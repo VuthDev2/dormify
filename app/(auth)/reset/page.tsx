@@ -27,86 +27,89 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col lg:flex-row overflow-hidden">
-      <div className="flex-1 flex flex-col justify-center px-8 sm:px-12 lg:px-16 py-12 relative z-10 bg-white">
-        <div className="max-w-md w-full mx-auto space-y-8">
-          <div className="flex items-center gap-2 group cursor-pointer">
-            <div className="w-9 h-9 bg-black rounded-lg flex items-center justify-center transition-transform group-hover:scale-110">
-              <Building2 className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-black tracking-tighter text-black">Dormify</span>
-          </div>
-
-          <div className="space-y-1.5">
-            <h1 className="text-3xl font-black tracking-tight text-black">Reset Password</h1>
-            <p className="text-muted-foreground font-medium text-sm">Create a new secure password</p>
-          </div>
-
-          <form onSubmit={handleReset} className="space-y-5">
-            <div className="space-y-3">
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">
-                  New Password
-                </label>
-                <div className="relative group">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-black transition-colors">
-                    <Lock className="w-5 h-5" />
-                  </div>
-                  <Input
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="h-11 pl-11 pr-11 rounded-xl border-border bg-transparent focus:ring-2 focus:ring-black/5 transition-all text-sm font-medium"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-black transition-colors"
-                  >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                  </button>
+      <div className="flex-1 flex flex-col justify-center px-4 sm:px-8 lg:px-16 py-12 relative z-10 overflow-y-auto scrollbar-none">
+        <div className="max-w-[480px] w-full mx-auto">
+          
+          <div className="bg-slate-50/60 border border-border/50 shadow-xl shadow-black/[0.02] rounded-[2rem] p-6 sm:p-10 space-y-8">
+            <div className="flex flex-col items-center justify-center text-center space-y-4">
+              <div className="flex items-center justify-center gap-2 group cursor-pointer">
+                <div className="w-12 h-12 bg-black rounded-2xl flex items-center justify-center transition-transform group-hover:-translate-y-1 group-hover:shadow-lg">
+                  <Building2 className="w-6 h-6 text-white" />
                 </div>
               </div>
-
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">
-                  Confirm Password
-                </label>
-                <div className="relative group">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-black transition-colors">
-                    <Lock className="w-5 h-5" />
-                  </div>
-                  <Input
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="••••••••"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="h-11 pl-11 pr-4 rounded-xl border-border bg-transparent focus:ring-2 focus:ring-black/5 transition-all text-sm font-medium"
-                    required
-                  />
-                </div>
+                <h1 className="text-3xl font-black tracking-tight text-black">Reset Password</h1>
+                <p className="text-muted-foreground font-medium text-sm">Create a new secure password</p>
               </div>
             </div>
 
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="w-full h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-base shadow-lg shadow-blue-600/20 active:scale-[0.98] transition-all mt-2"
-            >
-              {isLoading ? 'Resetting...' : 'Reset Password'}
-            </Button>
-          </form>
+            <form onSubmit={handleReset} className="space-y-5">
+              <div className="space-y-3.5">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">
+                    New Password
+                  </label>
+                  <div className="relative group">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-black transition-colors">
+                      <Lock className="w-5 h-5" />
+                    </div>
+                    <Input
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="h-12 pl-12 pr-12 rounded-xl border-border/40 bg-white shadow-sm focus:ring-2 focus:ring-black/5 transition-all text-sm font-medium"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-black transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                  </div>
+                </div>
 
-          <p className="text-center text-sm font-medium text-muted-foreground pt-2">
-            <Link
-              href="/auth/login"
-              className="inline-flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-700 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back to Sign In
-            </Link>
-          </p>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">
+                    Confirm Password
+                  </label>
+                  <div className="relative group">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-black transition-colors">
+                      <Lock className="w-5 h-5" />
+                    </div>
+                    <Input
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="••••••••"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="h-12 pl-12 pr-4 rounded-xl border-border/40 bg-white shadow-sm focus:ring-2 focus:ring-black/5 transition-all text-sm font-medium"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm sm:text-base shadow-xl shadow-blue-600/20 active:scale-[0.98] transition-all mt-4"
+              >
+                {isLoading ? 'Resetting...' : 'Reset Password'}
+              </Button>
+            </form>
+
+            <div className="flex justify-center pt-2">
+              <Link
+                href="/auth/login"
+                className="inline-flex items-center justify-center gap-2 text-blue-600 font-bold hover:text-blue-700 transition-colors text-sm"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Back to Sign In
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
 

@@ -11,7 +11,6 @@ import {
   CheckCircle2, Activity, TrendingUp, Shield, User,
   Key, Bell, Users
 } from 'lucide-react';
-import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Navigation } from '@/components/landing/Navigation';
@@ -22,17 +21,8 @@ import {
 } from '@/components/landing/constants';
 
 export default function LandingPage() {
-  const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress: pageScroll } = useScroll();
   
-  const { scrollYProgress: heroScroll } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"]
-  });
-
-  const heroOpacity = useTransform(heroScroll, [0, 0.6], [1, 0]);
-  const heroScale = useTransform(heroScroll, [0, 0.6], [1, 0.85]);
-  const heroTextY = useTransform(heroScroll, [0, 0.6], [0, -100]);
   const fadeInUp = ANIMATION_VARIANTS.fadeInUp;
   const staggerContainer = ANIMATION_VARIANTS.staggerContainer;
 
