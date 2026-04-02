@@ -11,28 +11,17 @@ import {
   CheckCircle2, Activity, TrendingUp, Shield, User,
   Key, Bell, Users
 } from 'lucide-react';
-import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll } from 'framer-motion';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Navigation } from '@/components/landing/Navigation';
-import { TypingHeadline, ScrollRevealText, DriftingElement } from '@/components/landing/animations';
+import { ScrollRevealText } from '@/components/landing/animations';
 import {
   STATS, SERVICES, INSTITUTIONAL_FEATURES, DINING_FEATURES,
   RESIDENT_FEATURES, PRICING_PLANS, FAQ_ITEMS, ANIMATION_VARIANTS
 } from '@/components/landing/constants';
 
 export default function LandingPage() {
-  const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress: pageScroll } = useScroll();
-  
-  const { scrollYProgress: heroScroll } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"]
-  });
-
-  const heroOpacity = useTransform(heroScroll, [0, 0.6], [1, 0]);
-  const heroScale = useTransform(heroScroll, [0, 0.6], [1, 0.85]);
-  const heroTextY = useTransform(heroScroll, [0, 0.6], [0, -100]);
   const fadeInUp = ANIMATION_VARIANTS.fadeInUp;
   const staggerContainer = ANIMATION_VARIANTS.staggerContainer;
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect, forwardRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 export const TypingHeadline = ({ text }: { text: string }) => {
@@ -48,50 +48,38 @@ export const TypingHeadline = ({ text }: { text: string }) => {
 
 export const ScrollRevealText = ({ children, className }: { children: React.ReactNode, className?: string }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const [mounted, setMounted] = useState(false);
-  
-  useEffect(() => {
-    // Wait for next tick to ensure DOM is fully settled
-    const timeout = setTimeout(() => {
-      setMounted(true);
-    }, 0);
-    
-    return () => clearTimeout(timeout);
-  }, []);
-  
-  if (!mounted) {
-    return (
-      <div className={className}>
-        {children}
-      </div>
-    );
-  }
-  
-  return (
-    <ScrollRevealTextClient ref={ref} className={className}>
-      {children}
-    </ScrollRevealTextClient>
-  );
-};
+  const [targetReady, setTargetReady] = useState(false);
 
-const ScrollRevealTextClient = forwardRef<HTMLDivElement, { children: React.ReactNode, className?: string }>(({ children, className }, ref) => {
-  const { scrollYProgress } = useScroll({
-    target: ref as any,
-    offset: ["start end", "end center"]
-  });
+  useEffect(() => {
+    const id = requestAnimationFrame(() => {
+      setTargetReady(Boolean(ref.current));
+    });
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  const { scrollYProgress } = useScroll(
+    targetReady
+      ? {
+          target: ref,
+          offset: ["start end", "end center"]
+        }
+      : ({} as any)
+  );
 
   const opacity = useTransform(scrollYProgress, [0, 0.5, 0.8], [0, 1, 1]);
   const y = useTransform(scrollYProgress, [0, 0.5, 0.8], [40, 0, 0]);
   const scale = useTransform(scrollYProgress, [0, 0.5, 0.8], [0.95, 1, 1]);
 
   return (
-    <motion.div ref={ref} style={{ opacity, y, scale }} className={className}>
+    <motion.div
+      ref={ref}
+      style={targetReady ? { opacity, y, scale } : undefined}
+      className={className}
+    >
       {children}
     </motion.div>
   );
-});
-
-ScrollRevealTextClient.displayName = 'ScrollRevealTextClient';
+};
 
 export const DriftingElement = ({ children, className, delay = 0 }: { children: React.ReactNode, className?: string, delay?: number }) => (
   <motion.div
