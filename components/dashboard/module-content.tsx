@@ -174,7 +174,7 @@ export function ModuleContent({ title, type, tier = 'normal', role = 'admin' }: 
         tickets: 2,
         systems: { power: 'ok', water: 'ok', security: 'ok', wifi: 'issue' },
         units: 120,
-        image: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?q=80&w=200'
+        image: '/bloomsbury-hall.jpg'
       },
       {
         name: 'Borough Wing',
@@ -185,7 +185,7 @@ export function ModuleContent({ title, type, tier = 'normal', role = 'admin' }: 
         tickets: 8,
         systems: { power: 'ok', water: 'alert', security: 'ok', wifi: 'ok' },
         units: 85,
-        image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?q=80&w=200'
+        image: '/borough-wing.jpg'
       },
       {
         name: 'Paddington Court',
@@ -196,7 +196,7 @@ export function ModuleContent({ title, type, tier = 'normal', role = 'admin' }: 
         tickets: 0,
         systems: { power: 'ok', water: 'ok', security: 'ok', wifi: 'ok' },
         units: 110,
-        image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?q=80&w=200'
+        image: '/paddington-court.jpg'
       },
     ];
 

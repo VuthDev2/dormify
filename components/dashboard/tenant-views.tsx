@@ -70,7 +70,7 @@ export function TenantInvoicesView() {
       {/* Header */}
       <motion.div variants={item} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border/40">
         <div className="space-y-1">
-          <h1 className="text-4xl font-black tracking-tight">My <span className="text-muted-foreground/30">Invoices</span></h1>
+          <h1 className="text-4xl font-bold tracking-tight">My <span className="text-muted-foreground/30">Invoices</span></h1>
           <p className="text-sm font-medium text-muted-foreground">Your personal billing history and upcoming payments.</p>
         </div>
         <Button variant="outline" className="h-11 px-6 rounded-2xl font-bold border-border/40 gap-2">
@@ -90,8 +90,8 @@ export function TenantInvoicesView() {
               <s.icon className="w-5 h-5" />
             </div>
             <div className="min-w-0">
-              <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 truncate">{s.label}</p>
-              <p className="text-2xl font-black tracking-tight">{s.value}</p>
+              <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60 truncate">{s.label}</p>
+              <p className="text-2xl font-bold tracking-tight">{s.value}</p>
               <p className="text-[10px] font-bold text-muted-foreground uppercase truncate">{s.sub}</p>
             </div>
           </Card>
@@ -104,20 +104,20 @@ export function TenantInvoicesView() {
           {/* Pending / Action needed */}
           {pending.length > 0 && (
             <motion.div variants={item} className="space-y-3">
-              <h2 className="text-sm font-black uppercase tracking-widest text-amber-600 flex items-center gap-2 px-1">
+              <h2 className="text-sm font-bold uppercase tracking-widest text-amber-600 flex items-center gap-2 px-1">
                 <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" /> Action Required
               </h2>
               {pending.map(inv => (
                 <Card key={inv.id} className="p-6 border-amber-500/20 bg-amber-500/5 rounded-2xl space-y-4">
                   <div className="flex items-start justify-between">
                     <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-amber-600">{inv.id} · {inv.type}</p>
-                      <h3 className="text-xl font-black mt-1">{inv.desc}</h3>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-amber-600">{inv.id} · {inv.type}</p>
+                      <h3 className="text-xl font-bold mt-1">{inv.desc}</h3>
                       <p className="text-xs font-bold text-muted-foreground mt-0.5">Due {inv.due}</p>
                     </div>
-                    <p className="text-2xl font-black text-amber-600">{inv.amount}</p>
+                    <p className="text-2xl font-bold text-amber-600">{inv.amount}</p>
                   </div>
-                  <Button className="w-full h-12 rounded-xl bg-amber-500 text-white font-black text-sm hover:bg-amber-600 shadow-lg shadow-amber-500/20">
+                  <Button className="w-full h-12 rounded-xl bg-amber-500 text-white font-bold text-sm hover:bg-amber-600 shadow-lg shadow-amber-500/20">
                     <CreditCard className="w-4 h-4 mr-2" /> Pay Now
                   </Button>
                 </Card>
@@ -127,8 +127,8 @@ export function TenantInvoicesView() {
 
           {/* All invoices list */}
           <motion.div variants={item} className="space-y-3">
-            <h2 className="text-sm font-black uppercase tracking-widest text-muted-foreground px-1">All Invoices</h2>
-            <Card className="border-border/40 bg-card rounded-[2.5rem] overflow-hidden shadow-sm">
+            <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground px-1">All Invoices</h2>
+            <Card className="border-border/40 bg-card rounded-2xl overflow-hidden shadow-sm">
               <div className="divide-y divide-border/20">
                 {MY_INVOICES.map(inv => (
                   <div key={inv.id}>
@@ -145,7 +145,7 @@ export function TenantInvoicesView() {
                       </div>
                       <div className="flex items-center gap-4">
                         <div className="text-right hidden sm:block">
-                          <p className="font-black text-sm">{inv.amount}</p>
+                          <p className="font-bold text-sm">{inv.amount}</p>
                           <Badge className={cn('text-[9px] border-none font-bold px-2', statusColor(inv.status))}>{inv.status}</Badge>
                         </div>
                         <ChevronDown className={cn('w-4 h-4 text-muted-foreground/30 transition-transform', expanded === inv.id && 'rotate-180')} />
@@ -156,10 +156,10 @@ export function TenantInvoicesView() {
                         <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
                           className="overflow-hidden bg-muted/20 border-t border-border/20">
                           <div className="px-6 py-4 grid grid-cols-2 gap-4 text-xs">
-                            <div><p className="font-black text-muted-foreground uppercase text-[9px] mb-1">Invoice ID</p><p className="font-bold">{inv.id}</p></div>
-                            <div><p className="font-black text-muted-foreground uppercase text-[9px] mb-1">Type</p><p className="font-bold">{inv.type}</p></div>
-                            <div><p className="font-black text-muted-foreground uppercase text-[9px] mb-1">Due Date</p><p className="font-bold">{inv.due}</p></div>
-                            <div><p className="font-black text-muted-foreground uppercase text-[9px] mb-1">{inv.status === 'Paid' ? 'Paid On' : 'Status'}</p><p className="font-bold">{inv.paidOn ?? inv.status}</p></div>
+                            <div><p className="font-bold text-muted-foreground uppercase text-[9px] mb-1">Invoice ID</p><p className="font-bold">{inv.id}</p></div>
+                            <div><p className="font-bold text-muted-foreground uppercase text-[9px] mb-1">Type</p><p className="font-bold">{inv.type}</p></div>
+                            <div><p className="font-bold text-muted-foreground uppercase text-[9px] mb-1">Due Date</p><p className="font-bold">{inv.due}</p></div>
+                            <div><p className="font-bold text-muted-foreground uppercase text-[9px] mb-1">{inv.status === 'Paid' ? 'Paid On' : 'Status'}</p><p className="font-bold">{inv.paidOn ?? inv.status}</p></div>
                           </div>
                           <div className="px-6 pb-4 flex gap-2">
                             <Button size="sm" variant="outline" className="rounded-xl font-bold text-[10px] uppercase h-8 px-4 border-border/40">
@@ -186,22 +186,22 @@ export function TenantInvoicesView() {
         <motion.div variants={item} className="space-y-6">
 
           {/* Payment method */}
-          <Card className="p-7 border-none bg-slate-900 text-white rounded-[2.5rem] space-y-6 relative overflow-hidden shadow-2xl">
+          <Card className="p-7 border-none bg-slate-900 text-white rounded-2xl space-y-6 relative overflow-hidden shadow-2xl">
             <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none"><Wallet className="w-40 h-40" /></div>
             <div className="relative z-10 space-y-5">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center"><CreditCard className="w-4 h-4" /></div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-white/50">Saved Card</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-white/50">Saved Card</span>
               </div>
               <div>
                 <p className="text-white/40 text-[10px] font-bold uppercase">Visa ending in</p>
-                <p className="text-4xl font-black tracking-widest mt-1">•••• 4242</p>
+                <p className="text-4xl font-bold tracking-widest mt-1">•••• 4242</p>
               </div>
               <div className="flex items-center justify-between text-[10px] font-bold text-white/40 uppercase">
                 <span>Expires 09 / 27</span>
                 <Badge className="bg-emerald-500/20 text-emerald-300 border-none text-[9px]">Active</Badge>
               </div>
-              <Button className="w-full h-11 rounded-xl bg-white/10 border border-white/10 text-white font-black text-[10px] uppercase tracking-widest hover:bg-white/20">
+              <Button className="w-full h-11 rounded-xl bg-white/10 border border-white/10 text-white font-bold text-[10px] uppercase tracking-widest hover:bg-white/20">
                 Manage Payment Methods
               </Button>
             </div>
@@ -209,7 +209,7 @@ export function TenantInvoicesView() {
 
           {/* Quick actions */}
           <Card className="p-6 border-border/40 bg-card rounded-[2rem] space-y-4 shadow-sm">
-            <h3 className="text-sm font-black tracking-tight">Billing <span className="text-muted-foreground/30">Help</span></h3>
+            <h3 className="text-sm font-bold tracking-tight">Billing <span className="text-muted-foreground/30">Help</span></h3>
             {[
               { label: 'Payment History',   sub: 'All past transactions', icon: Receipt,   color: 'text-primary',    bg: 'bg-primary/10' },
               { label: 'Auto-Pay Setup',    sub: 'Never miss a due date', icon: Zap,       color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
@@ -230,11 +230,11 @@ export function TenantInvoicesView() {
           </Card>
 
         </motion.div>
-      </div>
-    </motion.div>
-  );
-}
-
+        </div>
+        </div>
+        </motion.div>
+        );
+        }
 
 // ═══════════════════════════════════════════════════════════════════════════════
 //  TENANT MAINTENANCE VIEW
@@ -274,12 +274,12 @@ export function TenantMaintenanceView() {
       {/* Header */}
       <motion.div variants={item} className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-border/40">
         <div className="space-y-1">
-          <h1 className="text-4xl font-black tracking-tight">Maintenance <span className="text-muted-foreground/30">Requests</span></h1>
+          <h1 className="text-4xl font-bold tracking-tight">Maintenance <span className="text-muted-foreground/30">Requests</span></h1>
           <p className="text-sm font-medium text-muted-foreground">Submit and track repair requests for your room.</p>
         </div>
         <Button
           onClick={() => setFormOpen(true)}
-          className="h-12 px-8 rounded-2xl font-black bg-primary text-white shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform"
+          className="h-12 px-8 rounded-2xl font-bold bg-primary text-white shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform"
         >
           <Plus className="w-4 h-4 mr-2" /> New Request
         </Button>
@@ -298,8 +298,8 @@ export function TenantMaintenanceView() {
               <s.icon className="w-4 h-4" />
             </div>
             <div>
-              <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60">{s.label}</p>
-              <p className="text-2xl font-black">{s.value}</p>
+              <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60">{s.label}</p>
+              <p className="text-2xl font-bold">{s.value}</p>
             </div>
           </Card>
         ))}
@@ -308,7 +308,7 @@ export function TenantMaintenanceView() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-4">
 
-          <h2 className="text-sm font-black uppercase tracking-widest text-muted-foreground px-1">My Requests</h2>
+          <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground px-1">My Requests</h2>
 
           {MY_TICKETS.map((t, idx) => (
             <motion.div variants={item} key={t.id}>
@@ -318,7 +318,7 @@ export function TenantMaintenanceView() {
                     <div className={cn('w-2 h-2 rounded-full mt-2 shrink-0', sDot(t.status))} />
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-black text-base">{t.title}</h3>
+                        <h3 className="font-bold text-base">{t.title}</h3>
                         <Badge className={cn('text-[9px] font-bold border-none px-2', sColor(t.status))}>{t.status}</Badge>
                       </div>
                       <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground uppercase">
@@ -363,7 +363,7 @@ export function TenantMaintenanceView() {
           <Card className="p-6 border-rose-500/20 bg-rose-500/5 rounded-[2rem] space-y-4">
             <div className="flex items-center gap-2 text-rose-500">
               <AlertTriangle className="w-4 h-4" />
-              <span className="text-[10px] font-black uppercase tracking-widest">Emergency</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest">Emergency</span>
             </div>
             <div className="space-y-3">
               {[
@@ -374,7 +374,7 @@ export function TenantMaintenanceView() {
                 <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-white/70 dark:bg-black/20 border border-border/20">
                   <c.icon className="w-3.5 h-3.5 text-rose-500 shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-[9px] font-black uppercase text-muted-foreground">{c.label}</p>
+                    <p className="text-[9px] font-bold uppercase text-muted-foreground">{c.label}</p>
                     <p className="text-xs font-bold">{c.value}</p>
                   </div>
                 </div>
@@ -384,7 +384,7 @@ export function TenantMaintenanceView() {
 
           {/* Facility info */}
           <Card className="p-6 border-border/40 bg-card rounded-[2rem] space-y-4 shadow-sm">
-            <h3 className="text-sm font-black tracking-tight">Facility <span className="text-muted-foreground/30">Info</span></h3>
+            <h3 className="text-sm font-bold tracking-tight">Facility <span className="text-muted-foreground/30">Info</span></h3>
             {[
               { label: 'Your Room',     value: 'A-402, Floor 4',    icon: Home },
               { label: 'Response Time', value: 'typically 24-48h',  icon: Clock },
@@ -396,7 +396,7 @@ export function TenantMaintenanceView() {
                   <f.icon className="w-3.5 h-3.5 text-primary" />
                   <span className="text-[10px] font-bold text-muted-foreground uppercase">{f.label}</span>
                 </div>
-                <span className="text-xs font-black">{f.value}</span>
+                <span className="text-xs font-bold">{f.value}</span>
               </div>
             ))}
           </Card>
@@ -405,7 +405,7 @@ export function TenantMaintenanceView() {
           <Card className="p-5 border-border/40 bg-muted/30 rounded-[2rem] space-y-2">
             <div className="flex items-center gap-2 text-primary">
               <Info className="w-3.5 h-3.5" />
-              <span className="text-[10px] font-black uppercase tracking-widest">Pro Tip</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest">Pro Tip</span>
             </div>
             <p className="text-xs font-medium text-muted-foreground leading-relaxed">
               Include a photo and detailed description when submitting requests. This helps our team prepare and respond faster.
@@ -424,37 +424,37 @@ export function TenantMaintenanceView() {
               initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }} transition={{ type: 'spring', damping: 25 }}
               onClick={e => e.stopPropagation()}
-              className="bg-background border border-border/40 rounded-[2.5rem] p-10 max-w-lg w-full shadow-2xl space-y-8">
+              className="bg-background border border-border/40 rounded-2xl p-10 max-w-lg w-full shadow-2xl space-y-8">
               <div className="flex justify-between items-start">
                 <div className="space-y-1">
-                  <h3 className="text-2xl font-black">New Request</h3>
+                  <h3 className="text-2xl font-bold">New Request</h3>
                   <p className="text-sm text-muted-foreground">Tell us what needs fixing in your room.</p>
                 </div>
                 <button onClick={() => setFormOpen(false)} className="w-10 h-10 rounded-xl bg-muted/30 flex items-center justify-center text-muted-foreground hover:bg-muted/60">✕</button>
               </div>
               <div className="space-y-5">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Category</label>
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Category</label>
                   <div className="grid grid-cols-3 gap-2">
                     {['Plumbing', 'Electrical', 'HVAC', 'Carpentry', 'IT / WiFi', 'Other'].map(c => (
-                      <button key={c} className="p-3 rounded-xl border border-border/40 text-[11px] font-black text-center hover:border-primary hover:bg-primary/5 transition-all">{c}</button>
+                      <button key={c} className="p-3 rounded-xl border border-border/40 text-[11px] font-bold text-center hover:border-primary hover:bg-primary/5 transition-all">{c}</button>
                     ))}
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Description</label>
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Description</label>
                   <textarea className="w-full h-24 px-4 py-3 rounded-xl border border-border/40 bg-muted/20 text-sm font-medium resize-none focus:outline-none focus:ring-2 focus:ring-primary/20" placeholder="Describe the issue in detail..." />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Priority</label>
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Priority</label>
                   <div className="grid grid-cols-3 gap-2">
                     {['Low', 'Medium', 'High'].map(p => (
-                      <button key={p} className="p-3 rounded-xl border border-border/40 text-[11px] font-black hover:border-primary hover:bg-primary/5 transition-all">{p}</button>
+                      <button key={p} className="p-3 rounded-xl border border-border/40 text-[11px] font-bold hover:border-primary hover:bg-primary/5 transition-all">{p}</button>
                     ))}
                   </div>
                 </div>
               </div>
-              <Button onClick={() => setFormOpen(false)} className="w-full h-14 rounded-2xl bg-primary text-white font-black text-sm shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform">
+              <Button onClick={() => setFormOpen(false)} className="w-full h-14 rounded-2xl bg-primary text-white font-bold text-sm shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform">
                 Submit Request <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </motion.div>
@@ -483,7 +483,7 @@ export function TenantProfileView() {
       {/* Header */}
       <motion.div variants={item} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border/40">
         <div className="space-y-1">
-          <h1 className="text-4xl font-black tracking-tight">My <span className="text-muted-foreground/30">Profile</span></h1>
+          <h1 className="text-4xl font-bold tracking-tight">My <span className="text-muted-foreground/30">Profile</span></h1>
           <p className="text-sm font-medium text-muted-foreground">Your personal details and tenancy information.</p>
         </div>
         <Button
@@ -497,10 +497,10 @@ export function TenantProfileView() {
 
       {/* Avatar & name */}
       <motion.div variants={item}>
-        <Card className="p-8 border-border/40 bg-card rounded-[2.5rem] shadow-sm">
+        <Card className="p-8 border-border/40 bg-card rounded-2xl shadow-sm">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8">
             <div className="relative">
-              <div className="w-28 h-28 rounded-[2rem] bg-primary flex items-center justify-center shadow-xl shadow-primary/20 text-white text-5xl font-black">
+              <div className="w-28 h-28 rounded-[2rem] bg-primary flex items-center justify-center shadow-xl shadow-primary/20 text-white text-5xl font-bold">
                 S
               </div>
               {editMode && (
@@ -510,7 +510,7 @@ export function TenantProfileView() {
               )}
             </div>
             <div className="text-center sm:text-left space-y-2 flex-1">
-              <h2 className="text-3xl font-black">Sarah Johnson</h2>
+              <h2 className="text-3xl font-bold">Sarah Johnson</h2>
               <div className="flex flex-wrap justify-center sm:justify-start gap-2">
                 <Badge className="bg-primary/10 text-primary border-none font-bold text-[10px] px-3">Room A-402</Badge>
                 <Badge className="bg-emerald-500/10 text-emerald-600 border-none font-bold text-[10px] px-3">Active Tenant</Badge>
@@ -521,7 +521,7 @@ export function TenantProfileView() {
             <div className="text-center hidden sm:block">
               <div className="flex flex-col items-center gap-1">
                 {[1,2,3,4,5].map(s => <Star key={s} className="w-4 h-4 text-amber-400 fill-amber-400" />)}
-                <p className="text-[10px] font-black text-muted-foreground uppercase mt-1">Resident Rating</p>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase mt-1">Resident Rating</p>
               </div>
             </div>
           </div>
@@ -532,8 +532,8 @@ export function TenantProfileView() {
 
         {/* Personal details */}
         <motion.div variants={item}>
-          <Card className="p-7 border-border/40 bg-card rounded-[2.5rem] space-y-6 shadow-sm">
-            <h3 className="text-base font-black tracking-tight flex items-center gap-2">
+          <Card className="p-7 border-border/40 bg-card rounded-2xl space-y-6 shadow-sm">
+            <h3 className="text-base font-bold tracking-tight flex items-center gap-2">
               <User className="w-4 h-4 text-primary" /> Personal <span className="text-muted-foreground/30">Details</span>
             </h3>
             <div className="space-y-4">
@@ -548,7 +548,7 @@ export function TenantProfileView() {
                   <div className="flex items-center gap-3 min-w-0">
                     <f.icon className="w-4 h-4 text-primary shrink-0" />
                     <div className="min-w-0">
-                      <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">{f.label}</p>
+                      <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">{f.label}</p>
                       <p className={cn('text-sm font-bold truncate', !editMode && 'text-foreground')}>{f.value}</p>
                     </div>
                   </div>
@@ -563,8 +563,8 @@ export function TenantProfileView() {
 
         {/* Tenancy details */}
         <motion.div variants={item}>
-          <Card className="p-7 border-border/40 bg-card rounded-[2.5rem] space-y-6 shadow-sm">
-            <h3 className="text-base font-black tracking-tight flex items-center gap-2">
+          <Card className="p-7 border-border/40 bg-card rounded-2xl space-y-6 shadow-sm">
+            <h3 className="text-base font-bold tracking-tight flex items-center gap-2">
               <Home className="w-4 h-4 text-primary" /> Tenancy <span className="text-muted-foreground/30">Details</span>
             </h3>
             <div className="space-y-4">
@@ -580,7 +580,7 @@ export function TenantProfileView() {
                   <div className="flex items-center gap-3">
                     <f.icon className="w-4 h-4 text-primary shrink-0" />
                     <div>
-                      <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">{f.label}</p>
+                      <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">{f.label}</p>
                       <p className="text-sm font-bold">{f.value}</p>
                     </div>
                   </div>
@@ -592,8 +592,8 @@ export function TenantProfileView() {
 
         {/* Account security */}
         <motion.div variants={item}>
-          <Card className="p-7 border-border/40 bg-card rounded-[2.5rem] space-y-5 shadow-sm">
-            <h3 className="text-base font-black tracking-tight flex items-center gap-2">
+          <Card className="p-7 border-border/40 bg-card rounded-2xl space-y-5 shadow-sm">
+            <h3 className="text-base font-bold tracking-tight flex items-center gap-2">
               <Lock className="w-4 h-4 text-primary" /> Account <span className="text-muted-foreground/30">Security</span>
             </h3>
             <div className="space-y-3">
@@ -623,8 +623,8 @@ export function TenantProfileView() {
 
         {/* Documents */}
         <motion.div variants={item}>
-          <Card className="p-7 border-border/40 bg-card rounded-[2.5rem] space-y-5 shadow-sm">
-            <h3 className="text-base font-black tracking-tight flex items-center gap-2">
+          <Card className="p-7 border-border/40 bg-card rounded-2xl space-y-5 shadow-sm">
+            <h3 className="text-base font-bold tracking-tight flex items-center gap-2">
               <FileText className="w-4 h-4 text-primary" /> My <span className="text-muted-foreground/30">Documents</span>
             </h3>
             <div className="space-y-3">
@@ -645,7 +645,7 @@ export function TenantProfileView() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-[8px] font-black border-border/40 px-1.5">{d.type}</Badge>
+                    <Badge variant="outline" className="text-[8px] font-bold border-border/40 px-1.5">{d.type}</Badge>
                     <Download className="w-3.5 h-3.5 text-muted-foreground/30 group-hover:text-primary transition-colors" />
                   </div>
                 </div>
@@ -653,8 +653,8 @@ export function TenantProfileView() {
             </div>
           </Card>
         </motion.div>
-
-      </div>
-    </motion.div>
-  );
-}
+        </div>
+        </div>
+        </motion.div>
+        );
+        }

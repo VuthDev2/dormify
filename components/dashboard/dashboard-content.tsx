@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import {
   Users,
   Building2,
@@ -31,7 +32,8 @@ import {
   Shield,
   Mail,
   MessageSquare,
-  ChevronRight
+  ChevronRight,
+  CheckCircle2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -621,241 +623,207 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
   }
 
   // ─── Tenant Home Dashboard ────────────────────────────────────────────────
-  return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
+  if (isTenant) {
+    const today = new Date().toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
 
-      {/* Welcome hero - More sophisticated */}
-      <div className="relative rounded-[3.5rem] overflow-hidden bg-slate-950 p-12 shadow-2xl border border-white/5">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-transparent to-indigo-500/20 opacity-50" />
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/20 rounded-full blur-[100px] animate-pulse" />
-        <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-indigo-500/10 rounded-full blur-[80px]" />
+    return (
+      <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500 pb-10">
         
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
-          <div className="space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[10px] font-black text-white/70 uppercase tracking-widest">Bloomsbury Hall · A-402</span>
+        {/* Header Section - Clean & Inviting */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-1">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="flex h-2 w-2 rounded-full bg-emerald-500" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Bloomsbury Hall · Room A-402</span>
             </div>
-            <div className="space-y-2">
-              <h1 className="text-6xl font-black text-white tracking-tight leading-tight">
-                Welcome home, <br /><span className="text-primary">Sarah.</span>
-              </h1>
-              <p className="text-white/40 font-medium text-lg max-w-md leading-relaxed">
-                Your sanctuary is ready. You have <span className="text-white/80 font-bold">2 notifications</span> requiring attention today.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <Button size="sm" className="bg-primary text-white font-black text-[10px] uppercase tracking-widest h-10 px-6 rounded-xl shadow-lg shadow-primary/20">
-                View My Keycard
-              </Button>
-              <Button variant="outline" size="sm" className="bg-white/5 border-white/10 text-white font-black text-[10px] uppercase tracking-widest h-10 px-6 rounded-xl hover:bg-white/10 transition-all">
-                Quick Support
-              </Button>
-            </div>
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">
+              Welcome back, <span className="text-primary">Sarah</span>
+            </h1>
+            <p className="text-sm text-muted-foreground font-medium">
+              Everything is set for your stay. You have 2 new notifications.
+            </p>
           </div>
-          
-          <div className="hidden lg:block w-px h-48 bg-white/10 mx-8" />
-          
-          <div className="grid grid-cols-2 gap-4 md:w-80">
-            {[
-              { label: 'Rent Balance', val: '£1,240', sub: 'Due Apr 01', color: 'text-primary' },
-              { label: 'Meal Credits', val: '12', sub: 'Refills in 2d', color: 'text-emerald-400' },
-              { label: 'Active Tasks', val: '0', sub: 'All clear', color: 'text-white/40' },
-              { label: 'Energy Usage', val: 'Low', sub: 'Top 10%', color: 'text-amber-400' },
-            ].map((box, i) => (
-              <div key={i} className="bg-white/5 border border-white/10 rounded-3xl p-5 backdrop-blur-sm">
-                <p className="text-[9px] font-black uppercase tracking-widest text-white/30 mb-1">{box.label}</p>
-                <p className={cn("text-xl font-black", box.color)}>{box.val}</p>
-                <p className="text-[9px] font-bold text-white/20 uppercase mt-1">{box.sub}</p>
-              </div>
-            ))}
+          <div className="flex items-center gap-3">
+            <Button variant="outline" className="rounded-xl font-semibold text-xs border-border bg-card h-10 px-4">
+              Support
+            </Button>
+            <Button className="rounded-xl font-bold text-xs bg-primary text-primary-foreground shadow-sm h-10 px-5">
+              View Digital Key
+            </Button>
           </div>
         </div>
-      </div>
 
-      {/* Quick access services - Refined cards */}
-      <div className="space-y-6">
-        <div className="flex items-center justify-between px-2">
-          <h2 className="text-sm font-black uppercase tracking-[0.2em] text-muted-foreground">Essential Services</h2>
-          <span className="text-[10px] font-bold text-primary uppercase tracking-widest">View All Services</span>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Key Metrics - Simplified */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: 'Dining Hall', sub: 'Today\'s Special: Beef Bourguignon', icon: UtensilsCrossed, color: 'text-orange-500', bg: 'bg-orange-500/10', border: 'hover:border-orange-500/20' },
-            { label: 'Smart Laundry', sub: '3 machines available now', icon: Zap, color: 'text-blue-500', bg: 'bg-blue-500/10', border: 'hover:border-blue-500/20' },
-            { label: 'Finance Hub', sub: 'Next payment due in 5 days', icon: Wallet, color: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'hover:border-emerald-500/20' },
-            { label: 'Maintenance', sub: 'Report a new issue', icon: Settings, color: 'text-indigo-500', bg: 'bg-indigo-500/10', border: 'hover:border-indigo-500/20' },
-          ].map((s, i) => (
-            <Card key={i} className={cn(
-              "p-8 rounded-[2.5rem] border border-border/40 bg-card hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 group flex flex-col gap-6",
-              s.border
-            )}>
-              <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 duration-500", s.bg, s.color)}>
-                <s.icon className="w-6 h-6" />
+            { label: 'Rent Balance', value: '£1,240', sub: 'Due in 4 days', icon: Wallet, color: 'text-blue-600', bg: 'bg-blue-50' },
+            { label: 'Meal Credits', value: '12', sub: 'Reset on Monday', icon: UtensilsCrossed, color: 'text-orange-600', bg: 'bg-orange-50' },
+            { label: 'Active Tasks', value: '0', sub: 'All caught up', icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+            { label: 'Energy Usage', value: 'Optimal', sub: 'Top 10% efficient', icon: Zap, color: 'text-amber-600', bg: 'bg-amber-50' },
+          ].map((stat, i) => (
+            <Card key={i} className="p-5 border-border/50 bg-card rounded-2xl shadow-sm flex flex-col justify-between group hover:shadow-md transition-all">
+              <div className="flex justify-between items-start mb-4">
+                <div className={cn("p-2 rounded-lg", stat.bg, stat.color)}>
+                  <stat.icon className="w-5 h-5" />
+                </div>
+                <ArrowUpRight className="w-4 h-4 text-muted-foreground/30 group-hover:text-primary transition-colors" />
               </div>
-              <div className="space-y-1">
-                <p className="font-black text-lg text-foreground">{s.label}</p>
-                <p className="text-xs text-muted-foreground font-medium leading-snug">{s.sub}</p>
-              </div>
-              <div className="mt-auto pt-4 flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-widest text-primary opacity-0 group-hover:opacity-100 transition-all">Open Service</span>
-                <ArrowRight className="w-4 h-4 text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-1">{stat.label}</p>
+                <h3 className="text-2xl font-bold text-foreground">{stat.value}</h3>
+                <p className="text-[10px] font-medium text-muted-foreground mt-1">{stat.sub}</p>
               </div>
             </Card>
           ))}
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        {/* Main Feed */}
-        <div className="lg:col-span-8 space-y-8">
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-             {/* Dynamic Notice Board */}
-            <Card className="p-8 border-border/40 bg-card rounded-[2.5rem] shadow-sm space-y-6 overflow-hidden relative group">
-              <div className="flex items-center gap-3 relative z-10">
-                <div className="w-10 h-10 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
-                  <Bell className="w-5 h-5" />
-                </div>
-                <span className="text-xs font-black uppercase tracking-widest text-foreground">Hall Notices</span>
+        <div className="grid lg:grid-cols-12 gap-6">
+          {/* Main Content Area */}
+          <div className="lg:col-span-8 space-y-6">
+            
+            {/* Quick Services Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              {[
+                { label: 'Laundry', icon: Layers, href: '/dashboard/tenants/laundry' },
+                { label: 'Maintenance', icon: Wrench, href: '/dashboard/tenants/maintenance' },
+                { label: 'Payments', icon: CreditCard, href: '/dashboard/tenants/invoices' },
+                { label: 'Dining', icon: UtensilsCrossed, href: '/dashboard/tenants/meals' },
+              ].map((service, i) => (
+                <Button key={i} variant="outline" asChild className="flex flex-col items-center justify-center gap-2 h-24 rounded-2xl border-border/50 bg-card hover:bg-muted/50 hover:border-primary/20 transition-all group">
+                  <Link href={service.href}>
+                    <service.icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                    <span className="text-[10px] font-bold uppercase tracking-wider">{service.label}</span>
+                  </Link>
+                </Button>
+              ))}
+            </div>
+
+            {/* Activity/Notices Card */}
+            <Card className="border-border/50 bg-card rounded-2xl shadow-sm overflow-hidden">
+              <div className="px-6 py-4 border-b border-border/50 flex items-center justify-between bg-muted/20">
+                <h3 className="text-xs font-bold uppercase tracking-widest text-foreground flex items-center gap-2">
+                  <Bell className="w-4 h-4 text-primary" /> Hall Notices & Activity
+                </h3>
+                <Button variant="ghost" size="sm" className="text-[10px] font-bold uppercase text-muted-foreground h-8">
+                  View All
+                </Button>
               </div>
-              <div className="space-y-4 relative z-10">
-                <div className="p-4 rounded-2xl bg-muted/30 border border-border/40 space-y-1">
-                  <p className="text-xs font-black text-foreground">Summer Ball Tickets</p>
-                  <p className="text-[11px] text-muted-foreground font-medium">Early bird tickets available from Monday at reception.</p>
-                </div>
-                <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10 space-y-1">
-                  <p className="text-xs font-black text-primary">Wellness Week</p>
-                  <p className="text-[11px] text-muted-foreground font-medium">Free yoga sessions in the common room every 8AM.</p>
-                </div>
+              <div className="divide-y divide-border/30">
+                {[
+                  { title: 'Summer Ball Tickets', desc: 'Early bird tickets now available at reception.', time: '2h ago', tag: 'Event' },
+                  { title: 'Wellness Week', desc: 'Join us for morning yoga sessions in the common room.', time: '1d ago', tag: 'Activity' },
+                  { title: 'Rent Invoice Generated', desc: 'Your invoice for November is now available.', time: '2d ago', tag: 'Finance' },
+                ].map((notice, i) => (
+                  <div key={i} className="px-6 py-4 flex items-start gap-4 hover:bg-muted/10 transition-colors cursor-pointer group">
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0 opacity-40 group-hover:opacity-100" />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-0.5">
+                        <p className="text-sm font-semibold text-foreground">{notice.title}</p>
+                        <span className="text-[10px] font-medium text-muted-foreground">{notice.time}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground line-clamp-1">{notice.desc}</p>
+                    </div>
+                    <Badge variant="secondary" className="text-[9px] font-bold uppercase bg-muted text-muted-foreground px-2 py-0 h-5">
+                      {notice.tag}
+                    </Badge>
+                  </div>
+                ))}
               </div>
-              <div className="absolute -bottom-12 -right-12 w-32 h-32 bg-primary/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-1000" />
             </Card>
 
-            {/* Today's Special Card */}
-            <Card className="p-8 border-border/40 bg-card rounded-[2.5rem] shadow-sm space-y-6 group hover:border-orange-500/20 transition-all">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-orange-500/10 text-orange-500 flex items-center justify-center group-hover:bg-orange-500 group-hover:text-white transition-all">
-                  <UtensilsCrossed className="w-5 h-5" />
-                </div>
-                <span className="text-xs font-black uppercase tracking-widest text-foreground">Chef's Selection</span>
+            {/* Dining Special */}
+            <Card className="p-6 border-border/50 bg-card rounded-2xl shadow-sm flex flex-col md:flex-row items-center gap-6 group hover:border-orange-500/20 transition-all">
+              <div className="w-16 h-16 rounded-2xl bg-orange-500/10 text-orange-600 flex items-center justify-center shrink-0">
+                <UtensilsCrossed className="w-8 h-8" />
               </div>
-              <div className="space-y-2">
-                <p className="text-2xl font-black leading-tight text-foreground">Slow-cooked Beef Bourguignon</p>
-                <p className="text-xs font-bold text-muted-foreground uppercase">Served with buttered mash · 18:30</p>
+              <div className="flex-1 text-center md:text-left">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-orange-600 mb-1">Today's Special Selection</p>
+                <h4 className="text-xl font-bold text-foreground mb-1">Slow-cooked Beef Bourguignon</h4>
+                <p className="text-sm text-muted-foreground">Served with creamed potatoes and glazed carrots from 18:30.</p>
               </div>
-              <Button variant="outline" className="w-full h-12 rounded-2xl font-black text-[10px] uppercase tracking-widest border-border group-hover:border-orange-500/30 transition-all">
-                Book My Portion
+              <Button size="sm" className="rounded-xl font-bold text-[10px] uppercase tracking-widest bg-orange-600 text-white hover:bg-orange-700 px-6 h-10">
+                Pre-order
               </Button>
             </Card>
           </div>
 
-          {/* Upcoming Schedule */}
-          <Card className="border-border/40 bg-card rounded-[3rem] overflow-hidden shadow-sm">
-            <div className="px-10 py-8 flex items-center justify-between border-b border-border/20 bg-muted/10">
-              <h3 className="font-black text-lg flex items-center gap-3">
-                <Calendar className="w-5 h-5 text-primary" /> Weekly Schedule
-              </h3>
-              <Badge className="bg-primary/10 text-primary border-none font-black text-[10px] uppercase px-4 py-1.5 rounded-full">Oct 27 – Nov 02</Badge>
-            </div>
-            <div className="divide-y divide-border/10">
-              {[
-                { day: 'Monday',  event: 'Rent payment window opens',     icon: Wallet,        color: 'text-emerald-500', bg: 'bg-emerald-500/10', time: '09:00' },
-                { day: 'Tuesday', event: 'HVAC Maintenance Check',       icon: Wrench,        color: 'text-indigo-500',  bg: 'bg-indigo-500/10',  time: '10:00' },
-                { day: 'Tuesday', event: 'Hall Social: Movie Night',      icon: Zap,           color: 'text-orange-500',  bg: 'bg-orange-500/10',  time: '20:00' },
-                { day: 'Friday',  event: 'Laundry booking slot open',     icon: Layers,        color: 'text-blue-500',    bg: 'bg-blue-500/10',    time: '08:00' },
-                { day: 'Sunday',  event: 'Monthly rent deadline',         icon: CreditCard,    color: 'text-rose-500',    bg: 'bg-rose-500/10',    time: '23:59' },
-              ].map((e, i) => (
-                <div key={i} className="flex items-center gap-6 px-10 py-6 hover:bg-muted/30 transition-colors group cursor-pointer">
-                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 ${e.bg} ${e.color}`}>
-                    <e.icon className="w-5 h-5" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-black text-base text-foreground truncate">{e.event}</p>
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase mt-1">{e.day} · {e.time}</p>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-muted-foreground/20 group-hover:text-primary transition-all" />
-                </div>
-              ))}
-            </div>
-          </Card>
-
-        </div>
-
-        {/* Sidebar */}
-        <div className="lg:col-span-4 space-y-8">
-          
-          {/* Quick Stats/Room Info */}
-          <Card className="p-8 border-border/40 bg-card rounded-[3rem] space-y-8 shadow-sm relative overflow-hidden">
-            <div className="flex items-center justify-between relative z-10">
-              <h3 className="font-black text-sm uppercase tracking-widest text-muted-foreground">My Room</h3>
-              <Badge className="bg-primary text-white border-none font-black text-[9px] px-3 py-1 rounded-lg">Floor 4</Badge>
-            </div>
-            <div className="space-y-2 relative z-10">
-              <p className="text-6xl font-black text-foreground tracking-tighter">A-402</p>
-              <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">En-suite · Private Balcony</p>
-            </div>
+          {/* Sidebar Area */}
+          <div className="lg:col-span-4 space-y-6">
             
-            <div className="space-y-3 pt-4 relative z-10">
-               {[
-                { label: 'Temp', val: '22°C', icon: Zap },
-                { label: 'Wi-Fi', val: 'Connected', icon: Activity },
-                { label: 'Lock', val: 'Secured', icon: ShieldCheck },
-              ].map((item, i) => (
-                <div key={i} className="flex items-center justify-between p-4 rounded-2xl bg-muted/30 border border-border/40">
-                  <div className="flex items-center gap-3">
-                    <item.icon className="w-4 h-4 text-primary" />
-                    <span className="text-[10px] font-black uppercase text-muted-foreground">{item.label}</span>
-                  </div>
-                  <span className="text-xs font-black text-foreground">{item.val}</span>
-                </div>
-              ))}
-            </div>
-            <div className="absolute -top-12 -right-12 w-48 h-48 bg-primary/5 rounded-full blur-3xl" />
-          </Card>
-
-          {/* Quick Actions/Contacts */}
-          <div className="space-y-4">
-             <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground px-2">Instant Help</h3>
-             <div className="grid grid-cols-1 gap-3">
+            {/* Room Controls Card */}
+            <Card className="p-6 border-border/50 bg-card rounded-2xl shadow-sm space-y-6">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">My Residence</h3>
+                <Badge className="bg-primary/10 text-primary border-none text-[9px] font-bold px-2 py-0.5 rounded-md">Floor 4</Badge>
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="text-5xl font-bold tracking-tighter text-foreground">A-402</span>
+                <span className="text-xs font-medium text-muted-foreground">Standard Ensuite</span>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
                 {[
-                  { label: 'Call Reception', icon: Phone },
-                  { label: 'Emergency Security', icon: Shield },
-                  { label: 'Live Support Chat', icon: MessageSquare },
-                ].map((act, i) => (
-                  <Button key={i} variant="outline" className="h-16 justify-start gap-4 px-6 rounded-[1.5rem] border-border bg-card hover:bg-primary/5 hover:border-primary/20 transition-all group">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
-                      <act.icon className="w-5 h-5" />
-                    </div>
-                    <span className="font-black text-xs uppercase tracking-widest">{act.label}</span>
-                  </Button>
-                ))}
-             </div>
-          </div>
-
-          {/* Documents/Links */}
-          <Card className="p-8 border-border/40 bg-card rounded-[3rem] shadow-sm space-y-6">
-            <h3 className="font-black text-sm uppercase tracking-widest text-muted-foreground">Documents</h3>
-            <div className="space-y-3">
-              {[
-                'Tenancy Agreement.pdf',
-                'Hall Rules & Safety.pdf',
-                'Insurance Policy.pdf',
-              ].map((doc, i) => (
-                <div key={i} className="flex items-center justify-between group cursor-pointer">
-                  <div className="flex items-center gap-3">
-                    <FileText className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                    <span className="text-xs font-bold text-foreground group-hover:underline">{doc}</span>
+                  { label: 'Temp', val: '22°C', icon: Zap },
+                  { label: 'Wi-Fi', val: 'Fast', icon: Activity },
+                ].map((item, i) => (
+                  <div key={i} className="p-3 rounded-xl bg-muted/30 border border-border/50 flex flex-col gap-1">
+                    <item.icon className="w-4 h-4 text-primary opacity-70" />
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase">{item.label}</span>
+                    <span className="text-sm font-bold text-foreground">{item.val}</span>
                   </div>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground/30 group-hover:text-primary transition-all" />
-                </div>
-              ))}
-            </div>
-          </Card>
+                ))}
+              </div>
+            </Card>
 
+            {/* Quick Actions */}
+            <div className="space-y-3">
+              <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground px-2">Instant Help</h3>
+              <div className="grid grid-cols-1 gap-2">
+                <Button variant="outline" className="h-14 justify-start gap-4 px-5 rounded-xl border-border/50 bg-card hover:bg-primary/5 hover:border-primary/20 transition-all group">
+                  <div className="w-8 h-8 rounded-lg bg-primary/5 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
+                    <Phone className="w-4 h-4" />
+                  </div>
+                  <span className="font-bold text-xs uppercase tracking-wider">Call Reception</span>
+                </Button>
+                <Button variant="outline" className="h-14 justify-start gap-4 px-5 rounded-xl border-border/50 bg-card hover:bg-primary/5 hover:border-primary/20 transition-all group">
+                  <div className="w-8 h-8 rounded-lg bg-primary/5 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
+                    <MessageSquare className="w-4 h-4" />
+                  </div>
+                  <span className="font-bold text-xs uppercase tracking-wider">Live Support Chat</span>
+                </Button>
+              </div>
+            </div>
+
+            {/* Quick Links */}
+            <Card className="p-6 border-border/50 bg-card rounded-2xl shadow-sm">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">Documents</h3>
+              <div className="space-y-3">
+                {[
+                  'Tenancy Agreement.pdf',
+                  'Hall Rules & Safety.pdf',
+                  'Insurance Policy.pdf',
+                ].map((doc, i) => (
+                  <div key={i} className="flex items-center justify-between group cursor-pointer hover:bg-muted/10 p-1 -mx-1 rounded transition-colors">
+                    <div className="flex items-center gap-3">
+                      <FileText className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                      <span className="text-xs font-medium text-foreground group-hover:underline">{doc}</span>
+                    </div>
+                    <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground/30 group-hover:text-primary transition-all" />
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  return null;
 }
+
+

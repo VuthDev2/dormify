@@ -240,7 +240,7 @@ export function LaundryContent({ title, tier = 'normal', role = 'admin' }: Laund
 
           <Card className="p-0 overflow-hidden rounded-[2.5rem] h-[350px] relative shadow-xl border-none">
             <img
-              src="https://images.unsplash.com/photo-1521656693064-15921ad0f24c?q=80&w=800"
+              src="/laundry-facility.jpg"
               className="w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-110"
               alt="Facility Monitor"
             />
