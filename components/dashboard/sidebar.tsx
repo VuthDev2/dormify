@@ -15,11 +15,9 @@ import {
   PieChart,
   ShieldCheck,
   Zap,
-  Globe,
   CreditCard,
   History,
   Activity,
-  UserCircle,
   ChevronRight,
   Waves
 } from 'lucide-react';
@@ -134,98 +132,141 @@ export function Sidebar({ role, tier = 'normal' }: SidebarProps) {
 
   const isActive = (href: string) => pathname === href;
 
-  const sidebarStyles = cn(
-    "hidden lg:flex flex-col w-72 h-screen sticky top-0 transition-all duration-500 z-50",
-    "bg-sidebar border-r border-sidebar-border shadow-xl",
-    isPremium && "shadow-[4px_0_24px_rgba(0,0,0,0.1)] dark:shadow-[4px_0_24px_rgba(0,0,0,0.5)]"
+  const shellStyles = cn(
+    "hidden lg:block shrink-0 lg:w-[296px] xl:w-[320px] p-4 md:p-5"
+  );
+
+  const panelStyles = cn(
+    "relative flex h-full flex-col overflow-hidden rounded-[2rem] border backdrop-blur-2xl",
+    "border-slate-300/55 bg-slate-100/60 shadow-[0_12px_28px_rgba(15,23,42,0.06),inset_0_1px_0_rgba(255,255,255,0.55)]",
+    "dark:border-white/10 dark:bg-white/[0.04] dark:shadow-[0_24px_64px_rgba(2,6,23,0.45)]"
   );
 
   const logoStyles = cn(
-    "w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 shadow-lg",
+    "flex h-12 w-12 items-center justify-center rounded-2xl transition-transform duration-500 group-hover:scale-105 shadow-lg",
     isPremium ? "bg-primary text-white shadow-primary/30" :
     isPro ? "bg-primary/80 text-white shadow-primary/20" :
     "bg-primary/60 text-white shadow-primary/10"
   );
 
   const groupLabelStyles = cn(
-    "px-4 text-[10px] font-bold uppercase tracking-[0.25em] mb-4 transition-colors",
-    isPremium ? "text-primary/60 group-hover:text-primary" : isPro ? "text-muted-foreground/80" : "text-muted-foreground/60"
+    "px-3 text-[10px] font-bold uppercase tracking-[0.32em] transition-colors",
+    "text-slate-500 dark:text-slate-400/80"
   );
 
   const itemStyles = (active: boolean) => cn(
-    "flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 group relative overflow-hidden",
+    "group relative flex items-center gap-3 rounded-2xl border px-3 py-3 transition-all duration-300",
     active
-      ? (isPremium
-          ? "bg-primary text-primary-foreground shadow-xl shadow-primary/20"
-          : isPro
-          ? "bg-primary/90 text-primary-foreground shadow-lg shadow-primary/10"
-          : "bg-primary/80 text-primary-foreground")
-      : "text-muted-foreground hover:bg-accent hover:text-foreground"
+      ? "border-primary/20 bg-primary/[0.10] text-slate-900 shadow-[0_10px_24px_rgba(99,102,241,0.12)] dark:border-white/10 dark:bg-white/[0.09] dark:text-white dark:shadow-[0_18px_40px_rgba(2,6,23,0.36)]"
+      : "border-transparent text-slate-600 hover:border-slate-300/55 hover:bg-slate-200/55 hover:text-slate-900 dark:text-slate-300 dark:hover:border-white/10 dark:hover:bg-white/[0.06] dark:hover:text-white"
   );
 
+  const iconWrapStyles = (active: boolean) => cn(
+    "flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-300",
+    active
+      ? "border-primary/20 bg-primary/15 text-primary dark:border-white/10 dark:bg-white/10 dark:text-white"
+      : "border-transparent bg-slate-300/45 text-slate-500 group-hover:bg-slate-300/70 group-hover:text-slate-900 dark:bg-white/[0.05] dark:text-slate-300 dark:group-hover:bg-white/[0.08] dark:group-hover:text-white"
+  );
+
+  const experienceLabel =
+    role === 'tenant'
+      ? 'Resident Portal'
+      : role === 'chef'
+      ? 'Kitchen Console'
+      : isPremium
+      ? 'Premium Operations'
+      : isPro
+      ? 'Pro Operations'
+      : 'Operations Suite';
+
   return (
-    <aside className={sidebarStyles}>
-      <div className="p-8">
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className={logoStyles}>
-            <Building2 className="w-5 h-5" />
-          </div>
-          <div className="flex flex-col">
-            <span className={cn("font-bold text-lg leading-none tracking-tight text-foreground")}>Dormify</span>
-            <span className={cn("text-[9px] font-bold uppercase tracking-widest mt-1.5", isPremium ? "text-primary font-black" : isPro ? "text-primary/70" : "text-muted-foreground")}>
-                  System
+    <aside className={shellStyles}>
+      <div className={panelStyles}>
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.06),transparent_72%)] dark:bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.18),transparent_72%)]" />
+
+        <div className="relative p-6">
+          <Link href="/" className="group flex items-start gap-4">
+            <div className={logoStyles}>
+              <Building2 className="h-5 w-5" />
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2">
+                <span className="truncate text-lg font-semibold tracking-tight text-foreground">Dormify</span>
+                <span className="rounded-full border border-slate-300/70 bg-slate-200/70 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.24em] text-slate-500 shadow-sm dark:border-white/10 dark:bg-white/[0.06] dark:text-slate-300">
+                  Live
+                </span>
+              </div>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {experienceLabel}
+              </p>
+            </div>
+          </Link>
+
+          <div className="mt-5 flex flex-wrap items-center gap-2">
+            <span className="rounded-full border border-primary/15 bg-primary/8 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.24em] text-primary dark:border-primary/20 dark:bg-primary/10">
+              {role === 'admin' ? tier : role}
+            </span>
+            <span className="rounded-full border border-slate-300/70 bg-slate-200/70 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-500 dark:border-white/10 dark:bg-white/[0.05] dark:text-slate-300">
+              Control Surface
             </span>
           </div>
-        </Link>
-      </div>
+        </div>
 
-      <nav className="flex-1 overflow-y-auto px-4 py-2 space-y-8 scrollbar-none">
-        {getMenuGroups().map((group, i) => (
-          <div key={i} className="space-y-1">
-            {group.label && (
-              <h3 className={groupLabelStyles}>
-                {group.label}
-              </h3>
-            )}
-            <div className="space-y-1">
-              {group.items.map((item) => {
-                const active = isActive(item.href);
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={itemStyles(active)}
-                  >
-                    <item.icon className={cn(
-                      "w-[18px] h-[18px] transition-all duration-300",
-                      active
-                        ? (isPremium ? "text-white scale-110" : "text-primary-foreground")
-                        : "text-muted-foreground group-hover:text-foreground group-hover:scale-110"
-                    )} />
-                    <span className="flex-1">{item.label}</span>
-                    {active && (
-                      <div className={cn(
-                        "absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full transition-all duration-500",
-                        isPremium ? "bg-white shadow-[0_0_12px_rgba(255,255,255,0.8)]" :
-                        isPro ? "bg-white/80" : "bg-primary-foreground/50"
-                      )} />
-                    )}
-                  </Link>
-                );
-              })}
-            </div>
+        <nav className="relative flex-1 overflow-y-auto px-3 pb-4 scrollbar-none">
+          <div className="space-y-7">
+            {getMenuGroups().map((group, i) => (
+              <div key={i} className="space-y-3">
+                {group.label && (
+                  <h3 className={groupLabelStyles}>
+                    {group.label}
+                  </h3>
+                )}
+
+                <div className="space-y-2">
+                  {group.items.map((item) => {
+                    const active = isActive(item.href);
+
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className={itemStyles(active)}
+                      >
+                        <div className={iconWrapStyles(active)}>
+                          <item.icon className="h-[18px] w-[18px]" />
+                        </div>
+
+                        <div className="min-w-0 flex-1">
+                          <span className="block truncate text-sm font-semibold">
+                            {item.label}
+                          </span>
+                        </div>
+
+                        <ChevronRight className={cn(
+                          "h-4 w-4 transition-all duration-300",
+                          active
+                            ? "translate-x-0 opacity-100 text-primary dark:text-white/80"
+                            : "translate-x-1 opacity-0 text-slate-400 group-hover:translate-x-0 group-hover:opacity-100 dark:text-slate-500"
+                        )} />
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </nav>
+        </nav>
 
-      <div className={cn("p-6 mt-auto border-t border-sidebar-border")}>
-        <Button variant="ghost" className={cn(
-          "w-full justify-start rounded-xl transition-all font-bold text-sm h-12 px-4 group",
-          "text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-        )}>
-          <LogOut className="w-4 h-4 mr-3 group-hover:rotate-180 transition-transform duration-500" />
-          Sign out
-        </Button>
+        <div className="relative mt-auto border-t border-slate-300/60 p-4 dark:border-white/10">
+          <Button
+            variant="ghost"
+            className="group h-12 w-full justify-start rounded-2xl border border-transparent px-4 text-sm font-semibold text-muted-foreground transition-all hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive"
+          >
+            <LogOut className="mr-3 h-4 w-4 transition-transform duration-500 group-hover:rotate-180" />
+            Sign out
+          </Button>
+        </div>
       </div>
     </aside>
   );

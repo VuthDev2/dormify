@@ -1,9 +1,8 @@
 'use client';
 
-import { Bell, Search, ChevronDown } from 'lucide-react';
+import { Bell, Search, ChevronDown, Command } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,9 +10,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ThemeToggle } from './theme-toggle';
+import { cn } from '@/lib/utils';
 
 interface HeaderProps {
   role: 'admin' | 'tenant' | 'chef';
@@ -24,6 +24,13 @@ export function Header({ role, tier = 'normal' }: HeaderProps) {
   const isChef = role === 'chef';
   const isTenant = role === 'tenant';
   const isAdmin = role === 'admin';
+
+  const searchPlaceholder =
+    role === 'admin'
+      ? 'Search residents, rooms, reports'
+      : role === 'chef'
+      ? 'Search meals, inventory, plans'
+      : 'Search payments, meals, profile';
 
   return (
     <header className="sticky top-0 z-40 transition-all duration-500 px-6 py-4">
@@ -36,9 +43,14 @@ export function Header({ role, tier = 'normal' }: HeaderProps) {
           </div>
 
           <Input
-            placeholder={`Search ${isAdmin ? 'residents, rooms, logs...' : isChef ? 'meals, inventory, plans...' : 'payments, meals, profile...'}`}
-            className="w-full pl-12 transition-all duration-300 text-sm font-semibold tracking-tight bg-muted/50 border-border h-10 rounded-lg focus:bg-background placeholder:text-muted-foreground/50 shadow-none"
+            placeholder={searchPlaceholder}
+            className="w-full pl-12 transition-all duration-300 text-sm font-semibold tracking-tight bg-muted/50 border-border h-10 rounded-lg focus:bg-background placeholder:text-muted-foreground/50 shadow-none pr-16"
           />
+
+          <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 hidden items-center gap-1.5 rounded-lg border border-border/40 bg-muted/50 px-2 py-1 text-[10px] font-semibold text-muted-foreground group-focus-within:bg-background lg:flex transition-all">
+            <Command className="h-3 w-3" />
+            <span>K</span>
+          </div>
         </div>
 
         <div className="flex items-center gap-2 md:gap-4">
