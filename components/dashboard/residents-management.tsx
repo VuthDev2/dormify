@@ -19,7 +19,18 @@ import {
   Edit2,
   Trash2,
   MoreHorizontal,
-  HomeIcon
+  HomeIcon,
+  Archive,
+  ArrowUpRight,
+  ShieldCheck,
+  Activity,
+  UserPlus,
+  Building2,
+  GraduationCap as School,
+  Globe2,
+  Fingerprint,
+  FileText,
+  Clock
 } from 'lucide-react';
 import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
@@ -28,6 +39,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,8 +47,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
-interface Resident {
+export interface Resident {
   id: string;
   name: string;
   email: string;
@@ -48,6 +66,9 @@ interface Resident {
   leaseEnd: string;
   paymentStatus: 'Paid' | 'Pending' | 'Overdue';
   emergencyContact?: string;
+  university?: string;
+  course?: string;
+  nationality?: string;
 }
 
 interface ResidentsManagementProps {
@@ -57,32 +78,33 @@ interface ResidentsManagementProps {
   tier: 'normal' | 'pro' | 'premium';
 }
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 8;
 
 export function ResidentsManagement({ title, description, residents, tier }: ResidentsManagementProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [selectedFloor, setSelectedFloor] = useState<string>('all');
-  const [selectedPayment, setSelectedPayment] = useState<string>('all');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [currentPage, setCurrentPage] = useState(1);
 
+  const isPremium = tier === 'premium';
+
   // Extract unique values
-  const floors = useMemo(() => [...new Set(residents.map(r => r.floor))].sort(), [residents]);
+  const floors = useMemo(() => [...new Set(residents.map(r => r.floor))].sort((a, b) => parseInt(a) - parseInt(b)), [residents]);
   const statuses = useMemo(() => [...new Set(residents.map(r => r.status))], [residents]);
 
   // Filter residents
   const filteredResidents = useMemo(() => {
     return residents.filter(resident => {
       const matchesSearch = resident.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           resident.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           resident.room.toLowerCase().includes(searchTerm.toLowerCase());
+        resident.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        resident.room.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        resident.university?.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesStatus = selectedStatus === 'all' || resident.status === selectedStatus;
       const matchesFloor = selectedFloor === 'all' || resident.floor === selectedFloor;
-      const matchesPayment = selectedPayment === 'all' || resident.paymentStatus === selectedPayment;
-      return matchesSearch && matchesStatus && matchesFloor && matchesPayment;
+      return matchesSearch && matchesStatus && matchesFloor;
     });
-  }, [residents, searchTerm, selectedStatus, selectedFloor, selectedPayment]);
+  }, [residents, searchTerm, selectedStatus, selectedFloor]);
 
   // Calculate stats
   const stats = useMemo(() => ({
@@ -115,7 +137,7 @@ export function ResidentsManagement({ title, description, residents, tier }: Res
     switch (status) {
       case 'Paid': return 'bg-emerald-500/10 text-emerald-600';
       case 'Pending': return 'bg-amber-500/10 text-amber-600';
-      case 'Overdue': return 'bg-red-500/10 text-red-600';
+      case 'Overdue': return 'bg-rose-500/10 text-rose-600';
       default: return 'bg-muted text-muted-foreground';
     }
   };
@@ -125,412 +147,346 @@ export function ResidentsManagement({ title, description, residents, tier }: Res
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* Header: Clean & Focused */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-border/40">
         <div className="space-y-1">
-          <h2 className="text-2xl font-black tracking-tight">{title}</h2>
-          <p className="text-sm font-medium text-muted-foreground">{description}</p>
+          <h2 className="text-3xl font-bold tracking-tight text-foreground">{title}</h2>
+          <p className="text-sm text-muted-foreground max-w-2xl">{description}</p>
         </div>
-        <Button className="rounded-xl h-9 px-4 font-black bg-primary text-primary-foreground shadow-lg shadow-primary/20 text-[10px] uppercase tracking-wider">
-          <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Resident
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button variant="outline" className="rounded-xl h-11 px-6 border-border/40 bg-background/50 backdrop-blur-sm text-xs font-semibold gap-2 hover:bg-muted transition-all">
+            <Archive className="w-4 h-4" /> Archive
+          </Button>
+          <Button className="rounded-xl h-11 px-8 font-bold bg-primary text-white shadow-lg shadow-primary/20 text-xs transition-all hover:scale-[1.02] active:scale-95 group">
+            <UserPlus className="w-4 h-4 mr-2" /> Add Resident
+          </Button>
+        </div>
       </div>
 
-      {/* Statistics Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
-        <Card className="p-4 border-border/40 bg-card rounded-xl space-y-3 hover:shadow-md transition-all">
-          <div className="flex items-center justify-between">
-            <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-600"><Users className="w-4 h-4" /></div>
-            <span className="text-[8px] font-black uppercase text-muted-foreground/40">Total</span>
-          </div>
-          <div className="space-y-1">
-            <p className="text-lg font-black">{stats.total}</p>
-            <p className="text-[9px] text-muted-foreground">residents</p>
-          </div>
-        </Card>
-
-        <Card className="p-4 border-border/40 bg-card rounded-xl space-y-3 hover:shadow-md transition-all">
-          <div className="flex items-center justify-between">
-            <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600"><CheckCircle2 className="w-4 h-4" /></div>
-            <span className="text-[8px] font-black uppercase text-muted-foreground/40">Active</span>
-          </div>
-          <div className="space-y-1">
-            <p className="text-lg font-black text-emerald-600">{stats.active}</p>
-            <p className="text-[9px] text-muted-foreground">occupied</p>
-          </div>
-        </Card>
-
-        <Card className="p-4 border-border/40 bg-card rounded-xl space-y-3 hover:shadow-md transition-all">
-          <div className="flex items-center justify-between">
-            <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-600"><Calendar className="w-4 h-4" /></div>
-            <span className="text-[8px] font-black uppercase text-muted-foreground/40">Pending</span>
-          </div>
-          <div className="space-y-1">
-            <p className="text-lg font-black text-amber-600">{stats.pending}</p>
-            <p className="text-[9px] text-muted-foreground">upcoming</p>
-          </div>
-        </Card>
-
-        <Card className="p-4 border-border/40 bg-card rounded-xl space-y-3 hover:shadow-md transition-all">
-          <div className="flex items-center justify-between">
-            <div className="p-1.5 rounded-lg bg-orange-500/10 text-orange-600"><HomeIcon className="w-4 h-4" /></div>
-            <span className="text-[8px] font-black uppercase text-muted-foreground/40">Moving</span>
-          </div>
-          <div className="space-y-1">
-            <p className="text-lg font-black text-orange-600">{stats.movingOut}</p>
-            <p className="text-[9px] text-muted-foreground">departing</p>
-          </div>
-        </Card>
-
-        <Card className="p-4 border-border/40 bg-card rounded-xl space-y-3 hover:shadow-md transition-all">
-          <div className="flex items-center justify-between">
-            <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600"><CheckCircle2 className="w-4 h-4" /></div>
-            <span className="text-[8px] font-black uppercase text-muted-foreground/40">Paid</span>
-          </div>
-          <div className="space-y-1">
-            <p className="text-lg font-black text-emerald-600">{stats.paidUp}</p>
-            <p className="text-[9px] text-muted-foreground">payments ok</p>
-          </div>
-        </Card>
-
-        <Card className="p-4 border-border/40 bg-card rounded-xl space-y-3 hover:shadow-md transition-all">
-          <div className="flex items-center justify-between">
-            <div className="p-1.5 rounded-lg bg-red-500/10 text-red-600"><AlertCircle className="w-4 h-4" /></div>
-            <span className="text-[8px] font-black uppercase text-muted-foreground/40">Overdue</span>
-          </div>
-          <div className="space-y-1">
-            <p className="text-lg font-black text-red-600">{stats.overdue}</p>
-            <p className="text-[9px] text-muted-foreground">past due</p>
-          </div>
-        </Card>
+      {/* Stats Section: Clean & Informative */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        {[
+          { label: 'Total Residents', value: stats.total, icon: Users, color: 'text-blue-500', bg: 'bg-blue-500/5' },
+          { label: 'Active', value: stats.active, icon: CheckCircle2, color: 'text-emerald-500', bg: 'bg-emerald-500/5' },
+          { label: 'Pending', value: stats.pending, icon: Calendar, color: 'text-amber-500', bg: 'bg-amber-500/5' },
+          { label: 'Moving Out', value: stats.movingOut, icon: HomeIcon, color: 'text-orange-500', bg: 'bg-orange-500/5' },
+          { label: 'Paid Up', value: stats.paidUp, icon: Activity, color: 'text-primary', bg: 'bg-primary/5' },
+          { label: 'Overdue', value: stats.overdue, icon: AlertCircle, color: 'text-rose-500', bg: 'bg-rose-500/5' },
+        ].map((s, i) => (
+          <Card key={i} className="group p-5 border-border/40 bg-background/50 backdrop-blur-sm rounded-2xl transition-all hover:border-primary/20 hover:shadow-md border">
+            <div className="flex flex-col gap-4">
+              <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center border border-border/40 shadow-sm transition-all group-hover:scale-105', s.bg, s.color)}>
+                <s.icon className="w-5 h-5" />
+              </div>
+              <div className="space-y-0.5">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">{s.label}</p>
+                <p className="text-xl font-bold text-foreground">{s.value}</p>
+              </div>
+            </div>
+          </Card>
+        ))}
       </div>
 
-      {/* Controls */}
-      <div className="space-y-4">
-        <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-          {/* Search */}
-          <div className="relative flex-1 max-w-sm group">
-            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none z-10">
-              <Search className="w-3.5 h-3.5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+      {/* Control Bar: Modern & Functional */}
+      <div className="p-2 border border-border/40 bg-background/40 backdrop-blur-md rounded-2xl shadow-sm">
+        <div className="flex flex-col lg:flex-row gap-2">
+          {/* Main Search */}
+          <div className="relative flex-1 group">
+            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none z-10">
+              <Search className="w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
             </div>
             <Input
-              placeholder="Search by name, email, or room..."
+              placeholder="Search residents by name, room, university..."
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
-              className="pl-9 pr-3 h-9 text-xs font-bold shadow-sm bg-muted/30 border-border/40 rounded-xl focus:bg-background"
+              className="pl-10 pr-4 h-11 text-sm bg-background border-none focus:ring-1 focus:ring-primary/20 rounded-xl transition-all"
             />
           </div>
 
-          {/* View Toggle */}
-          <div className="flex gap-1 border border-border/40 rounded-lg p-1 bg-muted/20">
-            <Button
-              size="sm"
-              variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
-              className="rounded-md px-2.5 h-7 text-xs font-bold"
-              onClick={() => setViewMode('grid')}
-            >
-              <Grid3x3 className="w-3.5 h-3.5" />
-            </Button>
-            <Button
-              size="sm"
-              variant={viewMode === 'list' ? 'secondary' : 'ghost'}
-              className="rounded-md px-2.5 h-7 text-xs font-bold"
-              onClick={() => setViewMode('list')}
-            >
-              <List className="w-3.5 h-3.5" />
+          <div className="flex flex-wrap items-center gap-2">
+            {/* View Toggle */}
+            <div className="flex gap-1 bg-muted/30 p-1 rounded-xl">
+              <Button
+                variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
+                size="sm"
+                className={cn("rounded-lg px-3 h-9 text-[10px] font-bold uppercase tracking-wider", viewMode === 'grid' && "bg-background shadow-sm")}
+                onClick={() => setViewMode('grid')}
+              >
+                <Grid3x3 className="w-4 h-4 mr-1.5" /> Grid
+              </Button>
+              <Button
+                variant={viewMode === 'list' ? 'secondary' : 'ghost'}
+                size="sm"
+                className={cn("rounded-lg px-3 h-9 text-[10px] font-bold uppercase tracking-wider", viewMode === 'list' && "bg-background shadow-sm")}
+                onClick={() => setViewMode('list')}
+              >
+                <List className="w-4 h-4 mr-1.5" /> List
+              </Button>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <select
+                value={selectedStatus}
+                onChange={(e) => { setSelectedStatus(e.target.value); setCurrentPage(1); }}
+                className="pl-3 pr-8 h-11 text-[10px] font-bold uppercase tracking-wider rounded-xl border border-border/40 bg-background hover:bg-muted/5 transition-all appearance-none cursor-pointer focus:outline-none"
+              >
+                <option value="all">All Status</option>
+                {statuses.map(status => <option key={status} value={status}>{status}</option>)}
+              </select>
+              <select
+                value={selectedFloor}
+                onChange={(e) => { setSelectedFloor(e.target.value); setCurrentPage(1); }}
+                className="pl-3 pr-8 h-11 text-[10px] font-bold uppercase tracking-wider rounded-xl border border-border/40 bg-background hover:bg-muted/5 transition-all appearance-none cursor-pointer focus:outline-none"
+              >
+                <option value="all">All Levels</option>
+                {floors.map(floor => <option key={floor} value={floor}>Level {floor}</option>)}
+              </select>
+            </div>
+
+            <Button variant="outline" size="sm" className="h-11 px-4 rounded-xl border-border/40 bg-background text-[10px] font-bold uppercase tracking-wider hover:bg-primary hover:text-white transition-all">
+              <Download className="w-4 h-4 mr-2" /> Export
             </Button>
           </div>
-
-          {/* Download */}
-          <Button variant="outline" className="rounded-xl h-9 px-3 border-border text-muted-foreground gap-2 hover:bg-muted text-xs font-bold">
-            <Download className="w-3.5 h-3.5" /> Export
-          </Button>
-        </div>
-
-        {/* Filters */}
-        <div className="flex flex-wrap gap-2">
-          {/* Status Filter */}
-          <select
-            value={selectedStatus}
-            onChange={(e) => {
-              setSelectedStatus(e.target.value);
-              setCurrentPage(1);
-            }}
-            className="px-3 h-9 text-xs font-bold rounded-lg border border-border/40 bg-card hover:bg-muted/50 transition-colors cursor-pointer"
-          >
-            <option value="all">All Status</option>
-            {statuses.map(status => (
-              <option key={status} value={status}>{status}</option>
-            ))}
-          </select>
-
-          {/* Floor Filter */}
-          <select
-            value={selectedFloor}
-            onChange={(e) => {
-              setSelectedFloor(e.target.value);
-              setCurrentPage(1);
-            }}
-            className="px-3 h-9 text-xs font-bold rounded-lg border border-border/40 bg-card hover:bg-muted/50 transition-colors cursor-pointer"
-          >
-            <option value="all">All Floors</option>
-            {floors.map(floor => (
-              <option key={floor} value={floor}>{floor}</option>
-            ))}
-          </select>
-
-          {/* Payment Filter */}
-          <select
-            value={selectedPayment}
-            onChange={(e) => {
-              setSelectedPayment(e.target.value);
-              setCurrentPage(1);
-            }}
-            className="px-3 h-9 text-xs font-bold rounded-lg border border-border/40 bg-card hover:bg-muted/50 transition-colors cursor-pointer"
-          >
-            <option value="all">All Payments</option>
-            <option value="Paid">Paid</option>
-            <option value="Pending">Pending</option>
-            <option value="Overdue">Overdue</option>
-          </select>
-
-          {/* Active Filters Badge */}
-          {(searchTerm || selectedStatus !== 'all' || selectedFloor !== 'all' || selectedPayment !== 'all') && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-9 px-2 text-xs font-bold text-primary hover:bg-primary/10 rounded-lg"
-              onClick={() => {
-                setSearchTerm('');
-                setSelectedStatus('all');
-                setSelectedFloor('all');
-                setSelectedPayment('all');
-                setCurrentPage(1);
-              }}
-            >
-              Clear Filters
-            </Button>
-          )}
         </div>
       </div>
 
-      {/* Content Area */}
-      {paginatedResidents.length === 0 ? (
-        <Card className="p-12 border-border/40 bg-card rounded-xl flex flex-col items-center justify-center text-center space-y-4">
-          <div className="w-12 h-12 rounded-lg bg-muted/30 flex items-center justify-center text-muted-foreground/40">
-            <Users className="w-6 h-6" />
-          </div>
-          <div className="space-y-1">
-            <p className="text-sm font-bold text-foreground">No residents found</p>
-            <p className="text-xs text-muted-foreground">Try adjusting your filters or search terms</p>
-          </div>
-        </Card>
-      ) : (
-        <>
-          {/* Grid View */}
-          {viewMode === 'grid' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {paginatedResidents.map((resident) => (
-                <Card key={resident.id} className="group border-border/40 bg-card rounded-xl overflow-hidden hover:shadow-lg transition-all cursor-pointer">
-                  <div className="p-5 space-y-4">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-3">
-                        <Avatar className="h-10 w-10 rounded-lg">
-                          <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">{getInitials(resident.name)}</AvatarFallback>
-                        </Avatar>
-                        <div className="space-y-1">
-                          <h3 className="font-black text-foreground">{resident.name}</h3>
-                          <p className="text-[8px] text-muted-foreground font-bold uppercase">{resident.room} • {resident.floor}</p>
+      {/* Registry Content: Dossiers & Ledgers */}
+      <div className="relative min-h-[400px]">
+        <AnimatePresence mode="wait">
+          {filteredResidents.length === 0 ? (
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="absolute inset-0 flex items-center justify-center"
+            >
+              <Card className="p-12 border-border/40 bg-background/50 backdrop-blur-sm rounded-3xl flex flex-col items-center justify-center text-center space-y-4 border border-dashed">
+                <div className="w-14 h-14 rounded-2xl bg-muted flex items-center justify-center text-muted-foreground/40">
+                  <Users className="w-7 h-7" />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-lg font-bold text-foreground">No results found</h4>
+                  <p className="text-xs text-muted-foreground/60 max-w-sm">No residents match your current search or filters.</p>
+                </div>
+                <Button variant="outline" size="sm" onClick={() => { setSearchTerm(''); setSelectedStatus('all'); setSelectedFloor('all'); }} className="rounded-xl px-6 font-bold text-[10px] uppercase tracking-wider">Reset Filters</Button>
+              </Card>
+            </motion.div>
+          ) : (
+            <motion.div
+              layout
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              {/* Grid View: Resident Dossier Mode */}
+              {viewMode === 'grid' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {paginatedResidents.map((resident, idx) => (
+                    <motion.div
+                      key={resident.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.02 }}
+                    >
+                      <Card className="group relative border-border/40 bg-background/50 backdrop-blur-sm rounded-[1.5rem] overflow-hidden hover:shadow-lg transition-all duration-300 border">
+                        <div className="p-6 space-y-6">
+                          <div className="flex items-start justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="relative">
+                                <Avatar className="h-12 w-12 rounded-xl border border-background shadow-sm">
+                                  <AvatarFallback className="bg-primary/5 text-primary font-bold text-sm">{getInitials(resident.name)}</AvatarFallback>
+                                </Avatar>
+                                <div className={cn("absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-background", resident.status === 'Active' ? 'bg-emerald-500' : 'bg-amber-500')} />
+                              </div>
+                              <div className="space-y-0.5">
+                                <h3 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1">{resident.name}</h3>
+                                <div className="flex items-center gap-1.5">
+                                  <Badge variant="outline" className="text-[9px] h-4.5 font-bold border-muted-foreground/20 bg-muted/30 text-muted-foreground px-1.5 rounded-md">{resident.room}</Badge>
+                                  <span className="text-[9px] font-medium text-muted-foreground/50">Level {resident.floor}</span>
+                                </div>
+                              </div>
+                            </div>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-muted transition-all">
+                                  <MoreHorizontal className="w-4 h-4 text-muted-foreground/40" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="w-40 rounded-xl p-1.5 border-border/40 shadow-xl bg-background/95 backdrop-blur-xl">
+                                <DropdownMenuItem className="rounded-lg cursor-pointer text-xs font-medium py-2 px-3">View Profile</DropdownMenuItem>
+                                <DropdownMenuItem className="rounded-lg cursor-pointer text-xs font-medium py-2 px-3">Edit Details</DropdownMenuItem>
+                                <DropdownMenuLabel className="border-t border-border/20 mt-1.5 pt-1.5" />
+                                <DropdownMenuItem className="rounded-lg cursor-pointer text-xs font-medium py-2 px-3 text-rose-500">Archive</DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+
+                          <div className="space-y-3">
+                            <div className="space-y-1">
+                              <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider">Institution</p>
+                              <p className="text-xs font-medium text-foreground line-clamp-1">{resident.university}</p>
+                              <p className="text-[10px] text-muted-foreground/60 line-clamp-1 italic">{resident.course}</p>
+                            </div>
+
+                            <div className="flex items-center gap-3 pt-1">
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <div className="flex items-center gap-2 text-muted-foreground/60 hover:text-primary transition-colors cursor-help">
+                                        <Mail className="w-3.5 h-3.5" />
+                                        <span className="text-[10px] font-medium truncate max-w-[80px]">{resident.email}</span>
+                                      </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent className="text-[10px]">{resident.email}</TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                                <div className="flex items-center gap-2 text-muted-foreground/60">
+                                  <Phone className="w-3.5 h-3.5" />
+                                  <span className="text-[10px] font-medium">{resident.phone}</span>
+                                </div>
+                            </div>
+                          </div>
+
+                          <div className="pt-4 border-t border-border/5 flex items-center justify-between">
+                            <Badge className={cn("text-[9px] font-bold uppercase tracking-wider border-none px-2.5 py-0.5 rounded-full", getStatusColor(resident.status))}>{resident.status}</Badge>
+                            <Button variant="ghost" size="sm" className="h-8 px-3 rounded-lg text-[10px] font-bold gap-1.5 hover:bg-primary/5 hover:text-primary transition-all">
+                              Manage <ChevronRight className="w-3.5 h-3.5" />
+                            </Button>
+                          </div>
                         </div>
-                      </div>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                            <MoreHorizontal className="w-3.5 h-3.5" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-40 rounded-lg p-1 border-border/40 shadow-xl">
-                          <DropdownMenuLabel className="text-[9px] font-bold uppercase px-3 py-2">Actions</DropdownMenuLabel>
-                          <DropdownMenuItem className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold">
-                            <Eye className="w-3 h-3 mr-2" /> View
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold">
-                            <Edit2 className="w-3 h-3 mr-2" /> Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold text-destructive">
-                            <Trash2 className="w-3 h-3 mr-2" /> Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
 
-                    <div className="space-y-2">
-                      <div className="flex gap-2 flex-wrap">
-                        <Badge className={cn("text-[8px] font-bold px-2 py-0.5 rounded-md border-none", getStatusColor(resident.status))}>
-                          {resident.status}
-                        </Badge>
-                        <Badge className={cn("text-[8px] font-bold px-2 py-0.5 rounded-md border-none", getPaymentColor(resident.paymentStatus))}>
-                          {resident.paymentStatus}
-                        </Badge>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2 text-xs">
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <Mail className="w-3 h-3" />
-                        <span className="truncate">{resident.email}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <Phone className="w-3 h-3" />
-                        <span>{resident.phone}</span>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border/20 text-[9px]">
-                      <div>
-                        <p className="text-muted-foreground font-bold uppercase mb-1">Joined</p>
-                        <p className="font-black text-foreground">{resident.joinDate}</p>
-                      </div>
-                      <div>
-                        <p className="text-muted-foreground font-bold uppercase mb-1">Lease Ends</p>
-                        <p className="font-black text-foreground">{resident.leaseEnd}</p>
-                      </div>
-                    </div>
+              {/* List View: Clean Table */}
+              {viewMode === 'list' && (
+                <Card className="border-border/40 bg-background/50 backdrop-blur-sm rounded-2xl overflow-hidden shadow-sm border">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                      <thead className="bg-muted/20 border-b border-border/10">
+                        <tr>
+                          <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50 pl-6">Resident</th>
+                          <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50">Details</th>
+                          <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50">Unit</th>
+                          <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50">Status</th>
+                          <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50">Agreement</th>
+                          <th className="p-4"></th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border/5">
+                        {paginatedResidents.map((resident) => (
+                          <tr key={resident.id} className="group hover:bg-muted/10 transition-all cursor-pointer">
+                            <td className="p-4 pl-6">
+                              <div className="flex items-center gap-4">
+                                <Avatar className="h-10 w-10 rounded-xl border border-background shadow-sm">
+                                  <AvatarFallback className="bg-primary/5 text-primary font-bold text-xs">{getInitials(resident.name)}</AvatarFallback>
+                                </Avatar>
+                                <div>
+                                  <p className="font-bold text-foreground text-sm leading-none mb-1">{resident.name}</p>
+                                  <p className="text-[10px] text-muted-foreground/60">{resident.email}</p>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="p-4">
+                              <div className="space-y-0.5">
+                                <p className="text-xs font-semibold text-foreground tracking-tight">{resident.university}</p>
+                                <p className="text-[10px] text-muted-foreground/50">{resident.course}</p>
+                              </div>
+                            </td>
+                            <td className="p-4">
+                              <div className="space-y-0.5">
+                                <div className="flex items-center gap-1.5">
+                                  <Building2 className="w-3 h-3 text-primary/40" />
+                                  <p className="text-xs font-bold text-foreground">{resident.room}</p>
+                                </div>
+                                <p className="text-[10px] text-muted-foreground/40">Level {resident.floor}</p>
+                              </div>
+                            </td>
+                            <td className="p-4">
+                              <div className="flex flex-col gap-1.5">
+                                <Badge className={cn("text-[9px] font-bold uppercase tracking-wider border-none px-2 py-0.5 rounded-full self-start", getStatusColor(resident.status))}>
+                                  {resident.status}
+                                </Badge>
+                                <div className="flex items-center gap-1.5 px-0.5">
+                                  <div className={cn("w-1.5 h-1.5 rounded-full", resident.paymentStatus === 'Paid' ? "bg-emerald-500" : "bg-rose-500")} />
+                                  <span className="text-[8px] font-bold uppercase tracking-wider text-muted-foreground/40">{resident.paymentStatus}</span>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="p-4">
+                              <div className="space-y-0.5">
+                                <p className="text-xs font-bold text-foreground">{resident.leaseEnd}</p>
+                                <p className="text-[10px] text-muted-foreground/40">Expires</p>
+                              </div>
+                            </td>
+                            <td className="p-4 text-right pr-6">
+                              <div className="flex items-center justify-end gap-1">
+                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-muted transition-all">
+                                  <Edit2 className="w-4 h-4 text-muted-foreground/40" />
+                                </Button>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-muted transition-all text-rose-500">
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 </Card>
-              ))}
-            </div>
+              )}
+            </motion.div>
           )}
+        </AnimatePresence>
+      </div>
 
-          {/* List View */}
-          {viewMode === 'list' && (
-            <div className="border border-border/40 rounded-xl overflow-hidden bg-card">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead className="sticky top-0 z-10 bg-muted/50 border-b border-border/40">
-                    <tr>
-                      <th className="p-3 text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60">Resident</th>
-                      <th className="p-3 text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60">Contact</th>
-                      <th className="p-3 text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60">Room</th>
-                      <th className="p-3 text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60">Status</th>
-                      <th className="p-3 text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60">Payment</th>
-                      <th className="p-3 text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60">Lease End</th>
-                      <th className="p-3 text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60"></th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border/40">
-                    {paginatedResidents.map((resident) => (
-                      <tr key={resident.id} className="hover:bg-muted/30 transition-colors">
-                        <td className="p-3">
-                          <div className="flex items-center gap-2">
-                            <Avatar className="h-7 w-7 rounded-lg">
-                              <AvatarFallback className="bg-primary/10 text-primary font-bold text-[9px]">{getInitials(resident.name)}</AvatarFallback>
-                            </Avatar>
-                            <p className="font-semibold text-foreground">{resident.name}</p>
-                          </div>
-                        </td>
-                        <td className="p-3">
-                          <div className="text-xs space-y-0.5">
-                            <p className="font-semibold text-foreground">{resident.email}</p>
-                            <p className="text-muted-foreground">{resident.phone}</p>
-                          </div>
-                        </td>
-                        <td className="p-3">
-                          <div className="text-sm">
-                            <p className="font-bold text-foreground">{resident.room}</p>
-                            <p className="text-[9px] text-muted-foreground">{resident.floor}</p>
-                          </div>
-                        </td>
-                        <td className="p-3">
-                          <Badge className={cn("text-[8px] font-bold border-none", getStatusColor(resident.status))}>
-                            {resident.status}
-                          </Badge>
-                        </td>
-                        <td className="p-3">
-                          <Badge className={cn("text-[8px] font-bold border-none", getPaymentColor(resident.paymentStatus))}>
-                            {resident.paymentStatus}
-                          </Badge>
-                        </td>
-                        <td className="p-3">
-                          <p className="text-sm font-semibold text-foreground">{resident.leaseEnd}</p>
-                        </td>
-                        <td className="p-3 text-right">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg">
-                                <MoreHorizontal className="w-3.5 h-3.5" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-40 rounded-lg p-1 border-border/40 shadow-xl">
-                              <DropdownMenuLabel className="text-[9px] font-bold uppercase px-3 py-2">Actions</DropdownMenuLabel>
-                              <DropdownMenuItem className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold">
-                                <Eye className="w-3 h-3 mr-2" /> View
-                              </DropdownMenuItem>
-                              <DropdownMenuItem className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold">
-                                <Edit2 className="w-3 h-3 mr-2" /> Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuItem className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold text-destructive">
-                                <Trash2 className="w-3 h-3 mr-2" /> Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-        </>
-      )}
-
-      {/* Pagination */}
+      {/* Pagination: Compact & Clean */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between px-4 py-3 border border-border/40 rounded-lg bg-muted/20">
-          <p className="text-[10px] font-bold text-muted-foreground/60 uppercase">
-            Showing <span className="text-foreground">{(currentPage - 1) * ITEMS_PER_PAGE + 1}-{Math.min(currentPage * ITEMS_PER_PAGE, filteredResidents.length)}</span> of <span className="text-foreground">{filteredResidents.length}</span> residents
+        <div className="flex items-center justify-between py-4">
+          <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider">
+            Showing <span className="text-foreground">{(currentPage - 1) * ITEMS_PER_PAGE + 1}—{Math.min(currentPage * ITEMS_PER_PAGE, filteredResidents.length)}</span> of <span className="text-foreground">{filteredResidents.length}</span> residents
           </p>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1.5">
             <Button
-              variant="ghost"
+              variant="outline"
               size="icon"
-              className="h-8 w-8 rounded-lg text-muted-foreground disabled:opacity-40"
+              className="h-9 w-9 rounded-lg border-border/40 bg-background shadow-sm hover:bg-muted transition-all"
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
             >
               <ChevronLeft className="w-4 h-4" />
             </Button>
 
-            {Array.from({ length: Math.min(3, totalPages) }, (_, i) => {
-              let page = i + 1;
-              if (currentPage > 2) page = currentPage - 1 + i;
-              if (currentPage > totalPages - 2) page = totalPages - 2 + i;
-              return page > 0 && page <= totalPages ? (
+            <div className="flex items-center gap-1">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                 <Button
                   key={page}
                   variant={page === currentPage ? 'secondary' : 'ghost'}
                   className={cn(
-                    "h-8 w-8 rounded-lg text-xs font-bold transition-all",
+                    "h-9 w-9 rounded-lg text-xs font-bold transition-all",
                     page === currentPage
-                      ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
-                      : "text-muted-foreground hover:bg-muted"
+                      ? "bg-primary text-white shadow-md shadow-primary/10"
+                      : "text-muted-foreground/60 hover:bg-muted"
                   )}
                   onClick={() => setCurrentPage(page)}
                 >
                   {page}
                 </Button>
-              ) : null;
-            })}
+              ))}
+            </div>
 
             <Button
-              variant="ghost"
+              variant="outline"
               size="icon"
-              className="h-8 w-8 rounded-lg text-muted-foreground disabled:opacity-40"
+              className="h-9 w-9 rounded-lg border-border/40 bg-background shadow-sm hover:bg-muted transition-all"
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
             >

@@ -24,22 +24,22 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-interface Column {
+interface Column<T> {
   header: string;
-  accessor: string;
-  cell?: (item: any) => React.ReactNode;
+  accessor: keyof T | string;
+  cell?: (item: T) => React.ReactNode;
 }
 
-interface DataTableProps {
+interface DataTableProps<T> {
   title: string;
   description: string;
-  columns: Column[];
-  data: any[];
+  columns: Column<T>[];
+  data: T[];
   tier: 'normal' | 'pro' | 'premium';
   actionLabel?: string;
 }
 
-export function DataTable({ title, description, columns, data, tier, actionLabel }: DataTableProps) {
+export function DataTable<T>({ title, description, columns, data, tier, actionLabel }: DataTableProps<T>) {
   const isPremium = tier === 'premium';
 
   return (
@@ -118,7 +118,7 @@ export function DataTable({ title, description, columns, data, tier, actionLabel
                   {columns.map((col, j) => (
                     <td key={j} className="p-3 pl-6 text-sm">
                       {col.cell ? col.cell(item) : (
-                        <span className="font-semibold text-foreground/80">{item[col.accessor]}</span>
+                        <span className="font-semibold text-foreground/80">{(item as any)[col.accessor]}</span>
                       )}
                     </td>
                   ))}
@@ -126,11 +126,11 @@ export function DataTable({ title, description, columns, data, tier, actionLabel
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-background border border-transparent hover:border-border/40">
-                          <MoreHorizontal className="w-4 h-4 text-slate-400" />
+                          <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-48 rounded-xl p-1 border-border/40 shadow-xl">
-                        <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-3 py-2">Row Actions</DropdownMenuLabel>
+                        <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 px-3 py-2">Row Actions</DropdownMenuLabel>
                         <DropdownMenuItem className="rounded-lg cursor-pointer py-2 px-3 font-semibold text-sm">View details</DropdownMenuItem>
                         <DropdownMenuItem className="rounded-lg cursor-pointer py-2 px-3 font-semibold text-sm">Edit record</DropdownMenuItem>
                         <DropdownMenuItem className="rounded-lg cursor-pointer py-2 px-3 font-bold text-sm text-destructive focus:text-destructive focus:bg-destructive/10">Delete</DropdownMenuItem>

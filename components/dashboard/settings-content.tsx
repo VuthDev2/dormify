@@ -233,9 +233,9 @@ export function SettingsContent({ title, tier = 'normal' }: SettingsContentProps
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {[
-                { id: 'light', label: 'Daylight', icon: Sun, color: 'bg-white text-slate-950 border-slate-200' },
-                { id: 'dark', label: 'Midnight', icon: Moon, color: 'bg-slate-950 text-white border-slate-800' },
-                { id: 'system', label: 'System', icon: Monitor, color: 'bg-gradient-to-br from-white to-slate-950 text-foreground border-border' },
+                { id: 'light', label: 'Daylight', icon: Sun, color: 'bg-background text-foreground border border-border' },
+                { id: 'dark', label: 'Midnight', icon: Moon, color: 'bg-foreground text-background border border-border' },
+                { id: 'system', label: 'System', icon: Monitor, color: 'bg-gradient-to-br from-background to-foreground text-foreground border border-border' },
               ].map((theme) => (
                 <button
                   key={theme.id}

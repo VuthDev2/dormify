@@ -21,7 +21,7 @@ export default function ResetPasswordPage() {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      window.location.href = '/auth/login';
+      window.location.href = '/login';
     }, 1000);
   };
 
@@ -102,7 +102,7 @@ export default function ResetPasswordPage() {
 
             <div className="flex justify-center pt-2">
               <Link
-                href="/auth/login"
+                href="/login"
                 className="inline-flex items-center justify-center gap-2 text-blue-600 font-bold hover:text-blue-700 transition-colors text-sm"
               >
                 <ArrowLeft className="w-4 h-4" />

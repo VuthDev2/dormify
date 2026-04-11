@@ -17,7 +17,17 @@ import {
   Eye,
   Edit2,
   Trash2,
-  MoreHorizontal
+  MoreHorizontal,
+  Archive,
+  ArrowUpRight,
+  Activity,
+  Calendar,
+  Zap,
+  ShieldCheck,
+  Building,
+  Home,
+  Waves,
+  LayoutGrid
 } from 'lucide-react';
 import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
@@ -33,7 +43,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-interface Room {
+export interface Room {
   id: string;
   name: string;
   floor: string;
@@ -71,10 +81,10 @@ export function RoomsManagement({ title, description, rooms, tier }: RoomsManage
   const filteredRooms = useMemo(() => {
     return rooms.filter(room => {
       const matchesSearch = room.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           room.resident?.toLowerCase().includes(searchTerm.toLowerCase());
+        room.resident?.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesFloor = selectedFloor === 'all' || room.floor === selectedFloor;
       const matchesStatus = selectedStatus === 'all' || room.status === selectedStatus;
-      const matchesMaintenance = selectedMaintenance === 'all' || 
+      const matchesMaintenance = selectedMaintenance === 'all' ||
         (selectedMaintenance === 'issues' ? room.maintenance !== 'none' : room.maintenance === 'none');
       return matchesSearch && matchesFloor && matchesStatus && matchesMaintenance;
     });
@@ -110,287 +120,258 @@ export function RoomsManagement({ title, description, rooms, tier }: RoomsManage
 
   const getMaintenanceIcon = (maintenance: Room['maintenance']) => {
     switch (maintenance) {
-      case 'alert': return { color: 'text-red-600', bg: 'bg-red-500/10' };
-      case 'issue': return { color: 'text-orange-600', bg: 'bg-orange-500/10' };
-      default: return { color: 'text-emerald-600', bg: 'bg-emerald-500/10' };
+      case 'alert': return { color: 'text-red-500', bg: 'bg-red-500/5' };
+      case 'issue': return { color: 'text-orange-500', bg: 'bg-orange-500/5' };
+      default: return { color: 'text-emerald-500', bg: 'bg-emerald-500/5' };
     }
   };
 
   const getHousekeepingIcon = (hk: Room['housekeeping']) => {
     switch (hk) {
-      case 'Clean': return { icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-500/10' };
-      case 'Dirty': return { icon: SprayCan, color: 'text-orange-600', bg: 'bg-orange-500/10' };
-      case 'Inspected': return { icon: Eye, color: 'text-blue-600', bg: 'bg-blue-500/10' };
-      case 'Maintenance': return { icon: AlertTriangle, color: 'text-red-600', bg: 'bg-red-500/10' };
-      default: return { icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-500/10' };
+      case 'Clean': return { icon: CheckCircle2, color: 'text-emerald-500', bg: 'bg-emerald-500/5' };
+      case 'Dirty': return { icon: SprayCan, color: 'text-orange-500', bg: 'bg-orange-500/5' };
+      case 'Inspected': return { icon: ShieldCheck, color: 'text-blue-500', bg: 'bg-blue-500/5' };
+      case 'Maintenance': return { icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-500/5' };
+      default: return { icon: CheckCircle2, color: 'text-emerald-500', bg: 'bg-emerald-500/5' };
     }
   };
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+      {/* Registry Header: Professional Inventory Node */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-border/40">
         <div className="space-y-1">
-          <h2 className="text-2xl font-black tracking-tight">{title}</h2>
-          <p className="text-sm font-medium text-muted-foreground">{description}</p>
+          <div className="flex items-center gap-3">
+            <span className="flex h-2 w-2 rounded-full bg-blue-500 animate-pulse shadow-[0_0_12px_rgba(59,130,246,0.5)]" />
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/50">Asset Node: Space Allocation Registry</span>
+          </div>
+          <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase">{title}</h2>
+          <p className="text-sm font-bold text-muted-foreground/60 max-w-xl">{description}</p>
         </div>
-        <Button className="rounded-xl h-9 px-4 font-black bg-primary text-primary-foreground shadow-lg shadow-primary/20 text-[10px] uppercase tracking-wider">
-          <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Room
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" className="rounded-xl h-11 px-5 border border-border/40 text-[10px] font-black uppercase tracking-widest gap-2 hover:bg-muted">
+            <Archive className="w-4 h-4" /> Structural Archive
+          </Button>
+          <Button className="rounded-xl h-12 px-6 font-black bg-primary text-white shadow-xl shadow-primary/20 text-[10px] uppercase tracking-[0.2em] transition-all hover:scale-[1.02] active:scale-95 group">
+            <Plus className="w-4 h-4 mr-2 group-hover:rotate-90 transition-transform" /> Allocate New Unit
+          </Button>
+        </div>
       </div>
 
-      {/* Statistics Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
-        <Card className="p-4 border-border/40 bg-card rounded-xl space-y-3 hover:shadow-md transition-all">
-          <div className="flex items-center justify-between">
-            <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-600"><Building2 className="w-4 h-4" /></div>
-            <span className="text-[8px] font-black uppercase text-muted-foreground/40">Total</span>
-          </div>
-          <div className="space-y-1">
-            <p className="text-lg font-black">{stats.total}</p>
-            <p className="text-[9px] text-muted-foreground">units</p>
-          </div>
-        </Card>
-
-        <Card className="p-4 border-border/40 bg-card rounded-xl space-y-3 hover:shadow-md transition-all">
-          <div className="flex items-center justify-between">
-            <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600"><Users className="w-4 h-4" /></div>
-            <span className="text-[8px] font-black uppercase text-muted-foreground/40">Occupied</span>
-          </div>
-          <div className="space-y-1">
-            <p className="text-lg font-black text-emerald-600">{stats.occupied}</p>
-            <p className="text-[9px] text-muted-foreground">{stats.occupancyRate}% rate</p>
-          </div>
-        </Card>
-
-        <Card className="p-4 border-border/40 bg-card rounded-xl space-y-3 hover:shadow-md transition-all">
-          <div className="flex items-center justify-between">
-            <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-600"><Building2 className="w-4 h-4" /></div>
-            <span className="text-[8px] font-black uppercase text-muted-foreground/40">Vacant</span>
-          </div>
-          <div className="space-y-1">
-            <p className="text-lg font-black text-amber-600">{stats.vacant}</p>
-            <p className="text-[9px] text-muted-foreground">available</p>
-          </div>
-        </Card>
-
-        <Card className="p-4 border-border/40 bg-card rounded-xl space-y-3 hover:shadow-md transition-all">
-          <div className="flex items-center justify-between">
-            <div className="p-1.5 rounded-lg bg-orange-500/10 text-orange-600"><SprayCan className="w-4 h-4" /></div>
-            <span className="text-[8px] font-black uppercase text-muted-foreground/40">Cleaning</span>
-          </div>
-          <div className="space-y-1">
-            <p className="text-lg font-black text-orange-600">{stats.cleaning}</p>
-            <p className="text-[9px] text-muted-foreground">pending</p>
-          </div>
-        </Card>
-
-        <Card className="p-4 border-border/40 bg-card rounded-xl space-y-3 hover:shadow-md transition-all">
-          <div className="flex items-center justify-between">
-            <div className="p-1.5 rounded-lg bg-red-500/10 text-red-600"><AlertTriangle className="w-4 h-4" /></div>
-            <span className="text-[8px] font-black uppercase text-muted-foreground/40">Issues</span>
-          </div>
-          <div className="space-y-1">
-            <p className="text-lg font-black text-red-600">{stats.issues}</p>
-            <p className="text-[9px] text-muted-foreground">maintenance</p>
-          </div>
-        </Card>
-
-        <Card className="p-4 border-border/40 bg-card rounded-xl space-y-3 hover:shadow-md transition-all">
-          <div className="flex items-center justify-between">
-            <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-600"><Building2 className="w-4 h-4" /></div>
-            <span className="text-[8px] font-black uppercase text-muted-foreground/40">Filtered</span>
-          </div>
-          <div className="space-y-1">
-            <p className="text-lg font-black">{filteredRooms.length}</p>
-            <p className="text-[9px] text-muted-foreground">shown</p>
-          </div>
-        </Card>
+      {/* Operational Stat Ledger */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        {[
+          { label: 'Total Unit Inventory', value: stats.total, sub: 'Registered Spaces', icon: Building2, color: 'text-blue-500', bg: 'bg-blue-500/5' },
+          { label: 'Occupancy Velocity', value: `${stats.occupancyRate}%`, sub: 'Active Tenancy', icon: Activity, color: 'text-emerald-500', bg: 'bg-emerald-500/5' },
+          { label: 'Vacant Capacity', value: stats.vacant, sub: 'Market Ready', icon: Home, color: 'text-indigo-500', bg: 'bg-indigo-500/5' },
+          { label: 'Cleaning Backlog', value: stats.cleaning, sub: 'Housekeeping Queue', icon: SprayCan, color: 'text-orange-500', bg: 'bg-orange-500/5' },
+          { label: 'Structural Issues', value: stats.issues, sub: 'Maintenance Alerts', icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-500/5' },
+          { label: 'Registry View', value: filteredRooms.length, sub: 'Filtered Nodes', icon: LayoutGrid, color: 'text-primary', bg: 'bg-primary/5' },
+        ].map((s, i) => (
+          <Card key={i} className="group relative p-5 border-border/40 bg-white/70 backdrop-blur-xl dark:bg-white/[0.04] rounded-2xl transition-all hover:shadow-2xl hover:shadow-primary/5 overflow-hidden border">
+            <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-primary/5 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="flex flex-col gap-4">
+              <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center border border-border/40 transition-transform group-hover:scale-110', s.bg, s.color)}>
+                <s.icon className="w-5 h-5" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/50">{s.label}</p>
+                <div className="flex items-baseline gap-2">
+                  <p className="text-2xl font-black tracking-tight text-foreground">{s.value}</p>
+                  <span className="text-[10px] font-bold text-muted-foreground/40">{s.sub}</span>
+                </div>
+              </div>
+            </div>
+          </Card>
+        ))}
       </div>
 
-      {/* Controls */}
-      <div className="space-y-4">
-        <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-          {/* Search */}
-          <div className="relative flex-1 max-w-sm group">
-            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none z-10">
-              <Search className="w-3.5 h-3.5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+      {/* Control Surface: Unified Toolbar */}
+      <div className="p-2 border border-border/40 bg-white/40 dark:bg-white/[0.02] backdrop-blur-xl rounded-[1.5rem] shadow-sm">
+        <div className="flex flex-col lg:flex-row gap-2">
+          {/* Main Search Command */}
+          <div className="relative flex-1 group">
+            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none z-10">
+              <Search className="w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
             </div>
             <Input
-              placeholder="Search by room or resident..."
+              placeholder="System Search: Units, Residents, Type..."
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
-              className="pl-9 pr-3 h-9 text-xs font-bold shadow-sm bg-muted/30 border-border/40 rounded-xl focus:bg-background"
+              className="pl-11 pr-4 h-11 text-xs font-bold bg-white/50 dark:bg-transparent border-none focus:ring-1 focus:ring-primary/20 rounded-xl placeholder:text-muted-foreground/40"
             />
           </div>
 
-          {/* View Toggle */}
-          <div className="flex gap-1 border border-border/40 rounded-lg p-1 bg-muted/20">
-            <Button
-              size="sm"
-              variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
-              className="rounded-md px-2.5 h-7 text-xs font-bold"
-              onClick={() => setViewMode('grid')}
-            >
-              <Grid3x3 className="w-3.5 h-3.5" />
-            </Button>
-            <Button
-              size="sm"
-              variant={viewMode === 'list' ? 'secondary' : 'ghost'}
-              className="rounded-md px-2.5 h-7 text-xs font-bold"
-              onClick={() => setViewMode('list')}
-            >
-              <List className="w-3.5 h-3.5" />
+          <div className="flex flex-wrap items-center gap-2 p-1 lg:p-0">
+            {/* View Architecture Toggle */}
+            <div className="flex gap-1 bg-muted/20 border border-border/40 p-1 rounded-xl">
+              <Button
+                size="sm"
+                variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
+                className={cn("rounded-lg px-3 h-8 text-[10px] font-black uppercase tracking-widest transition-all", viewMode === 'grid' && "bg-white shadow-sm dark:bg-white/10")}
+                onClick={() => setViewMode('grid')}
+              >
+                <Grid3x3 className="w-3.5 h-3.5 mr-1.5" /> Grid
+              </Button>
+              <Button
+                size="sm"
+                variant={viewMode === 'list' ? 'secondary' : 'ghost'}
+                className={cn("rounded-lg px-3 h-8 text-[10px] font-black uppercase tracking-widest transition-all", viewMode === 'list' && "bg-white shadow-sm dark:bg-white/10")}
+                onClick={() => setViewMode('list')}
+              >
+                <List className="w-3.5 h-3.5 mr-1.5" /> List
+              </Button>
+            </div>
+
+            <div className="h-6 w-px bg-border/40 mx-1 hidden lg:block" />
+
+            {/* Industrial Filters */}
+            <div className="flex items-center gap-1">
+              <select
+                value={selectedFloor}
+                onChange={(e) => { setSelectedFloor(e.target.value); setCurrentPage(1); }}
+                className="pl-3 pr-8 h-11 text-[10px] font-black uppercase tracking-widest rounded-xl border border-border/40 bg-white/50 dark:bg-white/5 hover:bg-white dark:hover:bg-white/10 transition-all appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary/20"
+              >
+                <option value="all">Level: All Floors</option>
+                {floors.map(floor => <option key={floor} value={floor}>Level {floor}</option>)}
+              </select>
+              <select
+                value={selectedStatus}
+                onChange={(e) => { setSelectedStatus(e.target.value); setCurrentPage(1); }}
+                className="pl-3 pr-8 h-11 text-[10px] font-black uppercase tracking-widest rounded-xl border border-border/40 bg-white/50 dark:bg-white/5 hover:bg-white dark:hover:bg-white/10 transition-all appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary/20"
+              >
+                <option value="all">Protocol: All Status</option>
+                {statuses.map(status => <option key={status} value={status}>{status}</option>)}
+              </select>
+              <select
+                value={selectedMaintenance}
+                onChange={(e) => { setSelectedMaintenance(e.target.value); setCurrentPage(1); }}
+                className="pl-3 pr-8 h-11 text-[10px] font-black uppercase tracking-widest rounded-xl border border-border/40 bg-white/50 dark:bg-white/5 hover:bg-white dark:hover:bg-white/10 transition-all appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary/20"
+              >
+                <option value="all">Maintenance: All</option>
+                <option value="ok">Integrity: OK</option>
+                <option value="issues">Integrity: Alert</option>
+              </select>
+            </div>
+
+            <Button variant="outline" className="h-11 px-4 rounded-xl border-border/40 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all">
+              <Download className="w-4 h-4 mr-2" /> Export Inventory
             </Button>
           </div>
-
-          {/* Download */}
-          <Button variant="outline" className="rounded-xl h-9 px-3 border-border text-muted-foreground gap-2 hover:bg-muted text-xs font-bold">
-            <Download className="w-3.5 h-3.5" /> Export
-          </Button>
-        </div>
-
-        {/* Filters */}
-        <div className="flex flex-wrap gap-2">
-          {/* Floor Filter */}
-          <select
-            value={selectedFloor}
-            onChange={(e) => {
-              setSelectedFloor(e.target.value);
-              setCurrentPage(1);
-            }}
-            className="px-3 h-9 text-xs font-bold rounded-lg border border-border/40 bg-card hover:bg-muted/50 transition-colors cursor-pointer"
-          >
-            <option value="all">All Floors</option>
-            {floors.map(floor => (
-              <option key={floor} value={floor}>{floor}</option>
-            ))}
-          </select>
-
-          {/* Status Filter */}
-          <select
-            value={selectedStatus}
-            onChange={(e) => {
-              setSelectedStatus(e.target.value);
-              setCurrentPage(1);
-            }}
-            className="px-3 h-9 text-xs font-bold rounded-lg border border-border/40 bg-card hover:bg-muted/50 transition-colors cursor-pointer"
-          >
-            <option value="all">All Status</option>
-            {statuses.map(status => (
-              <option key={status} value={status}>{status}</option>
-            ))}
-          </select>
-
-          {/* Maintenance Filter */}
-          <select
-            value={selectedMaintenance}
-            onChange={(e) => {
-              setSelectedMaintenance(e.target.value);
-              setCurrentPage(1);
-            }}
-            className="px-3 h-9 text-xs font-bold rounded-lg border border-border/40 bg-card hover:bg-muted/50 transition-colors cursor-pointer"
-          >
-            <option value="all">All Maintenance</option>
-            <option value="ok">No Issues</option>
-            <option value="issues">Has Issues</option>
-          </select>
-
-          {/* Active Filters Badge */}
-          {(searchTerm || selectedFloor !== 'all' || selectedStatus !== 'all' || selectedMaintenance !== 'all') && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-9 px-2 text-xs font-bold text-primary hover:bg-primary/10 rounded-lg"
-              onClick={() => {
-                setSearchTerm('');
-                setSelectedFloor('all');
-                setSelectedStatus('all');
-                setSelectedMaintenance('all');
-                setCurrentPage(1);
-              }}
-            >
-              Clear Filters
-            </Button>
-          )}
         </div>
       </div>
 
+      {/* Filter Status Badge */}
+      {(searchTerm || selectedFloor !== 'all' || selectedStatus !== 'all' || selectedMaintenance !== 'all') && (
+        <div className="flex items-center gap-3 px-4">
+          <Badge className="bg-primary/10 text-primary border-none text-[8px] font-black uppercase tracking-widest px-3 py-1">Active Filter Suite</Badge>
+          <button
+            onClick={() => { setSearchTerm(''); setSelectedFloor('all'); setSelectedStatus('all'); setSelectedMaintenance('all'); setCurrentPage(1); }}
+            className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 hover:text-primary transition-colors underline underline-offset-4"
+          >
+            Reset All Commands
+          </button>
+        </div>
+      )}
+
       {/* Content Area */}
       {paginatedRooms.length === 0 ? (
-        <Card className="p-12 border-border/40 bg-card rounded-xl flex flex-col items-center justify-center text-center space-y-4">
-          <div className="w-12 h-12 rounded-lg bg-muted/30 flex items-center justify-center text-muted-foreground/40">
+        <Card className="p-12 border-border/40 bg-white/70 backdrop-blur-xl dark:bg-white/[0.04] rounded-2xl flex flex-col items-center justify-center text-center space-y-4 shadow-sm border">
+          <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
             <Building2 className="w-6 h-6" />
           </div>
           <div className="space-y-1">
-            <p className="text-sm font-bold text-foreground">No rooms found</p>
-            <p className="text-xs text-muted-foreground">Try adjusting your filters or search terms</p>
+            <p className="text-sm font-bold text-foreground">No units found in the structural registry</p>
+            <p className="text-xs text-muted-foreground/60">Adjust your node filters or structural search parameters.</p>
           </div>
         </Card>
       ) : (
         <>
-          {/* Grid View */}
+          {/* Grid View: Unit Dossiers */}
           {viewMode === 'grid' && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {paginatedRooms.map((room) => {
-                const hkIcon = getHousekeepingIcon(room.housekeeping);
-                const HKIcon = hkIcon.icon;
+                const hkInfo = getHousekeepingIcon(room.housekeeping);
+                const HKIcon = hkInfo.icon;
+                const maintInfo = getMaintenanceIcon(room.maintenance);
                 return (
-                  <Card key={room.id} className="group border-border/40 bg-card rounded-xl overflow-hidden hover:shadow-lg transition-all cursor-pointer">
-                    <div className="p-4 space-y-3">
+                  <Card key={room.id} className="group relative border-border/40 bg-white/70 backdrop-blur-xl dark:bg-white/[0.04] rounded-[1.5rem] overflow-hidden hover:shadow-2xl hover:shadow-primary/5 transition-all cursor-pointer border">
+                    <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                    <div className="p-4 space-y-4">
                       <div className="flex items-start justify-between">
                         <div className="space-y-1">
-                          <h3 className="text-lg font-black">{room.name}</h3>
-                          <p className="text-[9px] text-muted-foreground font-bold uppercase">{room.floor} • {room.type}</p>
+                          <div className="flex items-center gap-2">
+                            <h3 className="text-lg font-black text-foreground tracking-tight group-hover:text-primary transition-colors">{room.name}</h3>
+                            <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest bg-muted/20 border-border/40">{room.type}</Badge>
+                          </div>
+                          <p className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest">Structural Node {room.floor}</p>
                         </div>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-white dark:hover:bg-white/10 transition-all border border-transparent hover:border-border/40">
                               <MoreHorizontal className="w-3.5 h-3.5" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="w-40 rounded-lg p-1 border-border/40 shadow-xl">
-                            <DropdownMenuLabel className="text-[9px] font-bold uppercase px-3 py-2">Actions</DropdownMenuLabel>
-                            <DropdownMenuItem className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold">
-                              <Eye className="w-3 h-3 mr-2" /> View
+                          <DropdownMenuContent align="end" className="w-48 rounded-[1.5rem] p-2 border-border/40 shadow-2xl bg-card/80 backdrop-blur-2xl">
+                            <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest px-3 py-2 text-muted-foreground/60">Unit Operations</DropdownMenuLabel>
+                            <DropdownMenuItem className="rounded-xl cursor-pointer py-2.5 px-3 text-xs font-bold text-foreground">
+                              <Eye className="w-4 h-4 mr-2 text-primary" /> Visual Inspection
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold">
-                              <Edit2 className="w-3 h-3 mr-2" /> Edit
+                            <DropdownMenuItem className="rounded-xl cursor-pointer py-2.5 px-3 text-xs font-bold text-foreground">
+                              <Edit2 className="w-4 h-4 mr-2 text-primary" /> Modify Allocation
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold text-destructive">
-                              <Trash2 className="w-3 h-3 mr-2" /> Delete
+                            <DropdownMenuItem className="rounded-xl cursor-pointer py-2.5 px-3 text-xs font-bold text-destructive hover:bg-destructive/5">
+                              <Archive className="w-4 h-4 mr-2" /> Decommission Unit
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
 
-                      <div className="space-y-2">
-                        <Badge className={cn("text-[8px] font-bold px-2 py-0.5 rounded-md border-none", getStatusColor(room.status))}>
-                          {room.status}
-                        </Badge>
-                        {room.resident && (
-                          <p className="text-[9px] font-bold text-muted-foreground">👤 {room.resident}</p>
-                        )}
-                      </div>
-
-                      <div className="flex items-center justify-between pt-2 border-t border-border/20">
-                        <div className="flex items-center gap-1.5">
-                          <div className={cn("p-1.5 rounded-lg", hkIcon.bg)}>
-                            <HKIcon className={cn("w-3 h-3", hkIcon.color)} />
-                          </div>
-                          <span className="text-[8px] font-bold text-muted-foreground">{room.housekeeping}</span>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="p-2 rounded-xl bg-muted/5 border border-border/40">
+                          <p className="text-[7px] font-black text-muted-foreground/30 uppercase tracking-widest mb-1 leading-none">Status</p>
+                          <Badge className={cn("text-[8px] font-black uppercase tracking-widest border-none px-1.5 py-0", getStatusColor(room.status))}>{room.status}</Badge>
                         </div>
-                        {room.maintenance !== 'none' && (
-                          <div className={cn("p-1 rounded-lg", getMaintenanceIcon(room.maintenance).bg)}>
-                            <AlertTriangle className={cn("w-3 h-3", getMaintenanceIcon(room.maintenance).color)} />
+                        <div className="p-2 rounded-xl bg-muted/5 border border-border/40">
+                          <p className="text-[7px] font-black text-muted-foreground/30 uppercase tracking-widest mb-1 leading-none">Environmental</p>
+                          <div className="flex items-center gap-1.5">
+                            <HKIcon className={cn("w-3 h-3", hkInfo.color)} />
+                            <span className={cn("text-[8px] font-bold uppercase", hkInfo.color)}>{room.housekeeping}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        {room.resident ? (
+                          <div className="flex items-center justify-between p-2 rounded-xl bg-primary/[0.03] border border-primary/10 group/resident">
+                            <div className="flex items-center gap-2">
+                              <Users className="w-3.5 h-3.5 text-primary" />
+                              <span className="text-[10px] font-black text-foreground truncate max-w-[100px]">{room.resident}</span>
+                            </div>
+                            <ArrowUpRight className="w-3 h-3 text-primary opacity-0 group-hover/resident:opacity-100 transition-opacity" />
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-center p-2 rounded-xl border border-dashed border-border/40">
+                            <span className="text-[9px] font-bold text-muted-foreground/30 uppercase tracking-widest italic">Unoccupied Space</span>
                           </div>
                         )}
                       </div>
 
-                      <p className="text-sm font-black text-foreground">{room.rent}</p>
+                      <div className="flex items-center justify-between pt-3 border-t border-border/20">
+                        <div className="flex items-center gap-2">
+                          <div className={cn("w-6 h-6 rounded-lg flex items-center justify-center border border-border/40", maintInfo.bg)}>
+                            {room.maintenance !== 'none' ? <AlertTriangle className={cn("w-3 h-3", maintInfo.color)} /> : <ShieldCheck className="w-3 h-3 text-emerald-500" />}
+                          </div>
+                          <span className="text-[9px] font-black text-foreground">{room.rent}</span>
+                        </div>
+                        <Button variant="ghost" size="sm" className="h-7 px-2 rounded-lg text-[8px] font-black uppercase tracking-widest bg-primary/5 text-primary hover:bg-primary hover:text-white transition-all">
+                          Manage Unit
+                        </Button>
+                      </div>
                     </div>
                   </Card>
                 );
@@ -398,73 +379,90 @@ export function RoomsManagement({ title, description, rooms, tier }: RoomsManage
             </div>
           )}
 
-          {/* List View */}
+          {/* List View: System Ledger */}
           {viewMode === 'list' && (
-            <div className="border border-border/40 rounded-xl overflow-hidden bg-card">
+            <div className="border border-border/40 rounded-[2rem] overflow-hidden bg-white/70 backdrop-blur-xl dark:bg-white/[0.04] shadow-sm border">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
-                  <thead className="sticky top-0 z-10 bg-muted/50 border-b border-border/40">
+                  <thead className="bg-muted/30 border-b border-border/40">
                     <tr>
-                      <th className="p-3 text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60">Room</th>
-                      <th className="p-3 text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60">Resident</th>
-                      <th className="p-3 text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60">Type</th>
-                      <th className="p-3 text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60">Status</th>
-                      <th className="p-3 text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60">Housekeeping</th>
-                      <th className="p-3 text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60">Rent</th>
-                      <th className="p-3 text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60"></th>
+                      <th className="p-5 text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/50">Unit Dossier</th>
+                      <th className="p-5 text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/50">Node Allocation</th>
+                      <th className="p-5 text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/50">Resident Link</th>
+                      <th className="p-5 text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/50">Protocol Status</th>
+                      <th className="p-5 text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/50">Environmental State</th>
+                      <th className="p-5 text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/50">Financial Value</th>
+                      <th className="p-5"></th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-border/40">
+                  <tbody className="divide-y divide-border/20">
                     {paginatedRooms.map((room) => {
-                      const hkIcon = getHousekeepingIcon(room.housekeeping);
-                      const HKIcon = hkIcon.icon;
+                      const hkInfo = getHousekeepingIcon(room.housekeeping);
+                      const HKIcon = hkInfo.icon;
                       return (
-                        <tr key={room.id} className="hover:bg-muted/30 transition-colors">
-                          <td className="p-3">
-                            <div className="space-y-1">
-                              <p className="font-bold text-foreground">{room.name}</p>
-                              <p className="text-[8px] text-muted-foreground">{room.floor}</p>
+                        <tr key={room.id} className="group hover:bg-primary/[0.02] transition-colors cursor-pointer">
+                          <td className="p-5">
+                            <div className="flex items-center gap-4">
+                              <div className="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary border border-primary/10 transition-transform group-hover:scale-110">
+                                <Building className="w-5 h-5" />
+                              </div>
+                              <div>
+                                <p className="font-black text-foreground group-hover:text-primary transition-colors leading-none mb-1">{room.name}</p>
+                                <Badge variant="outline" className="text-[7px] font-black uppercase tracking-widest border-border/40 px-1 py-0">{room.type}</Badge>
+                              </div>
                             </div>
                           </td>
-                          <td className="p-3">
-                            <p className="text-sm font-semibold text-foreground">{room.resident || '-'}</p>
+                          <td className="p-5">
+                            <div className="space-y-1">
+                              <p className="text-xs font-black text-foreground tracking-tight">Structural Level {room.floor}</p>
+                              <p className="text-[8px] font-bold text-muted-foreground/40 uppercase tracking-widest">Sector Node Allocation</p>
+                            </div>
                           </td>
-                          <td className="p-3">
-                            <Badge variant="outline" className="text-[8px] font-bold border-border">{room.type}</Badge>
+                          <td className="p-5">
+                            {room.resident ? (
+                              <div className="flex items-center gap-2">
+                                <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                                  <Users className="w-3 h-3" />
+                                </div>
+                                <p className="text-[10px] font-black text-foreground">{room.resident}</p>
+                              </div>
+                            ) : (
+                              <span className="text-[9px] font-bold text-muted-foreground/20 italic uppercase">Vacant</span>
+                            )}
                           </td>
-                          <td className="p-3">
-                            <Badge className={cn("text-[8px] font-bold border-none", getStatusColor(room.status))}>
+                          <td className="p-5">
+                            <Badge className={cn("text-[9px] font-black uppercase tracking-widest border-none px-2 py-0.5", getStatusColor(room.status))}>
                               {room.status}
                             </Badge>
                           </td>
-                          <td className="p-3">
-                            <div className="flex items-center gap-1.5">
-                              <div className={cn("p-1.5 rounded-lg", hkIcon.bg)}>
-                                <HKIcon className={cn("w-3 h-3", hkIcon.color)} />
+                          <td className="p-5">
+                            <div className="flex items-center gap-2">
+                              <div className={cn("p-1.5 rounded-lg", hkInfo.bg)}>
+                                <HKIcon className={cn("w-3.5 h-3.5", hkInfo.color)} />
                               </div>
-                              <span className="text-xs font-bold">{room.housekeeping}</span>
+                              <span className={cn("text-[10px] font-black uppercase tracking-tight", hkInfo.color)}>{room.housekeeping}</span>
                             </div>
                           </td>
-                          <td className="p-3">
-                            <p className="font-bold text-foreground">{room.rent}</p>
+                          <td className="p-5">
+                            <p className="text-xs font-black text-foreground tracking-tighter">{room.rent}</p>
                           </td>
-                          <td className="p-3 text-right">
+                          <td className="p-5 text-right">
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg">
-                                  <MoreHorizontal className="w-3.5 h-3.5" />
+                                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl transition-all border border-transparent hover:border-border/40 hover:bg-white dark:hover:bg-white/10">
+                                  <MoreHorizontal className="w-4 h-4" />
                                 </Button>
                               </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end" className="w-40 rounded-lg p-1 border-border/40 shadow-xl">
-                                <DropdownMenuLabel className="text-[9px] font-bold uppercase px-3 py-2">Actions</DropdownMenuLabel>
-                                <DropdownMenuItem className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold">
-                                  <Eye className="w-3 h-3 mr-2" /> View
+                              <DropdownMenuContent align="end" className="w-48 rounded-[1.5rem] p-2 border-border/40 shadow-2xl bg-card/80 backdrop-blur-2xl">
+                                <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest px-3 py-2 text-muted-foreground/60">Unit Command</DropdownMenuLabel>
+                                <DropdownMenuItem className="rounded-xl cursor-pointer py-2.5 px-3 text-xs font-bold text-foreground">
+                                  <Eye className="w-4 h-4 mr-2 text-primary" /> Detail Analysis
                                 </DropdownMenuItem>
-                                <DropdownMenuItem className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold">
-                                  <Edit2 className="w-3 h-3 mr-2" /> Edit
+                                <DropdownMenuItem className="rounded-xl cursor-pointer py-2.5 px-3 text-xs font-bold text-foreground">
+                                  <Edit2 className="w-4 h-4 mr-2 text-primary" /> Structural Edit
                                 </DropdownMenuItem>
-                                <DropdownMenuItem className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold text-destructive">
-                                  <Trash2 className="w-3 h-3 mr-2" /> Delete
+                                <DropdownMenuItem className="rounded-xl cursor-pointer py-2.5 px-3 text-xs font-bold text-destructive hover:bg-destructive/5">
+                                  <Trash2 className="w-4 h-4 mr-2" /> Decommission Record
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
@@ -480,52 +478,53 @@ export function RoomsManagement({ title, description, rooms, tier }: RoomsManage
         </>
       )}
 
-      {/* Pagination */}
+      {/* Pagination Command Node */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between px-4 py-3 border border-border/40 rounded-lg bg-muted/20">
-          <p className="text-[10px] font-bold text-muted-foreground/60 uppercase">
-            Showing <span className="text-foreground">{(currentPage - 1) * ITEMS_PER_PAGE + 1}-{Math.min(currentPage * ITEMS_PER_PAGE, filteredRooms.length)}</span> of <span className="text-foreground">{filteredRooms.length}</span> rooms
+        <div className="flex items-center justify-between px-6 py-4 border border-border/40 rounded-[1.5rem] bg-white/40 dark:bg-white/[0.02] backdrop-blur-xl">
+          <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">
+            Inventory Storage: <span className="text-foreground">{(currentPage - 1) * ITEMS_PER_PAGE + 1}-{Math.min(currentPage * ITEMS_PER_PAGE, filteredRooms.length)}</span> of <span className="text-foreground">{filteredRooms.length}</span> Structural Nodes
           </p>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 rounded-lg text-muted-foreground disabled:opacity-40"
+              className="h-10 w-10 rounded-xl text-muted-foreground border border-transparent hover:border-border/40 hover:bg-white dark:hover:bg-white/10"
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-5 h-5" />
             </Button>
 
-            {Array.from({ length: Math.min(3, totalPages) }, (_, i) => {
-              let page = i + 1;
-              if (currentPage > 2) page = currentPage - 1 + i;
-              if (currentPage > totalPages - 2) page = totalPages - 2 + i;
-              return page > 0 && page <= totalPages ? (
-                <Button
-                  key={page}
-                  variant={page === currentPage ? 'secondary' : 'ghost'}
-                  className={cn(
-                    "h-8 w-8 rounded-lg text-xs font-bold transition-all",
-                    page === currentPage
-                      ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
-                      : "text-muted-foreground hover:bg-muted"
-                  )}
-                  onClick={() => setCurrentPage(page)}
-                >
-                  {page}
-                </Button>
-              ) : null;
-            })}
-
+            <div className="flex items-center gap-1">
+              {Array.from({ length: Math.min(3, totalPages) }, (_, i) => {
+                let page = i + 1;
+                if (currentPage > 2) page = currentPage - 1 + i;
+                if (currentPage > totalPages - 2) page = totalPages - 2 + i;
+                return page > 0 && page <= totalPages ? (
+                  <Button
+                    key={page}
+                    variant={page === currentPage ? 'secondary' : 'ghost'}
+                    className={cn(
+                      "h-10 w-10 rounded-xl text-xs font-black transition-all border border-transparent",
+                      page === currentPage
+                        ? "bg-primary text-white shadow-xl shadow-primary/20 border-primary/20"
+                        : "text-muted-foreground hover:border-border/40 hover:bg-white dark:hover:bg-white/10"
+                    )}
+                    onClick={() => setCurrentPage(page)}
+                  >
+                    {page}
+                  </Button>
+                ) : null;
+              })}
+            </div>
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 rounded-lg text-muted-foreground disabled:opacity-40"
+              className="h-10 w-10 rounded-xl text-muted-foreground border border-transparent hover:border-border/40 hover:bg-white dark:hover:bg-white/10"
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-5 h-5" />
             </Button>
           </div>
         </div>

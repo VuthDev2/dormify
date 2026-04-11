@@ -6,7 +6,7 @@ import {
   Activity, Globe, Wallet, Zap, MapPin, Cpu, Shield, Receipt,
   ArrowUpRight, ArrowDownRight, BarChart3, DollarSign, Clock,
   CheckCircle2, AlertTriangle, RefreshCcw, Target, Calendar,
-  MoreHorizontal, ChevronRight, Download, SprayCan
+  MoreHorizontal, ChevronRight, Download, SprayCan, Sparkles, History
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -16,7 +16,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { DataTable } from './data-table';
 import { PropertyGrid } from './property-grid';
-import { RoomsManagement } from './rooms-management';
+import { RoomsManagement, Room } from './rooms-management';
 import { FinanceLedger } from './finance-ledger';
 import { MaintenanceContent } from './maintenance-content';
 import { MealsContent } from './meals-content';
@@ -24,24 +24,170 @@ import { LaundryContent } from './laundry-content';
 import { SettingsContent } from './settings-content';
 import { IntegrationsContent } from './integrations-content';
 import { StaffContent } from './staff-content';
+import { InventoryContent } from './inventory-content';
+import { FeedbackContent } from './feedback-content';
+import { EfficiencyRadarChart, DualBarComparisonChart } from './charts';
+import { ResidentsManagement, Resident } from './residents-management';
+import { PropertiesContent } from './properties-content';
+import { FinanceContent } from './finance-content';
+
+const realisticResidents: Resident[] = [
+  { 
+    id: 'RES-8820', 
+    name: 'Sarah Johnson', 
+    email: 'sarah.j@university.edu', 
+    room: 'A-402', 
+    floor: '4', 
+    phone: '+44 7700 900123', 
+    status: 'Active', 
+    joinDate: 'Sept 2024', 
+    leaseEnd: 'Aug 2026', 
+    paymentStatus: 'Paid',
+    university: 'University College London',
+    course: 'MSc Data Science & AI',
+    nationality: 'British'
+  },
+  { 
+    id: 'RES-8821', 
+    name: 'Michael Chen', 
+    email: 'mchen@imperial.ac.uk', 
+    room: 'B-102', 
+    floor: '1', 
+    phone: '+44 7700 900124', 
+    status: 'Active', 
+    joinDate: 'Sept 2024', 
+    leaseEnd: 'Aug 2025', 
+    paymentStatus: 'Paid',
+    university: 'Imperial College London',
+    course: 'BEng Robotic Systems',
+    nationality: 'Singaporean'
+  },
+  { 
+    id: 'RES-8822', 
+    name: 'Emma Wilson', 
+    email: 'ewilson@lse.ac.uk', 
+    room: 'C-305', 
+    floor: '3', 
+    phone: '+44 7700 900125', 
+    status: 'Pending', 
+    joinDate: 'Oct 2024', 
+    leaseEnd: 'Sept 2026', 
+    paymentStatus: 'Pending',
+    university: 'London School of Economics',
+    course: 'BSc International Relations',
+    nationality: 'Canadian'
+  },
+  { 
+    id: 'RES-8823', 
+    name: 'James Porter', 
+    email: 'jporter@kcl.ac.uk', 
+    room: 'D-201', 
+    floor: '2', 
+    phone: '+44 7700 900126', 
+    status: 'Active', 
+    joinDate: 'Sept 2023', 
+    leaseEnd: 'Aug 2026', 
+    paymentStatus: 'Paid',
+    university: 'Kings College London',
+    course: 'LLB Law / Global Ethics',
+    nationality: 'British'
+  },
+  { 
+    id: 'RES-8824', 
+    name: 'Olivia Martinez', 
+    email: 'omartinez@arts.ac.uk', 
+    room: 'A-103', 
+    floor: '1', 
+    phone: '+44 7700 900127', 
+    status: 'Active', 
+    joinDate: 'Jan 2024', 
+    leaseEnd: 'Dec 2025', 
+    paymentStatus: 'Paid',
+    university: 'University of the Arts London',
+    course: 'BA Fine Art / Digital Media',
+    nationality: 'Spanish'
+  },
+  { 
+    id: 'RES-8825', 
+    name: 'Alexander Vogt', 
+    email: 'avogt@ucl.ac.uk', 
+    room: 'B-405', 
+    floor: '4', 
+    phone: '+44 7700 900128', 
+    status: 'Moving-Out', 
+    joinDate: 'Sept 2022', 
+    leaseEnd: 'Jun 2026', 
+    paymentStatus: 'Paid',
+    university: 'University College London',
+    course: 'PhD Quantum Computing',
+    nationality: 'German'
+  },
+  { 
+    id: 'RES-8826', 
+    name: 'Yuki Tanaka', 
+    email: 'y.tanaka@soas.ac.uk', 
+    room: 'C-202', 
+    floor: '2', 
+    phone: '+44 7700 900129', 
+    status: 'Active', 
+    joinDate: 'Sept 2024', 
+    leaseEnd: 'Aug 2027', 
+    paymentStatus: 'Overdue',
+    university: 'SOAS University of London',
+    course: 'MA East Asian Studies',
+    nationality: 'Japanese'
+  },
+  { 
+    id: 'RES-8827', 
+    name: 'Amara Diop', 
+    email: 'adiop@qmul.ac.uk', 
+    room: 'D-501', 
+    floor: '5', 
+    phone: '+44 7700 900130', 
+    status: 'Pending', 
+    joinDate: 'Oct 2024', 
+    leaseEnd: 'Sept 2025', 
+    paymentStatus: 'Pending',
+    university: 'Queen Mary University',
+    course: 'MSc Global Public Health',
+    nationality: 'Senegalese'
+  },
+];
 
 interface ModuleContentProps {
   title: string;
-  type: 'residents' | 'rooms' | 'meals' | 'payments' | 'analytics' | 'staff' | 'reports' | 'dorms' | 'properties' | 'billing' | 'revenue' | 'audit-log' | 'integrations' | 'maintenance' | 'laundry' | 'settings';
+  type: 'residents' | 'rooms' | 'meals' | 'payments' | 'analytics' | 'staff' | 'reports' | 'dorms' | 'properties' | 'billing' | 'revenue' | 'audit-log' | 'integrations' | 'maintenance' | 'laundry' | 'settings' | 'inventory' | 'feedback';
+  subType?: string;
   tier?: 'normal' | 'pro' | 'premium';
   role?: 'admin' | 'tenant' | 'chef';
 }
 
-export function ModuleContent({ title, type, tier = 'normal', role = 'admin' }: ModuleContentProps) {
+export function ModuleContent({ title, type, subType, tier = 'normal', role = 'admin' }: ModuleContentProps) {
   const isPremium = tier === 'premium';
   const isNormal = tier === 'normal';
+
+  if (type === 'properties') {
+    return <PropertiesContent tier={tier} />;
+  }
+
+  if (type === 'payments' && (tier === 'pro' || tier === 'premium')) {
+    return <FinanceContent tier={tier} />;
+  }
 
   if (type === 'laundry') {
     return <LaundryContent title={title} tier={tier} role={role} />;
   }
 
   if (type === 'meals') {
-    return <MealsContent title={title} tier={tier} role={role} />;
+    return <MealsContent title={title} tier={tier} role={role} subType={subType} />;
+  }
+
+  if (type === 'inventory') {
+    return <InventoryContent title={title} role={role} />;
+  }
+
+  if (type === 'feedback') {
+    return <FeedbackContent title={title} role={role} />;
   }
 
   if (type === 'integrations') {
@@ -49,89 +195,33 @@ export function ModuleContent({ title, type, tier = 'normal', role = 'admin' }: 
   }
 
   if (type === 'staff') {
-    return <StaffContent tier={tier} />;
+    return <StaffContent tier={tier} role={role} />;
   }
 
   if (type === 'residents') {
-    const data = [
-      { name: 'Sarah Johnson', email: 'sarah@university.edu', room: 'A-402', phone: '+44 7700 900123', status: 'Active' },
-      { name: 'Michael Chen', email: 'mchen@university.edu', room: 'B-102', phone: '+44 7700 900124', status: 'Active' },
-      { name: 'Emma Wilson', email: 'ewilson@university.edu', room: 'C-305', phone: '+44 7700 900125', status: 'Pending' },
-      { name: 'James Porter', email: 'jporter@university.edu', room: 'D-201', phone: '+44 7700 900126', status: 'Active' },
-      { name: 'Olivia Martinez', email: 'omartinez@university.edu', room: 'A-103', phone: '+44 7700 900127', status: 'Active' },
-    ];
-
-    const stats = {
-      total: data.length,
-      active: data.filter(r => r.status === 'Active').length,
-      pending: data.filter(r => r.status === 'Pending').length,
-    };
-
-    const columns = [
-      {
-        header: 'Resident',
-        accessor: 'name',
-        cell: (item: any) => (
-          <div className="flex items-center gap-3">
-            <Avatar className="h-8 w-8 rounded-lg">
-              <AvatarFallback className="bg-primary/10 text-primary font-bold text-[10px]">{item.name.charAt(0)}</AvatarFallback>
-            </Avatar>
-            <span className="font-bold text-foreground/90">{item.name}</span>
-          </div>
-        )
-      },
-      { header: 'Room', accessor: 'room' },
-      { header: 'Email', accessor: 'email' },
-      { header: 'Phone', accessor: 'phone' },
-      {
-        header: 'Status',
-        accessor: 'status',
-        cell: (item: any) => (
-          <Badge className={cn(
-            "text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full border-none",
-            item.status === 'Active' ? "bg-emerald-500/10 text-emerald-600" : 
-            item.status === 'Pending' ? "bg-amber-500/10 text-amber-600" : "bg-muted text-muted-foreground"
-          )}>{item.status}</Badge>
-        )
-      },
-    ];
-
     return (
-      <div className="space-y-6 animate-in fade-in duration-500">
-        {/* Quick Stats */}
-        <div className="grid grid-cols-3 gap-3">
-          <Card className="p-4 border-border/40 bg-card rounded-xl">
-            <div className="space-y-2">
-              <p className="text-[9px] font-black uppercase text-muted-foreground/40">Total</p>
-              <p className="text-2xl font-black">{stats.total}</p>
-            </div>
-          </Card>
-          <Card className="p-4 border-border/40 bg-card rounded-xl">
-            <div className="space-y-2">
-              <p className="text-[9px] font-black uppercase text-muted-foreground/40">Active</p>
-              <p className="text-2xl font-black text-emerald-600">{stats.active}</p>
-            </div>
-          </Card>
-          <Card className="p-4 border-border/40 bg-card rounded-xl">
-            <div className="space-y-2">
-              <p className="text-[9px] font-black uppercase text-muted-foreground/40">Pending</p>
-              <p className="text-2xl font-black text-amber-600">{stats.pending}</p>
-            </div>
-          </Card>
-        </div>
-
-        {/* Residents Table */}
-        <DataTable title={title} description="Directory of residents. Manage contacts, rooms, and account status." columns={columns} data={data} tier={tier} actionLabel="Add Resident" />
-      </div>
+      <ResidentsManagement 
+        title="Institutional Residents" 
+        description="Comprehensive administrative registry of active, pending, and departing structural nodes (residents) across the portfolio." 
+        residents={realisticResidents} 
+        tier={tier} 
+      />
     );
   }
 
   if (type === 'audit-log') {
+    interface AuditLogEntry {
+      name: string;
+      subtext: string;
+      status: string;
+      ref: string;
+    }
+
     const columns = [
       {
         header: 'Entity',
         accessor: 'name',
-        cell: (item: any) => (
+        cell: (item: AuditLogEntry) => (
           <div className="flex items-center gap-3">
             <Avatar className={cn("h-8 w-8", isNormal ? "rounded-lg" : "")}>
               <AvatarFallback className="bg-muted text-muted-foreground font-bold text-[10px]">{item.name.charAt(0)}</AvatarFallback>
@@ -144,7 +234,7 @@ export function ModuleContent({ title, type, tier = 'normal', role = 'admin' }: 
       {
         header: 'Status',
         accessor: 'status',
-        cell: (item: any) => (
+        cell: (item: AuditLogEntry) => (
           <Badge className={cn(
             "text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full border-none",
             item.status === 'Active' || item.status === 'Live' || item.status === 'Paid' ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"
@@ -154,13 +244,13 @@ export function ModuleContent({ title, type, tier = 'normal', role = 'admin' }: 
       ...(!isNormal ? [{ header: 'Reference', accessor: 'ref' }] : []),
     ];
 
-    const data = [
+    const data: AuditLogEntry[] = [
       { name: 'Sarah Johnson', subtext: 'Login', status: 'Active', ref: '#LOG-8820' },
       { name: 'Michael Chen', subtext: 'Room Update', status: 'Active', ref: '#LOG-8821' },
       { name: 'Emma Wilson', subtext: 'Payment', status: 'Pending', ref: '#LOG-8822' },
     ];
 
-    return <DataTable title={title} description={isNormal ? `Audit log for ${type}.` : `Manage your ${type} with real-time sync.`} columns={columns} data={data} tier={tier} />;
+    return <DataTable<AuditLogEntry> title={title} description={isNormal ? `Audit log for ${type}.` : `Manage your ${type} with real-time sync.`} columns={columns} data={data} tier={tier} />;
   }
 
   if (type === 'dorms' || type === 'properties') {
@@ -259,8 +349,8 @@ export function ModuleContent({ title, type, tier = 'normal', role = 'admin' }: 
                             <div className="flex gap-1.5">
                                {Object.entries(dorm.systems).map(([sys, status], idx) => (
                                  <div key={idx} className={cn(
-                                    "w-4 h-4 rounded-sm flex items-center justify-center",
-                                    status === 'ok' ? "text-emerald-500" : status === 'alert' ? "text-rose-500" : "text-amber-500"
+                                    "w-4 h-4 rounded-sm flex items-center justify-center border",
+                                    status === 'ok' ? "bg-muted/10 border-border/40 text-muted-foreground" : status === 'alert' ? "bg-rose-500/5 border-rose-500/10 text-rose-500" : "bg-amber-500/5 border-amber-500/10 text-amber-500"
                                  )}>
                                     {sys === 'wifi' ? <Globe className="w-3 h-3" /> : 
                                      sys === 'power' ? <Zap className="w-3 h-3" /> : 
@@ -296,7 +386,16 @@ export function ModuleContent({ title, type, tier = 'normal', role = 'admin' }: 
   }
 
   if (type === 'payments') {
-    const transactions: any[] = [
+    interface Transaction {
+      id: string;
+      user: string;
+      amount: string;
+      type: string;
+      status: string;
+      date: string;
+    }
+
+    const transactions: Transaction[] = [
       { id: 'TX-8820', user: 'Sarah Johnson', amount: '£1,240', type: 'Credit', status: 'Completed', date: 'Mar 24, 2026' },
       { id: 'TX-8821', user: 'Michael Chen', amount: '£850', type: 'Credit', status: 'Completed', date: 'Mar 23, 2026' },
       { id: 'TX-8822', user: 'Emma Wilson', amount: '£1,100', type: 'Credit', status: 'Pending', date: 'Mar 22, 2026' },
@@ -581,40 +680,162 @@ export function ModuleContent({ title, type, tier = 'normal', role = 'admin' }: 
   }
 
   if (type === 'analytics') {
-    const stats = [
-      { label: 'Occupancy', value: '94%', change: '+2.1%', up: true },
-      { label: 'Yield', value: '£42.5k', change: '+5.4%', up: true },
-      { label: 'Waitlist', value: '18', change: '-2', up: false },
+    const isPremium = tier === 'premium';
+    const isPro = tier === 'pro';
+
+    // --- Premium: Portfolio Intelligence Data ---
+    const portfolioHealth = [
+      { subject: 'Revenue', A: 92, B: 85 },
+      { subject: 'Maintenance', A: 78, B: 90 },
+      { subject: 'Satisfaction', A: 95, B: 80 },
+      { subject: 'Occupancy', A: 98, B: 92 },
+      { subject: 'Efficiency', A: 84, B: 75 },
+    ];
+
+    const performanceAudit = [
+      { n: 'Bloomsbury Hall', v: '+12.4%', s: 'Optimal', y: '9.2%' },
+      { n: 'Manchester Central', v: '-2.1%', s: 'Under Review', y: '8.4%' },
+      { n: 'London Hub', v: '+5.4%', s: 'Growth', y: '9.5%' },
+    ];
+
+    // --- Pro: Operational Efficiency Data ---
+    const slaCompliance = [
+      { name: 'Mon', current: 82, target: 95 },
+      { name: 'Tue', current: 88, target: 95 },
+      { name: 'Wed', current: 94, target: 95 },
+      { name: 'Thu', current: 91, target: 95 },
+      { name: 'Fri', current: 96, target: 95 },
     ];
 
     return (
-      <div className="space-y-6 animate-in fade-in duration-700">
-        <div className="flex justify-between items-center border-b border-border/40 pb-4">
-           <h2 className="text-2xl font-black tracking-tight">System <span className="text-muted-foreground/30">Analytics</span></h2>
-           <Badge variant="outline" className="rounded-full px-3 py-0.5 text-[9px] font-black uppercase tracking-widest">{tier} engine</Badge>
+      <div className="space-y-6 animate-in fade-in duration-700 pb-12">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-1 border-b border-border/40 pb-6">
+          <div className="space-y-1">
+            <h1 className="text-3xl font-black tracking-tight text-foreground uppercase italic underline decoration-primary/50 underline-offset-8">Intelligence <span className="text-muted-foreground/30 font-medium not-italic no-underline">Center</span></h1>
+            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/50">Tier: {tier.toUpperCase()} · Industrial Data Mode</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" className="h-9 px-4 rounded-xl border-border text-[9px] font-black uppercase tracking-widest gap-2">
+              <Download className="w-3.5 h-3.5" /> Export Audit
+            </Button>
+            <Button className="h-9 px-4 rounded-xl bg-primary text-white text-[9px] font-black uppercase tracking-widest gap-2 shadow-sm">
+              <RefreshCcw className="w-3.5 h-3.5" /> Recalculate Performance
+            </Button>
+          </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-           {stats.map((stat, i) => (
-             <Card key={i} className="p-5 border-border/40 bg-card rounded-xl space-y-2">
-                <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">{stat.label}</p>
-                <div className="flex items-end justify-between">
-                   <h3 className="text-2xl font-black">{stat.value}</h3>
-                   <div className={cn("flex items-center gap-1 text-[9px] font-black", stat.up ? "text-success" : "text-destructive")}>
-                      {stat.up ? <ArrowUpRight className="w-2.5 h-2.5" /> : <ArrowDownRight className="w-2.5 h-2.5" />}
-                      {stat.change}
+
+        {isPremium && (
+          <div className="grid grid-cols-12 gap-5">
+            {/* Portfolio Synergy Radar */}
+            <Card className="col-span-12 lg:col-span-6 p-8 border-border shadow-sm rounded-2xl bg-card flex flex-col">
+              <div className="flex items-center justify-between mb-10 border-b border-border/50 pb-6">
+                 <div className="space-y-1">
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-foreground">Synergy Balance</h3>
+                    <p className="text-[11px] text-muted-foreground font-semibold">Portfolio Equilibrium Metric (Performance vs. Baseline)</p>
+                 </div>
+                 <Badge variant="outline" className="text-[9px] font-bold text-emerald-500 bg-emerald-500/5 border-emerald-500/20">Optimized</Badge>
+              </div>
+              <div className="h-[300px] w-full flex items-center justify-center">
+                 <EfficiencyRadarChart data={portfolioHealth} />
+              </div>
+              <div className="mt-8 pt-6 border-t border-border grid grid-cols-2 gap-4">
+                 <div className="text-center"><p className="text-[9px] font-black uppercase text-muted-foreground mb-1">Portfolio Velocity</p><p className="text-lg font-black">+14.2%</p></div>
+                 <div className="text-center border-l border-border"><p className="text-[9px] font-black uppercase text-muted-foreground mb-1">Yield Delta</p><p className="text-lg font-black text-primary">£52K</p></div>
+              </div>
+            </Card>
+
+            {/* Performance Audit Table */}
+            <Card className="col-span-12 lg:col-span-6 p-8 border-border shadow-sm rounded-2xl bg-card flex flex-col items-center">
+              <div className="flex items-center justify-between mb-8 pb-4 border-b border-border w-full">
+                 <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-foreground">Market Comparison Audit</h3>
+                 <History className="w-4 h-4 text-muted-foreground/30" />
+              </div>
+              <div className="space-y-2 w-full flex-1 overflow-auto">
+                 {performanceAudit.map((item, i) => (
+                   <div key={i} className="flex items-center justify-between p-5 rounded-2xl hover:bg-muted/30 border border-transparent hover:border-border transition-all group cursor-pointer">
+                      <div className="space-y-0.5">
+                         <p className="text-xs font-black text-foreground group-hover:text-primary transition-colors">{item.n}</p>
+                         <p className="text-[10px] font-bold text-muted-foreground/40 uppercase">{item.s}</p>
+                      </div>
+                      <div className="text-right">
+                         <p className={cn("text-[10px] font-black uppercase tracking-widest", item.v.startsWith('+') ? 'text-emerald-500' : 'text-rose-500')}>{item.v}</p>
+                         <p className="text-[9px] font-bold text-muted-foreground group-hover:text-foreground transition-colors">{item.y} Yield</p>
+                      </div>
+                   </div>
+                 ))}
+              </div>
+              <div className="w-full pt-8 mt-auto">
+                 <Button variant="ghost" className="w-full text-[10px] font-black uppercase tracking-widest text-muted-foreground h-11 hover:text-primary gap-2">
+                    External Market Intelligence <ArrowRight className="w-3.5 h-3.5" />
+                 </Button>
+              </div>
+            </Card>
+          </div>
+        )}
+
+        {isPro && (
+          <div className="grid grid-cols-12 gap-5">
+             <Card className="col-span-12 lg:col-span-12 p-8 border-border shadow-sm rounded-2xl bg-card">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10 border-b border-border/50 pb-6">
+                   <div className="space-y-1">
+                      <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-foreground">Service Level Agreement (SLA) Compliance</h3>
+                      <p className="text-[11px] text-muted-foreground font-semibold">Weekly Maintenance Response Metrics vs Target (95%)</p>
+                   </div>
+                   <div className="flex items-center gap-6">
+                      <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-primary" /> <span className="text-[9px] font-bold uppercase text-muted-foreground">Compliance</span></div>
+                      <div className="flex items-center gap-2 font-bold uppercase text-muted-foreground border-l border-border pl-6"><div className="w-2.5 h-2.5 rounded-full bg-muted/30" /> <span className="text-[9px] font-bold uppercase text-muted-foreground">Target</span></div>
                    </div>
                 </div>
+                <div className="h-[300px]">
+                   <DualBarComparisonChart data={slaCompliance} />
+                </div>
              </Card>
-           ))}
-        </div>
-        <Card className="p-10 border-border/40 bg-card rounded-[2.5rem] flex flex-col items-center justify-center text-center space-y-6 h-64 border-dashed border-2">
-           <div className="w-16 h-16 rounded-2xl bg-muted/30 flex items-center justify-center text-muted-foreground/20"><PieChart className="w-8 h-8" /></div>
-           <div className="space-y-2">
-              <h4 className="font-black text-xl">Detailed Visuals</h4>
-              <p className="text-sm text-muted-foreground max-w-xs mx-auto">Full visual reporting and trend analysis is available in Pro and Premium tiers.</p>
-           </div>
-           {!isNormal ? <Button className="rounded-xl font-black text-xs uppercase tracking-widest">Generate Report</Button> : null}
-        </Card>
+
+             <Card className="col-span-12 p-8 bg-primary/5 dark:bg-card border border-primary/10 dark:border-border rounded-2xl relative overflow-hidden group">
+                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
+                   <div className="space-y-4">
+                      <Badge className="bg-primary/20 text-primary border-none text-[8px] font-black uppercase tracking-widest px-3">Protocol Optimized</Badge>
+                      <h3 className="text-3xl font-black text-foreground italic tracking-tight">SLA Performance has increased by <span className="text-primary not-italic">8.4%</span> since workflow automation.</h3>
+                      <p className="text-sm font-medium text-muted-foreground/60 max-w-xl leading-relaxed">Audited service times across the portfolio show an average resolution cycle of 14.2 hours, exceeding the standard target of 24 hours. No critical failures detected in the current period.</p>
+                   </div>
+                   <Button variant="outline" className="h-14 px-8 rounded-xl border-border text-foreground font-black text-xs uppercase tracking-[0.2em] hover:bg-muted/30 shrink-0 transition-all hover:scale-[1.02]">
+                      Download Performance Log
+                   </Button>
+                </div>
+                <Zap className="absolute bottom-0 right-0 w-[500px] h-[500px] text-primary/5 translate-x-32 translate-y-32 -rotate-12 pointer-events-none" />
+             </Card>
+          </div>
+        )}
+
+        {!isPremium && !isPro && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+               {[
+                 { l: 'Occupancy Rate', v: '94.2%', c: '+1.1%', up: true },
+                 { l: 'Open Tickets', v: '12 Items', c: '-2', up: false },
+                 { l: 'SLA Status', v: 'Optimal', c: '98%', up: true },
+               ].map((stat, i) => (
+                 <Card key={i} className="p-6 border-border shadow-sm rounded-xl space-y-2 bg-card">
+                    <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40">{stat.l}</p>
+                    <div className="flex items-end justify-between">
+                       <h3 className="text-2xl font-black text-foreground">{stat.v}</h3>
+                       <Badge variant="outline" className={cn("text-[8px] font-black border-none px-2", stat.up ? 'bg-emerald-500/10 text-emerald-600' : 'bg-rose-500/10 text-rose-600')}>
+                          {stat.c}
+                       </Badge>
+                    </div>
+                 </Card>
+               ))}
+            </div>
+            <Card className="p-16 border-border shadow-sm rounded-2xl bg-card border-dashed border-2 flex flex-col items-center justify-center text-center space-y-5">
+               <div className="w-14 h-14 rounded-2xl bg-muted/40 flex items-center justify-center text-muted-foreground/30"><PieChart className="w-7 h-7" /></div>
+               <div className="space-y-2">
+                  <h4 className="text-lg font-black uppercase tracking-tight italic">System <span className="text-muted-foreground/30 not-italic">Visualization</span></h4>
+                  <p className="text-xs font-semibold text-muted-foreground/60 max-w-sm mx-auto">Full visual intelligence and predictive reporting is reserved for higher-tier administrative nodes.</p>
+               </div>
+               <Button className="rounded-xl h-11 px-8 font-black text-[10px] uppercase tracking-widest bg-primary text-white transition-all shadow-xl shadow-primary/10">Upgrade Access</Button>
+            </Card>
+          </div>
+        )}
       </div>
     );
   }
@@ -676,14 +897,14 @@ export function ModuleContent({ title, type, tier = 'normal', role = 'admin' }: 
       { id: '401', name: '401', type: 'Suite', status: 'Occupied', housekeeping: 'Clean', maintenance: 'none', resident: 'Tom Bradley', rent: '£1,450', floor: 'Floor 4', lastChecked: '10:00 AM' },
       { id: '402', name: '402', type: 'Standard', status: 'Vacant', housekeeping: 'Inspected', maintenance: 'issue', resident: undefined, rent: '£850', floor: 'Floor 4', lastChecked: 'Just now' },
       { id: '403', name: '403', type: 'Standard', status: 'Occupied', housekeeping: 'Clean', maintenance: 'none', resident: 'Rachel Green', rent: '£850', floor: 'Floor 4', lastChecked: '09:30 AM' },
-      { id: '404', name: '404', type: 'Maintenance', status: 'Maintenance', housekeeping: 'Maintenance', maintenance: 'alert', resident: undefined, rent: '£0', floor: 'Floor 4', lastChecked: 'In Progress' },
+      { id: '404', name: '404', type: 'Standard', status: 'Maintenance', housekeeping: 'Maintenance', maintenance: 'alert', resident: undefined, rent: '£0', floor: 'Floor 4', lastChecked: 'In Progress' },
       { id: '405', name: '405', type: 'Standard', status: 'Arriving', housekeeping: 'Dirty', maintenance: 'none', resident: 'Noah Jackson', rent: '£850', floor: 'Floor 4', lastChecked: 'Today' },
       { id: '501', name: '501', type: 'Studio', status: 'Occupied', housekeeping: 'Clean', maintenance: 'none', resident: 'Sophie Turner', rent: '£1,100', floor: 'Floor 5', lastChecked: '08:20 AM' },
       { id: '502', name: '502', type: 'Standard', status: 'Vacant', housekeeping: 'Clean', maintenance: 'none', resident: undefined, rent: '£850', floor: 'Floor 5', lastChecked: 'Yesterday' },
       { id: '503', name: '503', type: 'Standard', status: 'Occupied', housekeeping: 'Clean', maintenance: 'issue', resident: 'Alex Morgan', rent: '£850', floor: 'Floor 5', lastChecked: '07:45 AM' },
     ];
 
-    return <RoomsManagement title={title} description="Comprehensive room management with filtering, search, and multiple view modes" rooms={rooms} tier={tier} />;
+    return <RoomsManagement title={title} description="Comprehensive room management with filtering, search, and multiple view modes" rooms={rooms as any[]} tier={tier} />;
   }
 
   if (type === 'settings') {

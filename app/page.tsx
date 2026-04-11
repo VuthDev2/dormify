@@ -149,9 +149,11 @@ export default function LandingPage() {
               </div>
 
               <motion.div variants={fadeInUp}>
-                <Button size="lg" className="h-14 px-8 rounded-none bg-foreground text-background font-black hover:bg-foreground/90 transition-all uppercase text-[11px] tracking-widest">
-                  Requests Portfolio Audits
-                </Button>
+                <Link href="/signup">
+                  <Button size="lg" className="h-14 px-8 rounded-none bg-foreground text-background font-black hover:bg-foreground/90 transition-all uppercase text-[11px] tracking-widest">
+                    Requests Portfolio Audits
+                  </Button>
+                </Link>
               </motion.div>
             </motion.div>
 
@@ -171,7 +173,7 @@ export default function LandingPage() {
                     playsInline 
                     className="w-full h-full object-cover grayscale brightness-50"
                   >
-                    <source src="/property-exterior.mp4" type="video/mp4" />
+                    <source src="/dorm-demo.mp4" type="video/mp4" />
                   </video>
 
                   <div className="absolute inset-0 p-8 flex flex-col justify-between pointer-events-none">
@@ -270,9 +272,11 @@ export default function LandingPage() {
             viewport={{ once: false }}
             transition={{ delay: 0.5 }}
           >
-            <Button size="lg" className="rounded-full px-10 h-14 font-bold bg-white text-black hover:bg-slate-200 transition-all hover:scale-105">
-              Explore the Ecosystem
-            </Button>
+            <Link href="/ecosystem">
+              <Button size="lg" className="rounded-full px-10 h-14 font-bold bg-white text-black hover:bg-slate-200 transition-all hover:scale-105">
+                Explore the Ecosystem
+              </Button>
+            </Link>
           </motion.div>
         </div>
       </section>
@@ -516,13 +520,15 @@ export default function LandingPage() {
                     ))}
                   </ul>
 
-                  <Button className={`w-full h-14 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all ${
-                    plan.highlighted 
-                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:scale-[1.02]' 
-                      : 'bg-foreground text-background hover:bg-foreground/90'
-                  }`}>
-                    {plan.cta}
-                  </Button>
+                  <Link href="/signup" className="w-full">
+                    <Button className={`w-full h-14 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all ${
+                      plan.highlighted 
+                        ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:scale-[1.02]' 
+                        : 'bg-foreground text-background hover:bg-foreground/90'
+                    }`}>
+                      {plan.cta}
+                    </Button>
+                  </Link>
                 </Card>
               </motion.div>
             ))}
@@ -585,14 +591,18 @@ export default function LandingPage() {
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                  <Button size="lg" className="h-16 px-10 rounded-2xl bg-primary text-primary-foreground font-bold text-base shadow-xl shadow-primary/20 transition-all">
-                    Get Started Now
-                  </Button>
+                  <Link href="/signup">
+                    <Button size="lg" className="h-16 px-10 rounded-2xl bg-primary text-primary-foreground font-bold text-base shadow-xl shadow-primary/20 transition-all">
+                      Get Started Now
+                    </Button>
+                  </Link>
                 </motion.div>
                 <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                  <Button size="lg" variant="outline" className="h-16 px-10 rounded-2xl border-white/10 text-white bg-white/5 backdrop-blur-md hover:bg-white/10 font-bold text-base transition-all">
-                    Contact Sales
-                  </Button>
+                  <Link href="/signup">
+                    <Button size="lg" variant="outline" className="h-16 px-10 rounded-2xl border-white/10 text-white bg-white/5 backdrop-blur-md hover:bg-white/10 font-bold text-base transition-all">
+                      Contact Sales
+                    </Button>
+                  </Link>
                 </motion.div>
               </div>
             </div>

@@ -59,7 +59,7 @@ export default function LandingPage() {
             whileInView="visible"
             viewport={{ once: false, margin: "-50px" }}
             variants={staggerContainer}
-            className="grid md:grid-cols-2 gap-6"
+            className="grid md:grid-cols-2 gap-16"
           >
             {SERVICES.map((service, i) => (
               <motion.div key={i} variants={fadeInUp}>
@@ -135,7 +135,7 @@ export default function LandingPage() {
                     playsInline 
                     className="w-full h-full object-cover grayscale brightness-50"
                   >
-                    <source src="/property-exterior.mp4" type="video/mp4" />
+                    <source src="/dorm-demo.mp4" type="video/mp4" />
                   </video>
 
                   <div className="absolute inset-0 p-8 flex flex-col justify-between pointer-events-none">

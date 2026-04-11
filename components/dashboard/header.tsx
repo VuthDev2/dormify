@@ -34,7 +34,7 @@ export function Header({ role, tier = 'normal' }: HeaderProps) {
 
   return (
     <header className="sticky top-0 z-40 transition-all duration-500 px-6 py-4">
-      <div className="w-full flex items-center justify-between gap-8 transition-all duration-500 bg-muted/10 backdrop-blur-3xl border border-border/40 rounded-[2rem] px-6 h-16 shadow-2xl shadow-primary/5">
+      <div className="w-full flex items-center justify-between gap-8 transition-all duration-500 bg-white/70 dark:bg-muted/10 backdrop-blur-3xl border border-border/40 rounded-[2rem] px-6 h-16 shadow-2xl shadow-primary/5">
         <div className="flex-1 max-w-md relative group hidden sm:block">
           <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none z-10">
             <div className="p-2 text-muted-foreground group-focus-within:text-foreground transition-colors">
@@ -44,10 +44,10 @@ export function Header({ role, tier = 'normal' }: HeaderProps) {
 
           <Input
             placeholder={searchPlaceholder}
-            className="w-full pl-12 transition-all duration-300 text-sm font-semibold tracking-tight bg-muted/50 border-border h-10 rounded-lg focus:bg-background placeholder:text-muted-foreground/50 shadow-none pr-16"
+            className="w-full pl-12 transition-all duration-300 text-sm font-semibold tracking-tight bg-background/50 dark:bg-muted/30 border-border h-10 rounded-lg focus:bg-background placeholder:text-muted-foreground/50 shadow-none pr-16"
           />
 
-          <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 hidden items-center gap-1.5 rounded-lg border border-border/40 bg-muted/50 px-2 py-1 text-[10px] font-semibold text-muted-foreground group-focus-within:bg-background lg:flex transition-all">
+          <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 hidden items-center gap-1.5 rounded-lg border border-border/40 bg-background/50 dark:bg-muted/30 px-2 py-1 text-[10px] font-semibold text-muted-foreground group-focus-within:bg-background lg:flex transition-all">
             <Command className="h-3 w-3" />
             <span>K</span>
           </div>
@@ -69,12 +69,12 @@ export function Header({ role, tier = 'normal' }: HeaderProps) {
                   tier === 'premium' ? "border-primary/20 group-hover:border-primary/60" : "border-border/40 group-hover:border-primary/40"
                 )}>
                   <AvatarFallback className="bg-primary/5 text-primary font-bold text-xs">
-                    {isChef ? 'CH' : isTenant ? 'SA' : 'SV'}
+                    {isChef ? 'CH' : isTenant ? 'SA' : 'AU'}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col hidden lg:flex">
                   <p className="text-sm font-bold leading-tight text-foreground">
-                    {isChef ? 'Chef Marco' : isTenant ? 'Sarah J.' : 'Saravuth'}
+                    {isChef ? 'Chef Marco' : isTenant ? 'Sarah J.' : 'Admin User'}
                   </p>
                   <p className={cn(
                     "text-[10px] font-bold uppercase tracking-wider capitalize",
