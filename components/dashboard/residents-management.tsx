@@ -75,19 +75,16 @@ interface ResidentsManagementProps {
   title: string;
   description: string;
   residents: Resident[];
-  tier: 'normal' | 'pro' | 'premium';
 }
 
 const ITEMS_PER_PAGE = 8;
 
-export function ResidentsManagement({ title, description, residents, tier }: ResidentsManagementProps) {
+export function ResidentsManagement({ title, description, residents }: ResidentsManagementProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [selectedFloor, setSelectedFloor] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [currentPage, setCurrentPage] = useState(1);
-
-  const isPremium = tier === 'premium';
 
   // Extract unique values
   const floors = useMemo(() => [...new Set(residents.map(r => r.floor))].sort((a, b) => parseInt(a) - parseInt(b)), [residents]);
@@ -189,7 +186,7 @@ export function ResidentsManagement({ title, description, residents, tier }: Res
       </div>
 
       {/* Control Bar: Modern & Functional */}
-      <div className="p-2 border border-border/40 bg-background/40 backdrop-blur-md rounded-2xl shadow-sm">
+      <div className="p-2 border border-border/40 bg-background/40 backdrop-blur-md rounded-2xl">
         <div className="flex flex-col lg:flex-row gap-2">
           {/* Main Search */}
           <div className="relative flex-1 group">

@@ -43,7 +43,13 @@ import {
   Download,
   MoreHorizontal,
   History as HistoryIcon,
-  TrendingDown
+  TrendingDown,
+  Receipt,
+  Waves,
+  Scan,
+  History,
+  Box,
+  Key
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -71,7 +77,7 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
   const isChef = role === 'chef';
   const isTenant = role === 'tenant';
 
-  // --- Premium: Executive Portfolio Portfolio (Industrial Realism) ---
+  // --- Premium: Executive Portfolio Overview ---
   if (isPremium) {
     const revenueData = [
       { name: 'Jul', actual: 850000, budget: 820000 },
@@ -87,24 +93,20 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
         {/* --- Minimalist Executive Header --- */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-1">
           <div className="space-y-1">
-            <div className="flex items-center gap-2 mb-1">
-              <Sparkles className="w-4 h-4 text-primary" />
-              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Premium Tier</span>
-            </div>
-            <h1 className="text-3xl font-black tracking-tight text-foreground">Executive <span className="text-muted-foreground/30 font-medium">Overview</span></h1>
-            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/50">Fiscal Quarter 4 · Fiscal Report ID: #2026-Q4-BLU</p>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">Portfolio <span className="text-muted-foreground/30 font-medium">Analytics</span></h1>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Fiscal Report ID: #2026-Q4-BLU • Live Ledger</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" className="h-9 px-4 rounded-lg border-border dark:border-blue-500/20 text-[10px] font-bold uppercase tracking-widest gap-2 hover:bg-blue-500/5">
+            <Button variant="outline" className="h-9 px-4 rounded-lg border-border dark:border-blue-500/10 text-[10px] font-bold uppercase tracking-widest gap-2 hover:bg-muted/50 transition-all">
               <Filter className="w-3.5 h-3.5" /> Filter Portfolio
             </Button>
-            <Button className="h-9 px-4 rounded-lg bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-widest gap-2 shadow-sm shadow-primary/20">
+            <Button className="h-9 px-4 rounded-lg bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-widest gap-2 shadow-sm shadow-primary/20 hover:translate-y-[-1px] transition-all">
               <Plus className="w-3.5 h-3.5" /> Add Property
             </Button>
           </div>
         </div>
 
-        {/* --- Top Metrics Bar: Consolidated & Organized --- */}
+        {/* --- Top Metrics Bar --- */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard tier="premium" label="Net Rental Income" value="£1.24M" trend="up" change="+4.2%" icon={Wallet} sparklineData={[40, 45, 42, 50, 48, 55, 60]} />
           <StatCard tier="premium" label="Portfolio Occupancy" value="98.2%" trend="neutral" change="Stable" icon={Building2} sparklineData={[80, 82, 85, 84, 88, 90, 92]} />
@@ -113,43 +115,41 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
         </div>
 
         <div className="grid grid-cols-12 gap-5">
-           {/* Primary Analysis Card: Revenue vs Forecast */}
-           <Card className="col-span-12 lg:col-span-8 p-6 lg:p-8 border-border dark:border-blue-500/10 shadow-sm rounded-2xl bg-card dark:bg-blue-950/20 backdrop-blur-3xl">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10 border-b border-border/50 dark:border-blue-500/10 pb-6">
-                 <div className="space-y-1">
+           <Card className="col-span-12 lg:col-span-8 p-6 border-border/50 shadow-sm rounded-2xl bg-card">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 border-b border-border/10 pb-4">
+                 <div className="space-y-0.5">
                     <h3 className="text-[10px] font-bold uppercase tracking-[0.25em] text-foreground">Revenue Performance</h3>
-                    <p className="text-[11px] text-muted-foreground font-semibold">Consolidated Actual vs. Forecasted Budget (GBP)</p>
+                    <p className="text-[11px] text-muted-foreground font-medium italic">Actual vs. Forecasted Budget (GBP)</p>
                  </div>
-                 <div className="flex items-center gap-6">
-                    <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-primary" /> <span className="text-[10px] font-bold uppercase text-muted-foreground">Actual</span></div>
-                    <div className="flex items-center gap-2 font-bold uppercase text-muted-foreground border-l border-border dark:border-blue-500/10 pl-6"><span className="w-2 h-2 border-2 border-muted-foreground border-dashed rounded-full" /> <span className="text-[10px] font-bold uppercase text-muted-foreground">Budget</span></div>
+                 <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-primary" /> <span className="text-[9px] font-bold uppercase text-muted-foreground">Actual</span></div>
+                    <div className="flex items-center gap-1.5 font-bold uppercase text-muted-foreground border-l border-border pl-4"><span className="w-1.5 h-1.5 border border-muted-foreground border-dashed rounded-full" /> <span className="text-[9px] font-bold uppercase text-muted-foreground">Budget</span></div>
                  </div>
               </div>
-              <div className="h-[300px]">
+              <div className="h-[280px]">
                  <RevenueVsBudgetChart data={revenueData} />
               </div>
-              <div className="grid grid-cols-4 gap-8 pt-10 border-t border-border dark:border-blue-500/10 mt-auto">
+              <div className="grid grid-cols-4 gap-4 pt-8 border-t border-border/10 mt-6">
                  {[
                    { l: 'Total Revenue', v: '£5.42M' },
-                   { l: 'Variance', v: '+£120K' },
+                   { l: 'Variance', v: '+£120K', c: 'text-emerald-500' },
                    { l: 'Exp. Ratio', v: '8.4%' },
                    { l: 'Net Yield', v: '9.21%' },
                  ].map((d, i) => (
-                   <div key={i} className="space-y-1.5">
-                      <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40">{d.l}</p>
-                      <p className="text-xl font-black text-foreground tracking-tighter">{d.v}</p>
+                   <div key={i} className="space-y-0.5">
+                      <p className="text-[8px] font-bold uppercase tracking-widest text-muted-foreground/50">{d.l}</p>
+                      <p className={cn("text-lg font-bold tracking-tight", d.c)}>{d.v}</p>
                    </div>
                  ))}
               </div>
            </Card>
 
-           {/* High-Density Portfolio Status Table */}
-           <Card className="col-span-12 lg:col-span-4 p-6 lg:p-8 border-border dark:border-blue-500/10 shadow-sm rounded-2xl bg-card dark:bg-blue-950/20 backdrop-blur-3xl flex flex-col">
-              <div className="flex items-center justify-between mb-8 pb-4 border-b border-border dark:border-blue-500/10">
+           <Card className="col-span-12 lg:col-span-4 p-6 border-border/50 shadow-sm rounded-2xl bg-card flex flex-col">
+              <div className="flex items-center justify-between mb-6 pb-3 border-b border-border/10">
                  <h3 className="text-[10px] font-bold uppercase tracking-[0.25em] text-foreground">Asset Health</h3>
-                 <HistoryIcon className="w-4 h-4 text-muted-foreground/30" />
+                 <HistoryIcon className="w-3.5 h-3.5 text-muted-foreground/30" />
               </div>
-              <div className="space-y-1 flex-1 overflow-auto max-h-[440px] -mx-2 px-2 scrollbar-hide">
+              <div className="space-y-1 flex-1 overflow-auto max-h-[380px] scrollbar-hide">
                  {[
                    { n: 'Bloomsbury Hall', s: 'Operational', o: '98%', y: '9.2%', st: 'emerald' },
                    { n: 'Manchester Central', s: 'Maintenance', o: '94%', y: '8.8%', st: 'amber' },
@@ -158,77 +158,68 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
                    { n: 'Leeds Quarter', s: 'Operational', o: '97%', y: '9.1%', st: 'emerald' },
                    { n: 'Southampton Bay', s: 'Operational', o: '99%', y: '9.0%', st: 'emerald' },
                  ].map((asset, i) => (
-                   <div key={i} className="flex items-center justify-between p-3 rounded-xl hover:bg-muted/30 dark:hover:bg-blue-500/10 border border-transparent hover:border-border dark:hover:border-blue-500/20 transition-all cursor-pointer group">
+                   <div key={i} className="flex items-center justify-between p-2.5 rounded-xl hover:bg-muted/30 transition-all cursor-pointer group border border-transparent hover:border-border/10">
                       <div className="space-y-0.5">
                          <p className="text-xs font-bold text-foreground group-hover:text-primary transition-colors">{asset.n}</p>
-                         <div className="flex items-center gap-2">
+                         <div className="flex items-center gap-1.5">
                             <div className={cn("w-1.5 h-1.5 rounded-full", `bg-${asset.st}-500`)} />
                             <span className="text-[9px] font-bold text-muted-foreground/60 uppercase">{asset.s}</span>
                          </div>
                       </div>
                       <div className="text-right">
-                         <p className="text-[10px] font-black text-foreground">{asset.o}</p>
-                         <p className="text-[9px] font-bold text-muted-foreground/40">{asset.y} Yield</p>
+                         <p className="text-[10px] font-bold text-foreground">{asset.o}</p>
+                         <p className="text-[9px] font-medium text-muted-foreground/40">{asset.y} Yield</p>
                       </div>
                    </div>
                  ))}
               </div>
-              <Button variant="ghost" className="w-full mt-6 text-[10px] font-bold uppercase tracking-widest text-muted-foreground h-11 hover:text-primary dark:hover:bg-blue-500/5">
-                 Detailed Asset Audit <ArrowRight className="w-3.5 h-3.5 ml-2" />
+              <Button variant="ghost" className="w-full mt-6 text-[10px] font-bold uppercase tracking-widest text-muted-foreground h-9 hover:text-primary">
+                 Full Asset Audit <ArrowRight className="w-3.5 h-3.5 ml-2" />
               </Button>
            </Card>
 
-           {/* Fiscal Audit Roadmap Section */}
-           <Card className="col-span-12 p-6 lg:p-8 bg-primary/5 dark:bg-blue-900/10 border border-primary/10 dark:border-blue-500/20 rounded-2xl relative overflow-hidden group shadow-lg">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.1),transparent_50%)]" />
+           <Card className="col-span-12 p-8 bg-primary/5 border border-primary/10 rounded-2xl relative overflow-hidden group shadow-sm">
               <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-                 <div className="space-y-4 max-w-2xl text-center md:text-left">
-                    <div className="flex items-center justify-center md:justify-start gap-4">
-                       <Badge className="bg-primary/20 text-primary border-none text-[9px] font-black uppercase tracking-widest px-3">2026 Strategy</Badge>
-                       <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">Internal Use Only</span>
+                 <div className="space-y-4 max-w-2xl">
+                    <div className="flex items-center gap-3">
+                       <Badge className="bg-primary/20 text-primary border-none text-[8px] font-bold uppercase tracking-widest px-2">2026 Strategy</Badge>
+                       <span className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest italic">Internal Protocol Only</span>
                     </div>
-                    <h3 className="text-3xl md:text-4xl font-black text-foreground leading-[1.1] tracking-tight">Expand Portfolio Yield by 12.4% <br className="hidden md:block" /> with Automated Rent Reviews.</h3>
-                    <p className="text-sm font-medium text-muted-foreground/60 leading-relaxed">Financial modeling for the next fiscal year indicates a significant opportunity in the London residential sector. Our audit reveals that 40% of properties are currently under-market for rent, suggesting a potential uplift of £400k annually.</p>
+                    <h3 className="text-3xl font-bold text-foreground leading-tight tracking-tight">Projected Yield Growth: +12.4% <br /> via Automated Rent Indexing.</h3>
+                    <p className="text-[13px] font-medium text-muted-foreground/60 leading-relaxed">Financial modeling for the next fiscal period indicates significant upside in the London residential sector. Audit revealed 40% of properties are under-market, suggesting a potential uplift of £400k annually.</p>
                  </div>
-                 <div className="flex flex-col gap-3 w-full md:w-auto min-w-[200px]">
-                    <Button className="h-14 rounded-xl bg-foreground text-background dark:bg-blue-600 dark:text-white font-bold text-xs uppercase tracking-widest hover:scale-[1.02] transition-transform shadow-xl shadow-primary/10">
-                       Download Audit Report
+                 <div className="flex flex-col gap-2.5 w-full md:w-auto min-w-[180px]">
+                    <Button className="h-10 rounded-lg bg-primary text-white font-bold text-[10px] uppercase tracking-widest hover:translate-y-[-1px] transition-all shadow-sm">
+                       Download Audit
                     </Button>
-                    <Button variant="ghost" className="h-14 rounded-xl border border-border dark:border-blue-500/20 text-foreground font-bold text-xs uppercase tracking-widest hover:bg-muted/30 dark:hover:bg-blue-500/5">
-                       Executive Summary
+                    <Button variant="ghost" className="h-10 rounded-lg border border-border/60 text-foreground font-bold text-[10px] uppercase tracking-widest hover:bg-muted/50 transition-all">
+                       Summary Report
                     </Button>
                  </div>
               </div>
-              <TrendingUp className="absolute bottom-0 right-0 w-[400px] h-[400px] text-primary/5 translate-x-32 translate-y-32 -rotate-12" />
+              <TrendingUp className="absolute bottom-0 right-0 w-64 h-64 text-primary/5 translate-x-12 translate-y-12 -rotate-12 pointer-events-none" />
            </Card>
-
         </div>
       </div>
     );
   }
 
-  // --- Pro: Operational Management Hub (Industrial Realism) ---
+  // --- Pro: Operational Management Hub ---
   if (isPro) {
     return (
       <div className="space-y-6 animate-in fade-in duration-500 pb-12">
-        {/* --- Organized Pro Header --- */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-1">
           <div className="space-y-1">
-            <div className="flex items-center gap-2 mb-1">
-              <ShieldCheck className="w-4 h-4 text-primary" />
-              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Pro Tier</span>
-            </div>
-            <h1 className="text-3xl font-black tracking-tight text-foreground italic">Operations <span className="text-muted-foreground/30 font-medium not-italic uppercase">Hub</span></h1>
-            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/50">Daily High-Priority Action Queue</p>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground italic">Operations <span className="text-muted-foreground/30 font-medium not-italic uppercase">Hub</span></h1>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Daily High-Priority Dispatch Queue</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button className="h-10 px-6 rounded-lg bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-widest gap-2 shadow-lg shadow-primary/20 transition-all hover:translate-y-[-2px]">
-              <Plus className="w-4 h-4" /> Create Service Ticket
+            <Button className="h-9 px-4 rounded-lg bg-primary text-white text-[10px] font-bold uppercase tracking-widest gap-2 shadow-sm border-none transition-all hover:translate-y-[-1px]">
+              <Plus className="w-3.5 h-3.5" /> Service Ticket
             </Button>
           </div>
         </div>
 
-        {/* --- Core Operational Stats --- */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard tier="pro" label="Current Occupancy" value="94.2%" trend="up" change="+1.4%" icon={Users} sparklineData={[60, 65, 70, 75, 80, 85, 94]} />
           <StatCard tier="pro" label="Open Incidents" value="12" trend="down" change="-2" icon={AlertCircle} sparklineData={[15, 14, 13, 14, 15, 13, 12]} />
@@ -237,174 +228,261 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
         </div>
 
         <div className="grid grid-cols-12 gap-5">
-           
-           {/* Main Column: High-Priority Queue */}
-           <Card className="col-span-12 lg:col-span-7 border-border dark:border-blue-500/10 shadow-sm rounded-2xl bg-card dark:bg-blue-950/20 backdrop-blur-3xl overflow-hidden flex flex-col border">
-              <div className="p-6 border-b border-border dark:border-blue-500/10 flex items-center justify-between bg-muted/10 dark:bg-blue-500/5">
-                 <div className="flex items-center gap-3">
+           <Card className="col-span-12 lg:col-span-7 border-border/50 shadow-sm rounded-2xl bg-card overflow-hidden flex flex-col">
+              <div className="p-4 border-b border-border/10 flex items-center justify-between bg-muted/5">
+                 <div className="flex items-center gap-2">
                     <ClipboardList className="w-4 h-4 text-primary" />
                     <h3 className="text-[10px] font-bold uppercase tracking-[0.25em] text-foreground">Action Queue</h3>
                  </div>
-                 <Badge variant="outline" className="text-[9px] font-bold text-muted-foreground/60 border-border dark:border-blue-500/20">Total: 12 Tasks</Badge>
+                 <Badge variant="outline" className="text-[8px] font-bold text-muted-foreground/60 border-border">12 Tasks</Badge>
               </div>
-              <div className="divide-y divide-border dark:divide-blue-500/10">
+              <div className="divide-y divide-border/10">
                  {[
-                   { t: 'Urgent: Leak Reported', r: 'Sarah J. (A-402)', s: 'Pending Dispatch', time: '14m ago', p: 'high' },
+                   { t: 'Urgent: Leak Reported', r: 'Sarah J. (A-402)', s: 'Dispatch Pending', time: '14m ago', p: 'high' },
                    { t: 'Contract Review Due', r: 'John D. (C-102)', s: 'Under Review', time: '1h ago', p: 'med' },
                    { t: 'Safety Inspection', r: 'Bloomsbury Hall', s: 'In Progress', time: '2h ago', p: 'med' },
-                   { t: 'Staff Scheduling', r: 'Kitchen Node', s: 'Awaiting Approval', time: '4h ago', p: 'low' },
+                   { t: 'Staff Scheduling', r: 'Kitchen Node', s: 'Awaiting Sign-off', time: '4h ago', p: 'low' },
                  ].map((item, i) => (
-                   <div key={i} className="p-5 flex items-center justify-between hover:bg-muted/20 dark:hover:bg-blue-500/10 transition-all cursor-pointer group">
-                      <div className="flex items-center gap-4 min-w-0">
-                         <div className={cn("w-2 h-2 rounded-full", item.p === 'high' ? 'bg-rose-500 animate-pulse' : item.p === 'med' ? 'bg-amber-500' : 'bg-slate-400')} />
+                   <div key={i} className="p-4 flex items-center justify-between hover:bg-muted/30 transition-all cursor-pointer group">
+                      <div className="flex items-center gap-3 min-w-0">
+                         <div className={cn("w-1.5 h-1.5 rounded-full shrink-0", item.p === 'high' ? 'bg-rose-500 animate-pulse' : item.p === 'med' ? 'bg-amber-500' : 'bg-slate-300')} />
                          <div className="min-w-0">
-                            <p className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">{item.t}</p>
-                            <p className="text-[10px] font-bold text-muted-foreground/60 uppercase">{item.r}</p>
+                            <p className="text-xs font-bold text-foreground group-hover:text-primary transition-colors truncate">{item.t}</p>
+                            <p className="text-[9px] font-medium text-muted-foreground/60 uppercase">{item.r}</p>
                          </div>
                       </div>
-                      <div className="flex items-center gap-6">
+                      <div className="flex items-center gap-6 shrink-0">
                          <div className="hidden sm:block text-right">
-                            <p className="text-[10px] font-bold text-foreground uppercase">{item.s}</p>
-                            <p className="text-[9px] font-medium text-muted-foreground/40">{item.time}</p>
+                            <p className="text-[9px] font-bold text-foreground uppercase">{item.s}</p>
+                            <p className="text-[8px] font-medium text-muted-foreground/30">{item.time}</p>
                          </div>
-                         <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/30 group-hover:text-primary transition-colors" />
+                         <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/20 group-hover:text-primary transition-all" />
                       </div>
                    </div>
                  ))}
               </div>
-              <div className="p-4 border-t border-border dark:border-blue-500/10 mt-auto bg-muted/5">
-                 <Button variant="ghost" className="w-full text-[10px] font-bold uppercase tracking-widest text-muted-foreground h-10 hover:text-primary dark:hover:bg-blue-500/5">
-                    View Full Task Board
+              <div className="p-3 border-t border-border/10 mt-auto bg-muted/5">
+                 <Button variant="ghost" className="w-full text-[10px] font-bold uppercase tracking-widest text-muted-foreground h-9 hover:text-primary transition-all">
+                    Open Task Board
                  </Button>
               </div>
            </Card>
 
-           {/* Secondary Column: Facility Health & Operations */}
            <div className="col-span-12 lg:col-span-5 space-y-5">
-              <Card className="p-6 lg:p-8 border-border dark:border-blue-500/10 shadow-sm rounded-2xl bg-card dark:bg-blue-950/20 backdrop-blur-3xl">
-                 <div className="flex items-center justify-between mb-8 border-b border-border dark:border-blue-500/10 pb-4">
+              <Card className="p-6 border-border/50 shadow-sm rounded-2xl bg-card">
+                 <div className="flex items-center justify-between mb-6 border-b border-border/10 pb-3">
                     <h3 className="text-[10px] font-bold uppercase tracking-[0.25em] text-foreground">Facility Health</h3>
                     <Target className="w-4 h-4 text-primary" />
                  </div>
-                 <div className="space-y-6">
+                 <div className="space-y-5">
                     {[
-                      { l: 'Housekeeping Compliance', v: 92, s: 'Excellent' },
-                      { l: 'Catering Utilization', v: 76, s: 'Normal' },
-                      { l: 'Energy Consumption', v: 88, s: 'Efficient' },
-                      { l: 'Resident Satisfaction', v: 94, s: 'Very High' },
+                      { l: 'Housekeeping Compliance', v: 92, s: 'Excel' },
+                      { l: 'Catering Utilization', v: 76, s: 'Norm' },
+                      { l: 'Energy Efficiency', v: 88, s: 'High' },
+                      { l: 'Resident Satisfaction', v: 94, s: 'Peak' },
                     ].map((stat, i) => (
-                      <div key={i} className="space-y-2">
+                      <div key={i} className="space-y-1.5">
                          <div className="flex items-center justify-between">
-                            <span className="text-[10px] font-bold uppercase text-muted-foreground">{stat.l}</span>
-                            <span className="text-[10px] font-black text-foreground">{stat.s}</span>
+                            <span className="text-[10px] font-bold uppercase text-muted-foreground/60">{stat.l}</span>
+                            <span className="text-[10px] font-bold text-foreground">{stat.v}%</span>
                          </div>
-                         <div className="h-1.5 w-full bg-muted dark:bg-blue-900/20 rounded-full overflow-hidden shadow-inner">
-                            <div className="h-full bg-primary shadow-[0_0_10px_rgba(99,102,241,0.4)]" style={{ width: `${stat.v}%` }} />
+                         <div className="h-1 w-full bg-muted/30 rounded-full overflow-hidden shadow-inner">
+                            <div className="h-full bg-primary shadow-[0_0_10px_rgba(99,102,241,0.3)]" style={{ width: `${stat.v}%` }} />
                          </div>
                       </div>
                     ))}
                  </div>
               </Card>
 
-              <Card className="p-6 lg:p-8 border border-primary/10 dark:border-blue-500/20 shadow-sm rounded-2xl bg-primary/5 dark:bg-blue-900/10 overflow-hidden relative group cursor-pointer hover:bg-primary/10 dark:hover:bg-blue-900/20 transition-colors">
+              <Card className="p-6 border border-primary/10 rounded-2xl bg-primary/5 overflow-hidden relative group cursor-pointer hover:bg-primary/10 transition-colors">
                  <div className="relative z-10 flex items-center justify-between">
-                    <div className="space-y-1">
-                       <h4 className="text-xl font-black uppercase tracking-tight text-foreground">Audit <br />Protocol</h4>
-                       <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40">Next Review: Nov 12</p>
+                    <div className="space-y-0.5">
+                       <h4 className="text-lg font-bold uppercase tracking-tight text-foreground">Compliance <br />Audit</h4>
+                       <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/40">Next Cycle: Nov 12</p>
                     </div>
-                    <Button className="h-12 w-12 rounded-xl bg-foreground text-background dark:bg-blue-600 dark:text-white p-0 shadow-xl group-hover:scale-110 transition-transform">
-                       <Download className="w-5 h-5" />
+                    <Button className="h-10 w-10 rounded-lg bg-primary text-white p-0 shadow-sm group-hover:scale-105 transition-transform border-none">
+                       <Download className="w-4 h-4" />
                     </Button>
                  </div>
-                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-3xl -translate-y-8 translate-x-8" />
               </Card>
            </div>
-
         </div>
       </div>
     );
   }
 
-  // --- Normal Dashboard Implementation (Organized & Readable) ---
+  // --- Normal Dashboard Implementation (Refined Resident Management Hub) ---
   if (isNormal) {
     return (
-      <div className="space-y-6 animate-in fade-in duration-500 pb-12">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 px-1">
+      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-700 pb-12">
+        {/* Professional Normal Header */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-1">
           <div className="space-y-1">
             <div className="flex items-center gap-2 mb-1">
-              <Zap className="w-4 h-4 text-primary" />
-              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Basic Tier</span>
+              <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Normal Node Active</span>
             </div>
-            <h1 className="text-3xl font-black tracking-tight text-foreground">Property <span className="text-muted-foreground/30 font-medium">Overview</span></h1>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Daily Operational Monitoring</p>
+            <h1 className="text-3xl font-black tracking-tight text-foreground">
+               Campus <span className="text-muted-foreground/30 font-medium italic">Command</span>
+            </h1>
+            <p className="text-xs font-bold text-muted-foreground/40 uppercase tracking-widest leading-none">Operational Control • Localized Cluster</p>
           </div>
-          <Button className="h-9 px-4 rounded-lg bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-widest gap-2 shadow-lg shadow-primary/20">
-            <Plus className="w-3.5 h-3.5" /> Add Entry
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" className="h-10 px-5 rounded-xl border-border/40 text-[10px] font-black uppercase tracking-widest hover:bg-muted/50 transition-all">
+               Quick Search
+            </Button>
+            <Button className="h-10 px-6 rounded-xl bg-primary text-white text-[10px] font-black uppercase tracking-[0.15em] shadow-xl shadow-primary/20 transition-all hover:translate-y-[-2px] border-none">
+              <Plus className="w-4 h-4 mr-2" /> New Entry
+            </Button>
+          </div>
         </div>
 
+        {/* 4-Column Specialized Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard tier="normal" label="Total Residents" value="142" icon={Users} trend="neutral" change="Stable" />
-          <StatCard tier="normal" label="Available Units" value="12" icon={Building2} trend="down" change="-2" />
-          <StatCard tier="normal" label="Active Invoices" value="£8.2k" icon={Wallet} trend="up" change="+4%" />
-          <StatCard tier="normal" label="Open Tickets" value="6" icon={AlertCircle} trend="up" change="+1" />
+          <Card className="p-5 border-border/40 bg-card rounded-[1.5rem] border shadow-sm group hover:shadow-xl hover:border-primary/20 transition-all cursor-pointer">
+             <div className="flex justify-between items-start mb-4">
+                <div className="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary shadow-inner">
+                   <Users className="w-5 h-5" />
+                </div>
+                <Badge className="bg-emerald-500/10 text-emerald-600 border-none text-[8px] font-black">98%</Badge>
+             </div>
+             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 mb-1">Total Residents</p>
+             <h3 className="text-2xl font-black tracking-tight">142 <span className="text-xs text-muted-foreground/20 font-medium ml-1">Live</span></h3>
+          </Card>
+          
+          <Card className="p-5 border-border/40 bg-card rounded-[1.5rem] border shadow-sm group hover:shadow-xl hover:border-primary/20 transition-all cursor-pointer">
+             <div className="flex justify-between items-start mb-4">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/5 flex items-center justify-center text-amber-500 shadow-inner">
+                   <Key className="w-5 h-5" />
+                </div>
+                <Badge className="bg-amber-500/10 text-amber-600 border-none text-[8px] font-black">12 Left</Badge>
+             </div>
+             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 mb-1">Available Rooms</p>
+             <h3 className="text-2xl font-black tracking-tight">12 <span className="text-xs text-muted-foreground/20 font-medium ml-1">Units</span></h3>
+          </Card>
+
+          <Card className="p-5 border-border/40 bg-card rounded-[1.5rem] border shadow-sm group hover:shadow-xl hover:border-primary/20 transition-all cursor-pointer">
+             <div className="flex justify-between items-start mb-4">
+                <div className="w-10 h-10 rounded-xl bg-indigo-500/5 flex items-center justify-center text-indigo-500 shadow-inner">
+                   <Receipt className="w-5 h-5" />
+                </div>
+                <Badge className="bg-indigo-500/10 text-indigo-600 border-none text-[8px] font-black">+£8.2k</Badge>
+             </div>
+             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 mb-1">Fee Collection</p>
+             <h3 className="text-2xl font-black tracking-tight">£14,420 <span className="text-xs text-muted-foreground/20 font-medium ml-1">Current</span></h3>
+          </Card>
+
+          <Card className="p-5 border-border/40 bg-card rounded-[1.5rem] border shadow-sm group hover:shadow-xl hover:border-primary/20 transition-all cursor-pointer">
+             <div className="flex justify-between items-start mb-4">
+                <div className="w-10 h-10 rounded-xl bg-rose-500/5 flex items-center justify-center text-rose-500 shadow-inner">
+                   <AlertCircle className="w-5 h-5" />
+                </div>
+                <Badge className="bg-rose-500/10 text-rose-600 border-none text-[8px] font-black">2 Critical</Badge>
+             </div>
+             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 mb-1">Support Tickets</p>
+             <h3 className="text-2xl font-black tracking-tight">6 <span className="text-xs text-muted-foreground/20 font-medium ml-1">Active</span></h3>
+          </Card>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6">
-           <Card className="lg:col-span-2 border-border dark:border-blue-500/10 shadow-sm rounded-2xl bg-card dark:bg-blue-950/20 backdrop-blur-3xl overflow-hidden">
-              <div className="p-4 border-b border-border dark:border-blue-500/10 bg-muted/10 dark:bg-blue-500/5 flex items-center justify-between">
-                 <h3 className="text-[10px] font-bold uppercase tracking-[0.25em] text-foreground">System Log</h3>
-                 <Badge variant="outline" className="text-[9px] font-bold text-muted-foreground/50 dark:border-blue-500/20">Live</Badge>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+           {/* System Activity Ledger */}
+           <Card className="lg:col-span-8 border-border/40 bg-card rounded-[2rem] border overflow-hidden shadow-2xl shadow-primary/5">
+              <div className="p-5 border-b border-border/10 flex items-center justify-between bg-muted/5">
+                 <div className="flex items-center gap-2">
+                    <History className="w-4 h-4 text-primary" />
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-foreground">Operational Logistics</h3>
+                 </div>
+                 <Badge variant="outline" className="text-[8px] font-black uppercase border-border/40 px-2 py-0.5">Real-time Feed</Badge>
               </div>
-              <div className="divide-y divide-border dark:divide-blue-500/10">
+              <div className="divide-y divide-border/10">
                  {[
-                   { t: 'Room 102 Check-in', d: 'Sarah Jenkins', s: 'Confirmed', time: '2h ago' },
-                   { t: 'Maintenance Task #401', d: 'Plumbing Repair B-Block', s: 'In Progress', time: '4h ago' },
-                   { t: 'Inventory Delivery', d: 'Stationery & Supplies', s: 'Logged', time: '1d ago' },
+                   { t: 'Room 102 Check-in', d: 'Sarah Jenkins', s: 'Confirmed', time: '2h ago', icon: CheckCircle2, color: 'text-emerald-500' },
+                   { t: 'Work Order #401', d: 'Plumbing Repair B-Block', s: 'In Progress', time: '4h ago', icon: Wrench, color: 'text-amber-500' },
+                   { t: 'Stock Intake', d: 'Stationery & Culinary Supplies', s: 'Logged', time: '1d ago', icon: Box, color: 'text-blue-500' },
+                   { t: 'Digital Key Issue', d: 'Room D-205 (New Resident)', s: 'Activated', time: '1d ago', icon: Key, color: 'text-indigo-500' },
                  ].map((log, i) => (
-                   <div key={i} className="p-4 flex items-center justify-between hover:bg-muted/20 dark:hover:bg-blue-500/10 transition-all cursor-pointer">
-                      <div className="space-y-0.5">
-                         <p className="text-xs font-bold text-foreground">{log.t}</p>
-                         <p className="text-[11px] text-muted-foreground font-medium">{log.d}</p>
+                   <div key={i} className="p-5 flex items-center justify-between hover:bg-muted/30 transition-all cursor-pointer group">
+                      <div className="flex items-center gap-4">
+                         <div className={cn("w-10 h-10 rounded-xl bg-muted/50 flex items-center justify-center group-hover:bg-white transition-colors", log.color)}>
+                            <log.icon className="w-5 h-5" />
+                         </div>
+                         <div className="space-y-0.5">
+                            <p className="text-sm font-black text-foreground group-hover:text-primary transition-colors">{log.t}</p>
+                            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider italic">{log.d}</p>
+                         </div>
                       </div>
-                      <div className="text-right">
-                         <Badge variant="outline" className="text-[8px] font-bold uppercase tracking-widest bg-muted dark:bg-blue-900/40 border-none h-5 px-2">{log.s}</Badge>
-                         <p className="text-[9px] text-muted-foreground/30 font-bold uppercase mt-1">{log.time}</p>
+                      <div className="text-right shrink-0">
+                         <Badge variant="outline" className="text-[8px] font-black uppercase tracking-[0.15em] bg-muted/50 border-none h-5 px-2">{log.s}</Badge>
+                         <p className="text-[9px] text-muted-foreground/30 font-black uppercase mt-1">{log.time}</p>
                       </div>
                    </div>
                  ))}
               </div>
-              <Button variant="ghost" className="w-full text-[10px] font-bold uppercase tracking-widest text-muted-foreground h-11 hover:text-primary dark:hover:bg-blue-500/5">
-                 View Historical Records
+              <Button variant="ghost" className="w-full text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground h-12 hover:text-primary hover:bg-primary/5 transition-all">
+                 Full Archive Registry <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
            </Card>
 
-           <div className="space-y-5">
-              <Card className="p-6 border-border dark:border-blue-500/10 shadow-sm rounded-2xl bg-card dark:bg-blue-950/20 backdrop-blur-3xl">
-                 <h3 className="text-[10px] font-bold uppercase tracking-[0.25em] text-foreground mb-6 pb-4 border-b border-border dark:border-blue-500/10">Financial Alerts</h3>
-                 <div className="space-y-4">
+           {/* Secondary Intelligence Column */}
+           <div className="lg:col-span-4 space-y-6">
+              {/* Financial Snap-Audit */}
+              <Card className="p-6 border-border/40 bg-card rounded-[2rem] border shadow-sm">
+                 <div className="flex items-center justify-between mb-8 pb-4 border-b border-border/10">
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-foreground">Fiscal Health</h3>
+                    <TrendingUp className="w-4 h-4 text-emerald-500" />
+                 </div>
+                 <div className="space-y-5">
                     {[
-                      { t: 'Pending Payments', v: '£1,420', c: 'text-amber-500' },
-                      { t: 'Overdue Rent', v: '2 Units', c: 'text-rose-500' },
-                      { t: 'Next Payout', v: 'Oct 1st', c: 'text-emerald-500' },
+                      { t: 'Pending Revenue', v: '£1,420', c: 'text-amber-500', sub: 'Meal Fees' },
+                      { t: 'Over Duedate', v: '2 Units', c: 'text-rose-500', sub: 'Room Fees' },
+                      { t: 'Completed Total', v: '£72,850', c: 'text-emerald-500', sub: 'Current Month' },
                     ].map((alert, i) => (
-                      <div key={i} className="flex justify-between items-center group cursor-pointer">
-                         <span className="text-[10px] font-bold uppercase text-muted-foreground">{alert.t}</span>
-                         <span className={cn("text-xs font-black", alert.c)}>{alert.v}</span>
+                      <div key={i} className="flex justify-between items-center group cursor-pointer border-b border-border/5 pb-4 last:border-0 last:pb-0">
+                         <div className="space-y-0.5">
+                            <span className="text-[10px] font-black uppercase text-muted-foreground/60 tracking-wider leading-none block">{alert.t}</span>
+                            <span className="text-[9px] font-bold text-muted-foreground/30 uppercase italic">{alert.sub}</span>
+                         </div>
+                         <span className={cn("text-sm font-black tracking-tight", alert.c)}>{alert.v}</span>
                       </div>
                     ))}
                  </div>
               </Card>
 
-              <Card className="p-6 border border-primary/10 dark:border-blue-500/20 shadow-sm rounded-2xl bg-primary/5 dark:bg-blue-900/10 cursor-pointer hover:bg-primary/10 dark:hover:bg-blue-900/20 transition-all">
-                 <div className="flex items-center justify-between">
+              {/* Support & Hub Contact */}
+              <Card className="p-6 bg-primary/5 border border-primary/10 rounded-[2rem] overflow-hidden relative group cursor-pointer hover:bg-primary/10 transition-all">
+                 <div className="relative z-10 flex items-center justify-between">
                     <div className="space-y-1">
-                       <h4 className="text-sm font-black uppercase tracking-widest text-foreground">Support Node</h4>
-                       <p className="text-[9px] font-bold text-muted-foreground/40 uppercase">Assigned Manager: Alex</p>
+                       <h4 className="text-lg font-black uppercase tracking-tight text-foreground italic leading-none">Support <br />Desk</h4>
+                       <p className="text-[10px] font-bold text-primary uppercase tracking-[0.2em] italic">Assigned: Alex M.</p>
                     </div>
-                    <div className="w-8 h-8 rounded-full bg-muted/30 dark:bg-blue-500/10 flex items-center justify-center text-muted-foreground">
-                       <Phone className="w-3.5 h-3.5" />
+                    <div className="w-12 h-12 rounded-xl bg-white shadow-xl flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                       <Phone className="w-5 h-5" />
                     </div>
+                 </div>
+                 <Shield className="absolute bottom-0 right-0 w-32 h-32 text-primary/5 translate-x-8 translate-y-8 -rotate-12 pointer-events-none" />
+              </Card>
+
+              {/* Maintenance Snapshot */}
+              <Card className="p-6 border-border/40 bg-card rounded-[2rem] border shadow-sm">
+                 <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-foreground leading-none">Facility Radar</h3>
+                    <Scan className="w-4 h-4 text-primary animate-pulse" />
+                 </div>
+                 <div className="space-y-4">
+                    <div className="flex justify-between items-end">
+                       <p className="text-[9px] font-black uppercase text-muted-foreground/40 tracking-widest">SLA Compliance</p>
+                       <p className="text-xl font-black text-foreground">98.2%</p>
+                    </div>
+                    <div className="h-2 w-full bg-muted rounded-full overflow-hidden shadow-inner p-0.5">
+                       <motion.div 
+                         initial={{ width: 0 }}
+                         animate={{ width: '98.2%' }}
+                         className="h-full bg-primary rounded-full shadow-lg shadow-primary/20" 
+                       />
+                    </div>
+                    <p className="text-[10px] font-semibold text-muted-foreground/60 leading-tight italic">
+                       System is operating within <span className="text-foreground font-black not-italic uppercase tracking-tighter">Optimal</span> parameters.
+                    </p>
                  </div>
               </Card>
            </div>
@@ -413,7 +491,7 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
     );
   }
 
-  // --- Chef Dashboard (Industrial Realism) ---
+  // --- Chef Dashboard (Industrial Precision & Professionalism) ---
   if (isChef) {
      const nextMeal = { type: 'Lunch', menu: 'Grilled Chicken Caesar', countdown: '1h 22m', progress: 45 };
      const alerts = [
@@ -423,174 +501,166 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
 
      return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-700 pb-12">
-           {/* 1. Industrial Header */}
-           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-1">
+           {/* 1. Industrial Precision Header */}
+           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-1">
               <div className="space-y-1">
-                 <div className="flex items-center gap-2 mb-2">
-                    <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Live Kitchen Environment</span>
+                 <div className="flex items-center gap-2 mb-1">
+                    <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                    <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-primary">Live Kitchen Ops</span>
                  </div>
-                 <h1 className="text-4xl font-black tracking-tight text-foreground uppercase italic underline decoration-primary/30 underline-offset-8">
-                    Kitchen <span className="text-muted-foreground/30 font-medium not-italic no-underline">Ops</span>
+                 <h1 className="text-3xl font-bold tracking-tight text-foreground italic">
+                    Culinary <span className="text-muted-foreground/30 font-medium not-italic uppercase">Command</span>
                  </h1>
               </div>
               <div className="flex items-center gap-2">
-                 <Button variant="outline" className="h-10 rounded-xl px-4 border-border/60 dark:border-blue-500/20 text-[10px] font-black uppercase tracking-widest bg-card dark:bg-blue-950/20 backdrop-blur-md">
-                    Daily Report
+                 <Button variant="outline" className="h-9 rounded-lg px-4 border-border dark:border-blue-500/10 text-[10px] font-bold uppercase tracking-widest bg-card/50 backdrop-blur-md">
+                    Daily Audit
                  </Button>
-                 <Button className="h-10 rounded-xl px-6 bg-primary text-white text-[10px] font-black uppercase tracking-widest shadow-xl shadow-primary/20">
-                    <Plus className="w-4 h-4 mr-2" /> Start New Service
+                 <Button className="h-9 rounded-lg px-6 bg-primary text-white text-[10px] font-bold uppercase tracking-widest shadow-sm shadow-primary/20 border-none transition-all hover:translate-y-[-1px]">
+                    <Plus className="w-3.5 h-3.5 mr-2" /> New Service
                  </Button>
               </div>
            </div>
            
-           {/* 2. High-Density Stat Grid */}
+           {/* 2. Refined Stat Grid */}
            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="group p-6 rounded-[2rem] border border-border/40 dark:border-blue-500/10 bg-card dark:bg-blue-950/20 backdrop-blur-3xl hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500">
+              <div className="group p-5 rounded-2xl border border-border/50 bg-card shadow-sm hover:shadow-md transition-all">
                  <div className="flex justify-between items-start mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all shadow-inner">
-                       <UtensilsCrossed className="w-5 h-5" />
+                    <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                       <UtensilsCrossed className="w-4.5 h-4.5" />
                     </div>
-                    <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest border-emerald-500/20 text-emerald-500 bg-emerald-500/5">+12.4%</Badge>
+                    <Badge variant="outline" className="text-[8px] font-bold uppercase tracking-widest border-emerald-500/20 text-emerald-500 bg-emerald-500/5">+12.4%</Badge>
                  </div>
-                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">Portions Remaining</p>
-                 <h3 className="text-3xl font-black mt-1">420 <span className="text-sm text-muted-foreground/30 font-bold ml-1">UNITS</span></h3>
+                 <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Portions Remaining</p>
+                 <h3 className="text-2xl font-bold mt-0.5">420 <span className="text-xs text-muted-foreground/30 font-medium ml-1">UNITS</span></h3>
               </div>
-              <div className="group p-6 rounded-[2rem] border border-border/40 dark:border-blue-500/10 bg-card dark:bg-blue-950/20 backdrop-blur-3xl hover:shadow-2xl hover:shadow-blue-500/5 transition-all duration-500">
+              <div className="group p-5 rounded-2xl border border-border/50 bg-card shadow-sm hover:shadow-md transition-all">
                  <div className="flex justify-between items-start mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-all shadow-inner">
-                       <Users className="w-5 h-5" />
+                    <div className="w-9 h-9 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-all">
+                       <Users className="w-4.5 h-4.5" />
                     </div>
-                    <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest border-border/40 dark:border-blue-500/20 text-muted-foreground">Normal</Badge>
+                    <Badge variant="outline" className="text-[8px] font-bold uppercase tracking-widest border-border/40 text-muted-foreground">Active</Badge>
                  </div>
-                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">Kitchen Staff</p>
-                 <h3 className="text-3xl font-black mt-1">12 <span className="text-sm text-muted-foreground/30 font-bold ml-1">ON-SITE</span></h3>
+                 <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">On-Site Staff</p>
+                 <h3 className="text-2xl font-bold mt-0.5">12 <span className="text-xs text-muted-foreground/30 font-medium ml-1">CHETS</span></h3>
               </div>
-              <div className="group p-6 rounded-[2rem] border border-border/40 dark:border-blue-500/10 bg-card dark:bg-blue-950/20 backdrop-blur-3xl hover:shadow-2xl hover:shadow-orange-500/5 transition-all duration-500">
+              <div className="group p-5 rounded-2xl border border-border/50 bg-card shadow-sm hover:shadow-md transition-all">
                  <div className="flex justify-between items-start mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500 group-hover:bg-orange-500 group-hover:text-white transition-all shadow-inner">
-                       <AlertCircle className="w-5 h-5" />
+                    <div className="w-9 h-9 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500 group-hover:bg-orange-500 group-hover:text-white transition-all">
+                       <AlertCircle className="w-4.5 h-4.5" />
                     </div>
-                    <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest border-rose-500/20 text-rose-500 bg-rose-500/5">Critical</Badge>
+                    <Badge variant="outline" className="text-[8px] font-bold uppercase tracking-widest border-rose-500/20 text-rose-500 bg-rose-500/5">Critical</Badge>
                  </div>
-                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">Shortage Alerts</p>
-                 <h3 className="text-3xl font-black mt-1">3 <span className="text-sm text-muted-foreground/30 font-bold ml-1">ITEMS</span></h3>
+                 <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Shortage Alerts</p>
+                 <h3 className="text-2xl font-bold mt-0.5">3 <span className="text-xs text-muted-foreground/30 font-medium ml-1">ITEMS</span></h3>
               </div>
-              <div className="group p-6 rounded-[2rem] border border-border/40 dark:border-blue-500/10 bg-card dark:bg-blue-950/20 backdrop-blur-3xl hover:shadow-2xl hover:shadow-emerald-500/5 transition-all duration-500">
+              <div className="group p-5 rounded-2xl border border-border/50 bg-card shadow-sm hover:shadow-md transition-all">
                  <div className="flex justify-between items-start mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white transition-all shadow-inner">
-                       <ShieldCheck className="w-5 h-5" />
+                    <div className="w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white transition-all">
+                       <ShieldCheck className="w-4.5 h-4.5" />
                     </div>
-                    <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest border-border/40 dark:border-blue-500/20 text-muted-foreground">Certified</Badge>
+                    <Badge variant="outline" className="text-[8px] font-bold uppercase tracking-widest border-border/40 text-muted-foreground">Optimal</Badge>
                  </div>
-                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">Hygiene Multiplier</p>
-                 <h3 className="text-3xl font-black mt-1">5.0 <span className="text-sm text-muted-foreground/30 font-bold ml-1">RATING</span></h3>
+                 <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Hygiene Index</p>
+                 <h3 className="text-2xl font-bold mt-0.5">5.0 <span className="text-xs text-muted-foreground/30 font-medium ml-1">RATING</span></h3>
               </div>
            </div>
 
-           {/* 3. Operational Grid */}
-           <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
-              {/* Active Service Status */}
-              <Card className="xl:col-span-8 p-10 border-border/40 dark:border-blue-500/10 bg-card dark:bg-blue-950/20 backdrop-blur-3xl rounded-[3rem] shadow-sm relative overflow-hidden group">
-                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 dark:bg-blue-500/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl pointer-events-none group-hover:bg-primary/10 transition-all duration-700" />
-                 <div className="relative z-10 space-y-10">
+           {/* 3. Refined Operational Grid */}
+           <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+              <Card className="xl:col-span-8 p-8 border-border/50 bg-card rounded-2xl shadow-sm relative overflow-hidden group">
+                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl pointer-events-none" />
+                 <div className="relative z-10 space-y-8">
                     <div className="flex justify-between items-center">
                        <div className="space-y-1">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-primary">In Progress</p>
-                          <h3 className="text-3xl font-black italic text-foreground">{nextMeal.type} Cycle <span className="text-muted-foreground/30 not-italic font-medium">— Service Active</span></h3>
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-primary">Service in Progress</p>
+                          <h3 className="text-2xl font-bold italic text-foreground">{nextMeal.type} Cycle <span className="text-muted-foreground/30 not-italic font-medium">— Service Active</span></h3>
                        </div>
                        <div className="text-right">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Estimated Finish</p>
-                          <p className="text-2xl font-black text-foreground">{nextMeal.countdown}</p>
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Est. Finish</p>
+                          <p className="text-xl font-bold text-foreground">{nextMeal.countdown}</p>
                        </div>
                     </div>
 
-                    <div className="space-y-6">
+                    <div className="space-y-4">
                        <div className="flex justify-between items-end">
-                          <div className="space-y-1 text-left">
-                             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-4">Flow Progress</p>
-                             <p className="text-5xl font-black text-foreground">{nextMeal.progress}%</p>
+                          <div className="space-y-1">
+                             <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Flow Progress</p>
+                             <p className="text-4xl font-bold text-foreground">{nextMeal.progress}%</p>
                           </div>
-                          <div className="space-y-1 text-right">
+                          <div className="text-right">
                              <p className="text-sm font-bold text-foreground">{nextMeal.menu}</p>
-                             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50 italic underline decoration-primary/50">Current Menu Signature</p>
+                             <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/40 italic">Signature Dish</p>
                           </div>
                        </div>
-                       <div className="h-4 w-full bg-muted/30 dark:bg-blue-900/20 rounded-full overflow-hidden border border-border/10 dark:border-blue-500/10 p-1">
+                       <div className="h-2.5 w-full bg-muted/30 rounded-full overflow-hidden p-0.5 border border-border/10">
                          <motion.div 
                            initial={{ width: 0 }}
                            animate={{ width: `${nextMeal.progress}%` }}
                            transition={{ duration: 1.5, ease: "circOut" }}
-                           className="h-full bg-primary rounded-full shadow-[0_0_20px_rgba(37,99,235,0.4)]"
+                           className="h-full bg-primary rounded-full shadow-[0_0_15px_rgba(37,99,235,0.3)]"
                          />
                        </div>
                     </div>
 
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 pt-6 border-t border-border/10 dark:border-blue-500/10">
-                       <div className="space-y-2">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Vegetarian</p>
-                          <p className="text-xl font-bold text-foreground">42 <span className="text-[10px] text-muted-foreground">units</span></p>
-                       </div>
-                       <div className="space-y-2">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Vegan</p>
-                          <p className="text-xl font-bold text-foreground">12 <span className="text-[10px] text-muted-foreground">units</span></p>
-                       </div>
-                       <div className="space-y-2 text-rose-500">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-rose-500/60">Allergies</p>
-                          <p className="text-xl font-bold">3 <span className="text-[10px] opacity-60">alerts</span></p>
-                       </div>
-                       <div className="space-y-2">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Energy Mix</p>
-                          <p className="text-xl font-bold text-foreground">High <span className="text-[10px] text-muted-foreground">output</span></p>
-                       </div>
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 pt-6 border-t border-border/10">
+                       {[
+                          { l: 'Vegetarian', v: '42 units' },
+                          { l: 'Vegan', v: '12 units' },
+                          { l: 'Allergies', v: '3 alerts', c: 'text-rose-500' },
+                          { l: 'Energy Mix', v: 'High load' },
+                       ].map((s, i) => (
+                          <div key={i} className="space-y-1">
+                             <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/50">{s.l}</p>
+                             <p className={cn("text-sm font-bold text-foreground", s.c)}>{s.v}</p>
+                          </div>
+                       ))}
                     </div>
                  </div>
               </Card>
 
-              {/* High-Priority Intelligence */}
               <div className="xl:col-span-4 space-y-6">
-                 <Card className="p-8 rounded-[3rem] border-border/40 dark:border-blue-500/10 bg-card dark:bg-blue-950/20 backdrop-blur-3xl space-y-6 shadow-sm">
-                    <h4 className="text-[10px] font-black uppercase tracking-widest text-foreground flex items-center gap-2">
-                       <Sparkles className="w-4 h-4 text-primary" /> Active Alerts
+                 <Card className="p-6 rounded-2xl border-border/50 bg-card space-y-5 shadow-sm">
+                    <h4 className="text-[10px] font-bold uppercase tracking-widest text-foreground flex items-center gap-2">
+                       <Sparkles className="w-4 h-4 text-primary" /> Incident Intelligence
                     </h4>
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                        {alerts.map(alert => (
                          <div key={alert.id} className={cn(
-                           "p-4 rounded-2xl border transition-all",
+                           "p-3 rounded-xl border transition-all",
                            alert.critical 
                              ? "bg-rose-500/5 border-rose-500/20" 
-                             : "bg-primary/5 border-primary/20 dark:bg-blue-500/5 dark:border-blue-500/20"
+                             : "bg-primary/5 border-primary/20"
                          )}>
-                            <div className="flex gap-4">
+                            <div className="flex gap-3 items-start">
                                <div className={cn(
-                                 "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm",
+                                 "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 shadow-sm",
                                  alert.critical ? "bg-rose-500 text-white" : "bg-primary text-white"
                                )}>
-                                  {alert.critical ? <AlertCircle className="w-5 h-5" /> : <Activity className="w-5 h-5" />}
+                                  {alert.critical ? <AlertCircle className="w-4 h-4" /> : <Activity className="w-4 h-4" />}
                                </div>
-                               <p className={cn("text-xs font-bold leading-relaxed", alert.critical ? "text-rose-600 dark:text-rose-400" : "text-primary dark:text-blue-400")}>
+                               <p className={cn("text-[11px] font-bold leading-relaxed", alert.critical ? "text-rose-600 dark:text-rose-400" : "text-primary dark:text-blue-400")}>
                                   {alert.text}
-                               </p>
+                                </p>
                             </div>
                          </div>
                        ))}
                     </div>
                  </Card>
 
-                 <Card className="p-8 bg-primary/5 dark:bg-blue-900/10 border border-primary/10 dark:border-blue-500/20 rounded-[3rem] relative overflow-hidden group">
-                    <div className="relative z-10 space-y-6">
-                       <div className="space-y-1">
-                          <p className="text-[9px] font-black uppercase tracking-widest text-primary/80">Strategy Node</p>
-                          <h4 className="text-xl font-black text-foreground italic">Plan Next Cycle</h4>
+                 <Card className="p-6 bg-primary/5 border border-primary/10 rounded-2xl relative overflow-hidden group">
+                    <div className="relative z-10 space-y-4">
+                       <div className="space-y-0.5">
+                          <p className="text-[9px] font-bold uppercase tracking-widest text-primary/80">Inventory Strategy</p>
+                          <h4 className="text-lg font-bold text-foreground italic">Plan Next Cycle</h4>
                        </div>
-                       <p className="text-xs text-muted-foreground/60 leading-relaxed font-medium">
-                          Review inventory levels and resident sentiment audits to optimize upcoming week 14 menus.
+                       <p className="text-[11px] text-muted-foreground leading-relaxed font-medium">
+                          Review inventory and resident sentiment to optimize week 14 menus.
                        </p>
-                       <Button className="w-full h-12 bg-primary text-white font-bold text-[10px] uppercase tracking-widest rounded-2xl shadow-xl shadow-primary/20 hover:scale-[1.02] transition-all">
-                          Open Menu Designer
+                       <Button className="w-full h-10 bg-primary text-white font-bold text-[10px] uppercase tracking-widest rounded-lg shadow-sm transition-all hover:translate-y-[-1px] border-none">
+                          Menu Designer
                        </Button>
                     </div>
-                    <Plus className="absolute bottom-0 right-0 w-48 h-48 text-white/5 translate-x-12 translate-y-12 rotate-45 pointer-events-none" />
                  </Card>
               </div>
            </div>
@@ -598,207 +668,165 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
      );
   }
 
-  // --- Tenant Dashboard (Lifestyle & Concierge Experience) ---
+
+  // --- Tenant Dashboard (Professional & Refined Experience) ---
   if (isTenant) {
      return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-700 pb-12">
-           {/* 1. Welcome Hero: High-Impact Lifestyle Greeting */}
-           <div className="relative overflow-hidden rounded-[3rem] bg-gradient-to-br from-blue-950 via-slate-900 to-black p-10 lg:p-14 text-white shadow-2xl group border border-white/5">
-              <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/30 transition-all duration-1000" />
-              <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
-              
-              <div className="relative z-10 space-y-10">
-                 <div className="space-y-4">
-                    <div className="flex flex-wrap items-center gap-3">
-                       <Badge className="bg-white/10 text-white border-white/20 text-[10px] font-black uppercase tracking-widest backdrop-blur-md px-4 py-1.5 rounded-full">
-                          Bloomsbury Hall Resident
-                       </Badge>
-                       <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-500/20">
-                          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                          <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">Profile Verified</span>
-                       </div>
-                    </div>
-                    <h1 className="text-5xl lg:text-7xl font-black tracking-tighter leading-[0.9] drop-shadow-2xl">
-                       Good Morning, <br />
-                       <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-white/40">Sarah Johnson.</span>
-                    </h1>
-                    <p className="text-lg lg:text-xl font-medium text-white/50 max-w-2xl leading-relaxed">
-                       Your stay is <span className="text-white font-bold">142 days</span> in. Everything in Room <span className="text-white font-bold">A-402</span> is operating at optimal levels.
-                    </p>
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-700 pb-12">
+           {/* 1. Refined Header: Sophisticated Greeting */}
+           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-1">
+              <div className="space-y-1">
+                 <div className="flex items-center gap-2 mb-1">
+                    <Badge variant="outline" className="text-[10px] font-bold text-primary border-primary/20 bg-primary/5 px-2 py-0 h-5">Bloomsbury Hall</Badge>
+                    <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">Room A-402</span>
                  </div>
-                 
-                 <div className="flex flex-wrap gap-4">
-                    <Button className="h-14 px-10 rounded-2xl bg-white text-black dark:bg-blue-600 dark:text-white font-black uppercase tracking-widest hover:scale-[1.05] active:scale-95 transition-all text-xs shadow-2xl shadow-white/5 group/btn border-none">
-                       <ShieldCheck className="w-4 h-4 mr-2 group-hover:text-primary dark:group-hover:text-white transition-colors" /> Digital Key Access
-                    </Button>
-                    <Button variant="outline" className="h-14 px-8 rounded-2xl border-white/20 text-white hover:bg-white/10 font-black uppercase tracking-widest text-xs transition-all backdrop-blur-sm shadow-xl">
-                       <UtensilsCrossed className="w-4 h-4 mr-2 opacity-60" /> Book Today's Menu
-                    </Button>
-                 </div>
+                 <h1 className="text-2xl font-bold tracking-tight text-foreground">
+                    Welcome back, <span className="text-primary/80">Sarah Johnson</span>
+                 </h1>
+                 <p className="text-xs text-muted-foreground font-medium">Your residency is currently in good standing. All systems operational.</p>
               </div>
-              <Sparkles className="absolute bottom-10 right-10 w-24 h-24 text-white/5 animate-pulse rotate-12" />
+              <div className="flex items-center gap-2">
+                 <Button variant="outline" className="h-9 px-4 rounded-lg border-border dark:border-blue-500/10 text-[10px] font-bold uppercase tracking-widest gap-2 hover:bg-muted/50 transition-all">
+                    <ShieldCheck className="w-3.5 h-3.5" /> Digital Key
+                 </Button>
+                 <Button className="h-9 px-4 rounded-lg bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-widest gap-2 shadow-sm shadow-primary/20 hover:translate-y-[-1px] transition-all">
+                    <Plus className="w-3.5 h-3.5" /> New Request
+                 </Button>
+              </div>
            </div>
 
-           <div className="grid lg:grid-cols-12 gap-8">
-              {/* 2. Smart Room Intelligence: IoT Visualizer */}
-              <Card className="lg:col-span-8 p-10 rounded-[3rem] border-white/20 dark:border-blue-500/10 bg-card/40 dark:bg-blue-950/20 backdrop-blur-3xl space-y-12 relative overflow-hidden shadow-sm group transition-all hover:shadow-2xl hover:shadow-primary/5">
-                 <div className="flex items-center justify-between border-b border-border/10 dark:border-blue-500/10 pb-8">
-                    <div className="flex items-center gap-3">
-                       <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20 dark:border-blue-500/20 shadow-inner">
-                          <Cpu className="w-5 h-5" />
-                       </div>
-                       <div>
-                          <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-foreground">Room A-402 Intelligence</h3>
-                          <p className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-widest mt-0.5">Real-time IoT Telemetry</p>
-                       </div>
-                    </div>
-                    <Badge className="bg-emerald-500/10 text-emerald-500 border-none px-4 py-1.5 text-[9px] font-black uppercase tracking-widest rounded-full shadow-inner">
-                       Active Node
-                    </Badge>
-                 </div>
-                 
-                 <div className="grid sm:grid-cols-3 gap-12">
-                    <div className="space-y-5">
-                       <div className="flex items-center gap-2 text-muted-foreground/60">
-                          <Zap className="w-4 h-4" />
-                          <p className="text-[10px] font-black uppercase tracking-widest">Climate Control</p>
-                       </div>
-                       <div className="flex items-end gap-2">
-                          <span className="text-6xl font-black tracking-tighter text-foreground">21°</span>
-                          <span className="text-sm font-bold text-emerald-500 pb-3 uppercase tracking-widest">Optimal</span>
-                       </div>
-                       <div className="h-1.5 w-full bg-muted/40 dark:bg-blue-900/40 rounded-full overflow-hidden shadow-inner">
-                          <motion.div initial={{ width: 0 }} animate={{ width: '65%' }} transition={{ duration: 1.5, ease: "circOut" }} className="h-full bg-primary shadow-[0_0_15px_rgba(99,102,241,0.5)]" />
-                       </div>
-                    </div>
-                    <div className="space-y-5">
-                       <div className="flex items-center gap-2 text-muted-foreground/60">
-                          <Activity className="w-4 h-4" />
-                          <p className="text-[10px] font-black uppercase tracking-widest">Bandwidth</p>
-                       </div>
-                       <div className="flex items-end gap-2">
-                          <span className="text-6xl font-black tracking-tighter text-foreground">942</span>
-                          <span className="text-sm font-bold text-muted-foreground/30 pb-3 uppercase tracking-widest">Mbps</span>
-                       </div>
-                       <div className="flex gap-1.5 h-1.5">
-                          {[1,2,3,4,5].map(i => <div key={i} className={cn("flex-1 rounded-full shadow-inner", i <= 4 ? "bg-primary" : "bg-muted/30 dark:bg-blue-900/20")} />)}
-                       </div>
-                    </div>
-                    <div className="space-y-5">
-                       <div className="flex items-center gap-2 text-muted-foreground/60">
-                          <Shield className="w-4 h-4" />
-                          <p className="text-[10px] font-black uppercase tracking-widest">Security State</p>
-                       </div>
-                       <div className="flex items-center gap-4 py-1">
-                          <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 border border-emerald-500/20 shadow-lg shadow-emerald-500/10">
-                             <ShieldCheck className="w-7 h-7" />
-                          </div>
-                          <div>
-                             <p className="text-2xl font-black tracking-tight text-foreground uppercase">Secured</p>
-                             <p className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest">Encrypted Entry</p>
-                          </div>
-                       </div>
-                       <p className="text-[9px] font-bold text-muted-foreground/30 uppercase tracking-[0.2em] border-t border-border/10 dark:border-blue-500/10 pt-4">Last Entry: 08:42 AM · 2FA Active</p>
-                    </div>
-                 </div>
+           {/* 2. Key Metrics Row: Compact & Informative */}
+           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <StatCard tier="pro" label="Next Rent Due" value="£1,240" trend="neutral" change="Due Oct 1" icon={CreditCard} />
+              <StatCard tier="pro" label="Room Temperature" value="21.4°C" trend="up" change="+0.2°" icon={Zap} />
+              <StatCard tier="pro" label="WiFi Bandwidth" value="942 Mbps" trend="up" change="Optimal" icon={Activity} />
+              <StatCard tier="pro" label="Meal Credits" value="18" trend="neutral" change="This Month" icon={UtensilsCrossed} />
+           </div>
 
-                 <div className="p-8 rounded-[2.5rem] bg-gradient-to-br from-primary/5 via-transparent to-transparent dark:from-blue-500/10 border border-primary/10 dark:border-blue-500/20 flex flex-col md:flex-row items-center justify-between gap-8 group/eco shadow-inner">
-                    <div className="flex items-center gap-8 text-center md:text-left">
-                       <div className="w-20 h-20 rounded-[2rem] bg-card dark:bg-blue-900/40 border border-white/20 dark:border-blue-500/20 shadow-2xl flex items-center justify-center text-primary group-hover/eco:rotate-12 transition-transform duration-700">
-                          <Sparkles className="w-10 h-10" />
+           <div className="grid lg:grid-cols-12 gap-6">
+              {/* 3. Main Operational Column */}
+              <div className="lg:col-span-8 space-y-6">
+                 {/* Recent Activity / Status Board */}
+                 <Card className="border-border dark:border-blue-500/10 shadow-sm rounded-2xl bg-card dark:bg-blue-950/20 backdrop-blur-3xl overflow-hidden border">
+                    <div className="p-4 border-b border-border dark:border-blue-500/10 flex items-center justify-between bg-muted/10 dark:bg-blue-500/5">
+                       <div className="flex items-center gap-2">
+                          <HistoryIcon className="w-4 h-4 text-primary" />
+                          <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground">Recent Activity & Notices</h3>
                        </div>
-                       <div>
-                          <h4 className="text-xl font-black tracking-tight text-foreground">Eco-Champion Ranking</h4>
-                          <p className="text-sm font-medium text-muted-foreground leading-relaxed">Your carbon footprint is <span className="text-emerald-500 font-bold">18% lower</span> than the building average. Keep it up!</p>
-                       </div>
+                       <Badge variant="outline" className="text-[9px] font-bold text-muted-foreground/40 border-none px-0">Live Updates</Badge>
                     </div>
-                    <Button variant="ghost" className="h-12 rounded-xl px-6 font-black text-[10px] uppercase tracking-[0.2em] text-primary dark:text-blue-400 hover:bg-primary/5 dark:hover:bg-blue-500/10 transition-all">
-                       View Sustainability Ledger <ChevronRight className="w-4 h-4 ml-2" />
-                    </Button>
-                 </div>
-              </Card>
-
-              {/* 3. Culinary & Concierge Sidebar */}
-              <div className="lg:col-span-4 space-y-8">
-                 <Card className="p-8 rounded-[3rem] border-white/20 dark:border-blue-500/10 bg-card/40 dark:bg-blue-950/20 backdrop-blur-3xl space-y-8 shadow-sm overflow-hidden relative group">
-                    <div className="flex items-center justify-between border-b border-border/10 dark:border-blue-500/10 pb-6">
-                       <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-foreground flex items-center gap-2">
-                          <UtensilsCrossed className="w-4 h-4 text-primary" /> Dining Node
-                       </h4>
-                       <Badge className="bg-primary/10 text-primary border-none text-[8px] font-black uppercase tracking-widest px-3 py-1">Lunch Cycle</Badge>
+                    <div className="divide-y divide-border dark:divide-blue-500/10">
+                       {[
+                         { t: 'Maintenance Complete', d: 'Room A-402 HVAC Filter replacement.', s: 'Resolved', time: '2h ago', icon: CheckCircle2, color: 'text-emerald-500' },
+                         { t: 'Package Delivered', d: 'Amazon Logistics - Locker #42', s: 'Pending', time: '5h ago', icon: Bell, color: 'text-blue-500' },
+                         { t: 'Rent Invoice Issued', d: 'October 2024 Accommodation Fee', s: 'Unpaid', time: '1d ago', icon: Receipt, color: 'text-amber-500' },
+                         { t: 'Fire Safety Drill', d: 'Scheduled for Tomorrow, 10:00 AM', s: 'Notice', time: '1d ago', icon: Shield, color: 'text-rose-500' },
+                       ].map((item, i) => (
+                         <div key={i} className="p-4 flex items-start gap-4 hover:bg-muted/20 dark:hover:bg-blue-500/10 transition-all cursor-pointer group">
+                            <div className={cn("mt-0.5 p-2 rounded-lg bg-muted/50 dark:bg-blue-500/10 group-hover:bg-white dark:group-hover:bg-blue-500/20 transition-colors", item.color)}>
+                               <item.icon className="w-4 h-4" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                               <div className="flex items-center justify-between mb-0.5">
+                                  <p className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">{item.t}</p>
+                                  <span className="text-[10px] font-medium text-muted-foreground/40 uppercase">{item.time}</span>
+                               </div>
+                               <p className="text-xs text-muted-foreground line-clamp-1">{item.d}</p>
+                            </div>
+                         </div>
+                       ))}
                     </div>
-                    <div className="space-y-6">
-                       <div className="relative h-40 rounded-2xl overflow-hidden group/img shadow-2xl">
-                          <img src="/gourmet-dining.jpg" className="w-full h-full object-cover transition-transform duration-1000 group-hover/img:scale-110" alt="Lunch" />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                          <div className="absolute bottom-4 left-4 right-4">
-                             <p className="text-[9px] font-black text-primary uppercase tracking-widest mb-1">On the Menu Today</p>
-                             <h4 className="text-lg font-black text-white tracking-tight leading-snug">Miso-Glazed Atlantic Salmon with Ginger Quinoa</h4>
-                          </div>
-                       </div>
-                       <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 italic">
-                          <span className="flex items-center gap-2"><Clock className="w-3.5 h-3.5" /> 12:00 - 14:30</span>
-                          <span className="text-emerald-500">Available</span>
-                       </div>
-                       <Button className="w-full h-14 rounded-2xl bg-foreground text-background dark:bg-blue-600 dark:text-white font-black text-[11px] uppercase tracking-widest hover:scale-[1.02] active:scale-98 transition-all shadow-2xl shadow-black/20 border-none">
-                          Pre-Order Now
+                    <div className="p-3 border-t border-border dark:border-blue-500/10 bg-muted/5">
+                       <Button variant="ghost" className="w-full text-[10px] font-bold uppercase tracking-widest text-muted-foreground h-9 hover:text-primary transition-all">
+                          View Activity History
                        </Button>
                     </div>
                  </Card>
 
-                 <Card className="p-8 rounded-[3rem] border-white/20 dark:border-blue-500/10 bg-card/40 dark:bg-blue-950/20 backdrop-blur-3xl space-y-8 shadow-sm">
-                    <div className="flex items-center justify-between border-b border-border/10 dark:border-blue-500/10 pb-6">
-                       <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-foreground flex items-center gap-2">
-                          <Calendar className="w-4 h-4 text-primary" /> Social Horizon
+                 {/* Service Quick Access Grid */}
+                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    {[
+                      { l: 'My Ledger', i: Receipt, h: '/dashboard/tenants/invoices' },
+                      { l: 'Concierge', i: Wrench, h: '/dashboard/tenants/services' },
+                      { l: 'Dining Node', i: UtensilsCrossed, h: '/dashboard/tenants/meals' },
+                      { l: 'Support', i: MessageSquare, h: '/dashboard/tenants/services' },
+                    ].map((link, i) => (
+                      <Link key={i} href={link.h}>
+                         <Card className="p-4 flex flex-col items-center justify-center gap-3 border-border dark:border-blue-500/10 bg-card hover:bg-primary/5 hover:border-primary/20 dark:hover:bg-blue-500/10 transition-all cursor-pointer text-center group">
+                            <div className="w-10 h-10 rounded-xl bg-muted dark:bg-blue-500/10 flex items-center justify-center text-muted-foreground group-hover:text-primary group-hover:bg-white dark:group-hover:bg-blue-500/20 transition-all shadow-sm">
+                               <link.i className="w-5 h-5" />
+                            </div>
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground group-hover:text-foreground transition-colors">{link.l}</span>
+                         </Card>
+                      </Link>
+                    ))}
+                 </div>
+              </div>
+
+              {/* 4. Secondary Column (Sider) */}
+              <div className="lg:col-span-4 space-y-6">
+                 {/* Today's Featured Menu */}
+                 <Card className="border-border dark:border-blue-500/10 shadow-sm rounded-2xl bg-card dark:bg-blue-950/20 backdrop-blur-3xl overflow-hidden border">
+                    <div className="p-4 border-b border-border dark:border-blue-500/10 flex items-center justify-between">
+                       <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground flex items-center gap-2">
+                          <UtensilsCrossed className="w-4 h-4 text-primary" /> Today's Menu
                        </h4>
-                       <Button variant="ghost" size="sm" className="h-6 text-[9px] font-black uppercase tracking-widest text-muted-foreground p-0 hover:text-primary">All Events</Button>
+                       <Badge variant="outline" className="text-[8px] font-black bg-primary/5 text-primary border-primary/20">Chef's Special</Badge>
                     </div>
-                    <div className="space-y-4">
+                    <div className="relative aspect-[16/9] overflow-hidden group/img">
+                       <img src="/gourmet-dining.jpg" className="w-full h-full object-cover transition-transform duration-700 group-hover/img:scale-105" alt="Lunch" />
+                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                       <div className="absolute bottom-3 left-3 right-3">
+                          <p className="text-[9px] font-bold text-primary uppercase tracking-widest mb-0.5">Signature Lunch</p>
+                          <h4 className="text-sm font-bold text-white tracking-tight leading-tight">Miso-Glazed Atlantic Salmon with Quinoa</h4>
+                       </div>
+                    </div>
+                    <div className="p-4 space-y-3">
+                       <div className="flex items-center justify-between text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                          <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> 12:00 - 14:30</span>
+                          <span className="text-emerald-500 flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5" /> Available</span>
+                       </div>
+                       <Button className="w-full h-9 rounded-lg bg-primary text-primary-foreground font-bold text-[10px] uppercase tracking-widest hover:translate-y-[-1px] transition-all shadow-sm">
+                          Pre-Order Portions
+                       </Button>
+                    </div>
+                 </Card>
+
+                 {/* Social Horizon / Community */}
+                 <Card className="p-4 border-border dark:border-blue-500/10 shadow-sm rounded-2xl bg-card dark:bg-blue-950/20 backdrop-blur-3xl space-y-4 border">
+                    <div className="flex items-center justify-between pb-2 border-b border-border/50 dark:border-blue-500/10">
+                       <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground flex items-center gap-2">
+                          <Calendar className="w-4 h-4 text-primary" /> Community
+                       </h4>
+                       <span className="text-[9px] font-bold text-muted-foreground/40 uppercase">Upcoming</span>
+                    </div>
+                    <div className="space-y-3">
                        {[
-                         { t: 'Roof Terrace Mixer', d: 'Tonight, 19:00', i: Users, c: 'bg-emerald-500/10 text-emerald-500' },
-                         { t: 'Morning Yoga Flow', d: 'Tomorrow, 08:00', i: Activity, c: 'bg-blue-500/10 text-blue-500' },
-                         { t: 'Career Workshop', d: 'Thu, 15:30', i: Sparkles, c: 'bg-amber-500/10 text-amber-500' },
+                         { t: 'Roof Terrace Mixer', d: 'Tonight, 19:00', i: Users, c: 'text-emerald-500' },
+                         { t: 'Morning Yoga', d: 'Tomorrow, 08:00', i: Activity, c: 'text-blue-500' },
                        ].map((ev, i) => (
-                         <div key={i} className="flex items-center gap-5 group cursor-pointer p-3 hover:bg-white/5 dark:hover:bg-blue-500/10 rounded-2xl transition-all border border-transparent hover:border-border/10 dark:hover:border-blue-500/20 shadow-none hover:shadow-lg">
-                            <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-inner", ev.c)}>
-                               <ev.i className="w-6 h-6" />
+                         <div key={i} className="flex items-center gap-3 group cursor-pointer p-2 hover:bg-muted/30 dark:hover:bg-blue-500/10 rounded-xl transition-all">
+                            <div className={cn("w-9 h-9 rounded-lg bg-muted/50 dark:bg-blue-500/10 flex items-center justify-center shrink-0 group-hover:bg-white dark:group-hover:bg-blue-500/20 transition-colors shadow-sm", ev.c)}>
+                               <ev.i className="w-4.5 h-4.5" />
                             </div>
-                            <div className="min-w-0">
-                               <p className="text-sm font-black text-foreground group-hover:text-primary transition-colors truncate">{ev.t}</p>
-                               <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest mt-0.5">{ev.d}</p>
+                            <div className="min-w-0 flex-1">
+                               <p className="text-xs font-bold text-foreground group-hover:text-primary transition-colors truncate">{ev.t}</p>
+                               <p className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-widest mt-0.5">{ev.d}</p>
                             </div>
-                            <ChevronRight className="w-4 h-4 ml-auto text-muted-foreground/20 group-hover:text-primary transition-all group-hover:translate-x-1" />
+                            <ChevronRight className="w-3 h-3 text-muted-foreground/20 group-hover:text-primary transition-all" />
                          </div>
                        ))}
                     </div>
+                    <Button variant="ghost" className="w-full h-8 rounded-lg text-[9px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors">
+                       Discover More Events
+                    </Button>
                  </Card>
               </div>
-           </div>
-
-           {/* 4. Quick Access Grid: Task-Oriented Interaction */}
-           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {[
-                { l: 'My Ledger', i: Receipt, h: '/dashboard/tenants/invoices', d: 'View & pay rent', c: 'hover:border-emerald-500/30 hover:bg-emerald-500/5 dark:hover:bg-emerald-500/10' },
-                { l: 'Concierge', i: Wrench, h: '/dashboard/tenants/services', d: 'Report room issues', c: 'hover:border-primary/30 hover:bg-primary/5 dark:hover:bg-blue-500/10' },
-                { l: 'Laundry Live', i: Waves, h: '/dashboard/tenants/services', d: 'Track machine status', c: 'hover:border-blue-500/30 hover:bg-blue-500/5 dark:hover:bg-blue-500/10' },
-                { l: 'Support Node', i: MessageSquare, h: '/dashboard/tenants/services', d: 'Chat with staff', c: 'hover:border-amber-500/30 hover:bg-amber-500/5 dark:hover:bg-amber-500/10' },
-              ].map((item, i) => (
-                 <Link key={i} href={item.h} className="group">
-                    <Card className={cn("p-8 rounded-[2.5rem] border-white/20 dark:border-blue-500/10 bg-card/40 dark:bg-blue-950/20 backdrop-blur-3xl transition-all duration-500 flex flex-col gap-6 shadow-sm hover:shadow-2xl cursor-pointer border", item.c)}>
-                       <div className="w-14 h-14 rounded-2xl bg-primary/5 text-primary group-hover:scale-110 group-hover:bg-primary group-hover:text-white flex items-center justify-center transition-all duration-500 shadow-inner">
-                          <item.i className="w-7 h-7" />
-                       </div>
-                       <div className="space-y-1.5">
-                          <h4 className="text-lg font-black tracking-tight text-foreground group-hover:text-primary transition-colors">{item.l}</h4>
-                          <p className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/40 leading-relaxed">{item.d}</p>
-                       </div>
-                    </Card>
-                 </Link>
-              ))}
            </div>
         </div>
      );
   }
+
 
   return (
     <div className="h-full flex items-center justify-center text-muted-foreground">

@@ -6,7 +6,8 @@ import {
   Activity, Globe, Wallet, Zap, MapPin, Cpu, Shield, Receipt,
   ArrowUpRight, ArrowDownRight, BarChart3, DollarSign, Clock,
   CheckCircle2, AlertTriangle, RefreshCcw, Target, Calendar,
-  MoreHorizontal, ChevronRight, Download, SprayCan, Sparkles, History
+  MoreHorizontal, ChevronRight, Download, SprayCan, Sparkles, History,
+  Filter, Boxes, Eye
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -30,6 +31,8 @@ import { EfficiencyRadarChart, DualBarComparisonChart } from './charts';
 import { ResidentsManagement, Resident } from './residents-management';
 import { PropertiesContent } from './properties-content';
 import { FinanceContent } from './finance-content';
+
+import { FinanceHub } from './finance-hub';
 
 const realisticResidents: Resident[] = [
   { 
@@ -170,10 +173,6 @@ export function ModuleContent({ title, type, subType, tier = 'normal', role = 'a
     return <PropertiesContent tier={tier} />;
   }
 
-  if (type === 'payments' && (tier === 'pro' || tier === 'premium')) {
-    return <FinanceContent tier={tier} />;
-  }
-
   if (type === 'laundry') {
     return <LaundryContent title={title} tier={tier} role={role} />;
   }
@@ -186,7 +185,14 @@ export function ModuleContent({ title, type, subType, tier = 'normal', role = 'a
     return <InventoryContent title={title} role={role} />;
   }
 
-  if (type === 'feedback') {
+  if (type === 'payments') {
+    if (tier === 'normal') {
+      return <FinanceContent />;
+    }
+    return <FinanceHub tier={tier as 'pro' | 'premium'} />;
+  }
+
+  if (type === 'dorms') {
     return <FeedbackContent title={title} role={role} />;
   }
 
@@ -204,7 +210,6 @@ export function ModuleContent({ title, type, subType, tier = 'normal', role = 'a
         title="Institutional Residents" 
         description="Comprehensive administrative registry of active, pending, and departing structural nodes (residents) across the portfolio." 
         residents={realisticResidents} 
-        tier={tier} 
       />
     );
   }
@@ -241,7 +246,7 @@ export function ModuleContent({ title, type, subType, tier = 'normal', role = 'a
           )}>{item.status}</Badge>
         )
       },
-      ...(!isNormal ? [{ header: 'Reference', accessor: 'ref' }] : []),
+      { header: 'Reference', accessor: 'ref' },
     ];
 
     const data: AuditLogEntry[] = [
@@ -250,10 +255,10 @@ export function ModuleContent({ title, type, subType, tier = 'normal', role = 'a
       { name: 'Emma Wilson', subtext: 'Payment', status: 'Pending', ref: '#LOG-8822' },
     ];
 
-    return <DataTable<AuditLogEntry> title={title} description={isNormal ? `Audit log for ${type}.` : `Manage your ${type} with real-time sync.`} columns={columns} data={data} tier={tier} />;
+    return <DataTable<AuditLogEntry> title={title} description={`Manage your ${type} with real-time sync.`} columns={columns} data={data} tier={tier} />;
   }
 
-  if (type === 'dorms' || type === 'properties') {
+  if (type === 'dorms') {
     const dorms = [
       {
         name: 'Bloomsbury Hall',
@@ -295,7 +300,7 @@ export function ModuleContent({ title, type, subType, tier = 'normal', role = 'a
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-6 border-b border-border/40">
            <div className="space-y-2">
               <div className="inline-flex items-center gap-2 px-2 py-0.5 rounded-full bg-primary/5 border border-primary/10">
-                 <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                  <span className="text-[9px] font-bold uppercase tracking-widest text-primary">Portfolio Live</span>
               </div>
               <h1 className="text-4xl font-black tracking-tight text-foreground">Campus <span className="text-muted-foreground/30 font-medium">Assets</span></h1>
@@ -386,50 +391,10 @@ export function ModuleContent({ title, type, subType, tier = 'normal', role = 'a
   }
 
   if (type === 'payments') {
-    interface Transaction {
-      id: string;
-      user: string;
-      amount: string;
-      type: string;
-      status: string;
-      date: string;
+    if (tier === 'normal') {
+      return <FinanceContent />;
     }
-
-    const transactions: Transaction[] = [
-      { id: 'TX-8820', user: 'Sarah Johnson', amount: '£1,240', type: 'Credit', status: 'Completed', date: 'Mar 24, 2026' },
-      { id: 'TX-8821', user: 'Michael Chen', amount: '£850', type: 'Credit', status: 'Completed', date: 'Mar 23, 2026' },
-      { id: 'TX-8822', user: 'Emma Wilson', amount: '£1,100', type: 'Credit', status: 'Pending', date: 'Mar 22, 2026' },
-      { id: 'TX-8823', user: 'Maintenance', amount: '£420', type: 'Debit', status: 'Completed', date: 'Mar 20, 2026' },
-      { id: 'TX-8824', user: 'Utility Corp', amount: '£1,150', type: 'Debit', status: 'Failed', date: 'Mar 18, 2026' },
-    ];
-
-    const stats = [
-      { label: 'Total Revenue', value: '£42,850', sub: '+12% from last month', icon: TrendingUp, color: 'text-success' },
-      { label: 'Pending', value: '£3,120', sub: '4 invoices awaiting', icon: Clock, color: 'text-warning' },
-      { label: 'Avg Payment', value: '£942', sub: 'Per resident/mo', icon: DollarSign, color: 'text-primary' },
-    ];
-
-    return (
-      <div className="space-y-4 animate-in fade-in duration-700">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {stats.map((stat, i) => (
-            <Card key={i} className="p-5 border-border/40 bg-card rounded-xl space-y-3 hover:shadow-md transition-all">
-              <div className="flex items-center justify-between">
-                <div className={cn("p-1.5 rounded-lg bg-muted/30", stat.color)}>
-                  <stat.icon className="w-4 h-4" />
-                </div>
-                <span className="text-[9px] font-black uppercase text-muted-foreground/40 tracking-widest">{stat.label}</span>
-              </div>
-              <div>
-                <h3 className="text-2xl font-black tracking-tight">{stat.value}</h3>
-                <p className="text-[9px] font-bold text-muted-foreground mt-0.5 uppercase">{stat.sub}</p>
-              </div>
-            </Card>
-          ))}
-        </div>
-        <FinanceLedger title="Transaction History" transactions={transactions} tier={tier} />
-      </div>
-    );
+    return <FinanceHub tier={tier as 'pro' | 'premium'} />;
   }
 
   if (type === 'billing') {
@@ -841,40 +806,154 @@ export function ModuleContent({ title, type, subType, tier = 'normal', role = 'a
   }
 
   if (type === 'reports') {
+    const reportCategories = [
+      { name: 'Financial', icon: Wallet, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+      { name: 'Occupancy', icon: Building2, color: 'text-blue-500', bg: 'bg-blue-500/10' },
+      { name: 'Maintenance', icon: AlertCircle, color: 'text-amber-500', bg: 'bg-amber-500/10' },
+      { name: 'Staffing', icon: ShieldCheck, color: 'text-purple-500', bg: 'bg-purple-500/10' },
+    ];
+
     const reports = [
-      { name: 'Monthly Financial Summary', date: 'Mar 01, 2026', size: '1.2 MB', type: 'PDF' },
-      { name: 'Occupancy Analysis', date: 'Feb 28, 2026', size: '2.4 MB', type: 'XLSX' },
-      { name: 'Maintenance Log', date: 'Feb 25, 2026', size: '0.8 MB', type: 'PDF' },
-      { name: 'Staff Attendance', date: 'Feb 20, 2026', size: '1.5 MB', type: 'PDF' },
+      { name: 'Monthly Financial Summary', category: 'Financial', date: 'Mar 01, 2026', size: '1.2 MB', type: 'PDF', status: 'Verified' },
+      { name: 'Q1 Occupancy Analysis', category: 'Occupancy', date: 'Feb 28, 2026', size: '2.4 MB', type: 'XLSX', status: 'Ready' },
+      { name: 'Maintenance Efficiency Log', category: 'Maintenance', date: 'Feb 25, 2026', size: '0.8 MB', type: 'PDF', status: 'Ready' },
+      { name: 'Staff Attendance Audit', category: 'Staffing', date: 'Feb 20, 2026', size: '1.5 MB', type: 'PDF', status: 'Archived' },
+      { name: 'Budget vs Actual Q1', category: 'Financial', date: 'Feb 15, 2026', size: '3.1 MB', type: 'XLSX', status: 'Verified' },
     ];
 
     return (
-      <div className="space-y-6 animate-in fade-in duration-500">
-        <div className="flex flex-col gap-1 border-b border-border/10 pb-6">
-           <h2 className="text-2xl font-black tracking-tight text-foreground">System Reports</h2>
-           <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Operational logs and summaries</p>
+      <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-12">
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-1">
+            <h2 className="text-3xl font-black tracking-tight text-foreground">Intelligence <span className="text-muted-foreground/30 font-medium">Archive</span></h2>
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Validated operational data & strategic exports</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="hidden md:flex items-center -space-x-2 mr-2">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="w-8 h-8 rounded-full border-2 border-background bg-muted flex items-center justify-center overflow-hidden">
+                  <img src={`/avatar-${i}.jpg`} alt="User" className="w-full h-full object-cover" onError={(e) => { (e.target as any).src = 'https://ui-avatars.com/api/?name=Admin' }} />
+                </div>
+              ))}
+              <div className="w-8 h-8 rounded-full border-2 border-background bg-primary text-[8px] font-black text-white flex items-center justify-center">+4</div>
+            </div>
+            <Button className="h-11 px-6 rounded-xl bg-primary text-white font-bold gap-2 shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95 border-none">
+              <Plus className="w-4 h-4" /> Generate Report
+            </Button>
+          </div>
         </div>
 
-        <div className="grid gap-px bg-border/5 border border-border/10 rounded-2xl overflow-hidden shadow-sm">
-           {reports.map((report, i) => (
-             <div key={i} className="group p-5 bg-card hover:bg-muted/20 transition-all flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                   <div className="w-10 h-10 rounded-xl bg-primary/5 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
-                      <FileText className="w-5 h-5" />
-                   </div>
-                   <div>
-                      <h3 className="font-bold text-sm text-foreground">{report.name}</h3>
-                      <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{report.date} • {report.size}</p>
-                   </div>
+        {/* Quick Stats Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { label: 'Total Reports', value: '128', icon: FileText, color: 'text-blue-500' },
+            { label: 'Storage Used', value: '452 MB', icon: Globe, color: 'text-emerald-500' },
+            { label: 'Pending Audits', value: '3', icon: Clock, color: 'text-amber-500' },
+            { label: 'System Health', value: '99.9%', icon: Activity, color: 'text-purple-500' },
+          ].map((stat, i) => (
+            <Card key={i} className="p-5 bg-card/40 backdrop-blur-xl border-border/40 rounded-2xl shadow-sm group hover:border-primary/20 transition-all">
+              <div className="flex items-center justify-between mb-3">
+                <div className={cn("p-2 rounded-lg bg-muted/50 transition-colors group-hover:bg-primary/5", stat.color)}>
+                  <stat.icon className="w-4 h-4" />
                 </div>
-                <div className="flex items-center gap-3">
-                   <Badge variant="outline" className="text-[8px] font-black uppercase border-border/40 bg-muted/20 px-1.5 h-4">{report.type}</Badge>
-                   <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary transition-colors">
-                      <Download className="w-4 h-4" />
-                   </Button>
-                </div>
-             </div>
-           ))}
+                <ArrowUpRight className="w-3 h-3 text-muted-foreground/30" />
+              </div>
+              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{stat.label}</p>
+              <p className="text-2xl font-black text-foreground mt-1">{stat.value}</p>
+            </Card>
+          ))}
+        </div>
+
+        <div className="grid lg:grid-cols-4 gap-8">
+          {/* Categories Sidebar */}
+          <div className="lg:col-span-1 space-y-6">
+            <div className="space-y-2">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50 px-2">Data Segments</h3>
+              <div className="space-y-1">
+                {reportCategories.map((cat, i) => (
+                  <button key={i} className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-muted/50 transition-all group text-left">
+                    <div className="flex items-center gap-3">
+                      <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center transition-all", cat.bg, cat.color)}>
+                        <cat.icon className="w-4 h-4" />
+                      </div>
+                      <span className="text-xs font-bold text-foreground/70 group-hover:text-foreground">{cat.name}</span>
+                    </div>
+                    <ChevronRight className="w-3 h-3 text-muted-foreground/20 group-hover:text-foreground transition-all" />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <Card className="p-5 bg-primary/5 border-primary/10 rounded-2xl border-dashed">
+              <Sparkles className="w-5 h-5 text-primary mb-3" />
+              <p className="text-xs font-bold text-foreground mb-1">Custom Intelligence</p>
+              <p className="text-[10px] text-muted-foreground leading-relaxed mb-4">Need a specific data pivot? Our AI can generate custom insights.</p>
+              <Button variant="outline" className="w-full h-9 rounded-lg text-[9px] font-black uppercase tracking-widest border-primary/20 hover:bg-primary/10 text-primary">
+                Request Pivot
+              </Button>
+            </Card>
+          </div>
+
+          {/* Reports List */}
+          <div className="lg:col-span-3 space-y-4">
+            <div className="flex items-center justify-between px-2">
+              <div className="flex items-center gap-2">
+                <Badge className="bg-primary text-white text-[9px] font-black px-2.5 py-0.5 rounded-full">Recent</Badge>
+                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Showing last 30 days</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button variant="ghost" size="sm" className="h-8 px-3 rounded-lg text-[10px] font-black uppercase tracking-widest gap-2">
+                  <Filter className="w-3 h-3" /> Filter
+                </Button>
+                <Button variant="ghost" size="sm" className="h-8 px-3 rounded-lg text-[10px] font-black uppercase tracking-widest gap-2">
+                  <Search className="w-3 h-3" /> Search
+                </Button>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              {reports.map((report, i) => (
+                <Card key={i} className="group p-1.5 bg-card/40 backdrop-blur-xl border-border/40 rounded-2xl hover:border-primary/20 transition-all shadow-sm overflow-hidden">
+                  <div className="p-4 flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-muted/50 flex items-center justify-center relative overflow-hidden group-hover:bg-primary/5 transition-all">
+                        <FileText className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-all" />
+                        <div className="absolute bottom-0 right-0 bg-background/80 px-1 py-0.5 text-[7px] font-black uppercase border-tl border-border/20">{report.type}</div>
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <h3 className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">{report.name}</h3>
+                          <Badge variant="outline" className={cn(
+                            "text-[7px] font-black uppercase px-1.5 h-3.5 border-none",
+                            report.status === 'Verified' ? "bg-emerald-500/10 text-emerald-500" : 
+                            report.status === 'Ready' ? "bg-blue-500/10 text-blue-500" : "bg-muted text-muted-foreground"
+                          )}>{report.status}</Badge>
+                        </div>
+                        <div className="flex items-center gap-3 text-[10px] font-medium text-muted-foreground/60">
+                          <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {report.date}</span>
+                          <span className="flex items-center gap-1"><Boxes className="w-3 h-3" /> {report.size}</span>
+                          <span className="flex items-center gap-1 font-bold text-primary/40"># {report.category}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all opacity-0 group-hover:opacity-100">
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                      <Button variant="outline" className="h-9 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest gap-2 bg-background/50 border-border/40 hover:bg-primary hover:text-white hover:border-primary transition-all">
+                        <Download className="w-3.5 h-3.5" /> Download
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+
+            <Button variant="ghost" className="w-full h-12 rounded-2xl border border-dashed border-border/40 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:bg-muted/30 transition-all">
+              Load Archive History
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -904,7 +983,7 @@ export function ModuleContent({ title, type, subType, tier = 'normal', role = 'a
       { id: '503', name: '503', type: 'Standard', status: 'Occupied', housekeeping: 'Clean', maintenance: 'issue', resident: 'Alex Morgan', rent: '£850', floor: 'Floor 5', lastChecked: '07:45 AM' },
     ];
 
-    return <RoomsManagement title={title} description="Comprehensive room management with filtering, search, and multiple view modes" rooms={rooms as any[]} tier={tier} />;
+    return <RoomsManagement title={title} description="Comprehensive room management with filtering, search, and multiple view modes" rooms={rooms as any[]} />;
   }
 
   if (type === 'settings') {

@@ -117,16 +117,31 @@ export function Sidebar({ role, tier = 'normal' }: SidebarProps) {
     if (tier === 'normal' && role === 'admin') {
       return [
         {
-          label: '',
+          label: 'Intelligence',
           items: [
             { label: 'Overview', href: base, icon: LayoutDashboard },
+          ]
+        },
+        {
+          label: 'Operations',
+          items: [
             { label: 'Rooms', href: `${base}/rooms`, icon: Home },
             { label: 'Residents', href: `${base}/residents`, icon: Building2 },
             { label: 'Meals', href: `${base}/meals`, icon: UtensilsCrossed },
-            { label: 'Services', href: `${base}/services`, icon: Wrench },
+            { label: 'Maintenance', href: `${base}/services`, icon: Wrench },
+          ]
+        },
+        {
+          label: 'Organization',
+          items: [
             { label: 'Staff', href: `${base}/staff`, icon: ShieldCheck },
             { label: 'Payments', href: `${base}/payments`, icon: Wallet },
             { label: 'Reports', href: `${base}/reports`, icon: FileText },
+          ]
+        },
+        {
+          label: 'Infrastructure',
+          items: [
             { label: 'Settings', href: `${base}/settings`, icon: Settings },
           ]
         }
@@ -160,7 +175,7 @@ export function Sidebar({ role, tier = 'normal' }: SidebarProps) {
       {
         label: 'Infrastructure',
         items: [
-          { label: 'Integrations', href: `${base}/integrations`, icon: Zap },
+          ...(tier === 'premium' ? [{ label: 'Integrations', href: `${base}/integrations`, icon: Zap }] : []),
           { label: 'Audit Log', href: `${base}/audit-log`, icon: History },
           { label: 'Settings', href: `${base}/settings`, icon: Settings },
         ]
@@ -195,9 +210,9 @@ export function Sidebar({ role, tier = 'normal' }: SidebarProps) {
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         className="hidden lg:block shrink-0 px-5 py-5"
       >
-        <div className="relative flex h-full flex-col overflow-hidden rounded-[2.5rem] border border-slate-200/50 bg-white/80 dark:border-white/5 dark:bg-gradient-to-b dark:from-slate-900/80 dark:to-blue-950/80 backdrop-blur-3xl shadow-sm">
+        <div className="relative flex h-full flex-col overflow-hidden rounded-[2.5rem] border border-slate-200/50 bg-white/80 dark:border-blue-500/15 dark:bg-gradient-to-b dark:from-[#070e1b] dark:to-[#01040a] backdrop-blur-2xl shadow-xl shadow-black/20">
           {/* Dark Mode Gradient Glow */}
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-primary/5 opacity-0 dark:opacity-100 pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.08),transparent_50%)] opacity-0 dark:opacity-100 pointer-events-none" />
           <div className={cn("relative pt-8 pb-6 flex flex-col gap-6", isCollapsed ? "px-4" : "px-6")}>
             <div className={cn(
               "flex transition-all duration-500",
@@ -207,7 +222,7 @@ export function Sidebar({ role, tier = 'normal' }: SidebarProps) {
                 "group flex transition-all duration-500",
                  isCollapsed ? "self-center justify-center pt-2" : "items-center gap-3"
               )}>
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-primary text-white shadow-lg shadow-primary/20">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/20">
                   <Building2 className="h-5 w-5" />
                 </div>
                 {!isCollapsed && (
@@ -224,7 +239,7 @@ export function Sidebar({ role, tier = 'normal' }: SidebarProps) {
                 variant="ghost"
                 size="icon"
                 onClick={toggleSidebar}
-                className="h-9 w-9 shrink-0 rounded-xl hover:bg-muted transition-all duration-500"
+                className="h-9 w-9 shrink-0 rounded-xl hover:bg-muted/80 dark:hover:bg-blue-500/10 transition-all duration-500"
               >
                 {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
               </Button>
@@ -235,7 +250,7 @@ export function Sidebar({ role, tier = 'normal' }: SidebarProps) {
             {getMenuGroups().map((group, i) => (
               <div key={i} className="space-y-3">
                 {group.label && !isCollapsed && (
-                  <h3 className="px-4 text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground/40">
+                  <h3 className="px-4 text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground/50">
                     {group.label}
                   </h3>
                 )}
@@ -250,14 +265,14 @@ export function Sidebar({ role, tier = 'normal' }: SidebarProps) {
                         className={cn(
                           "group relative flex items-center gap-3 rounded-2xl px-3 py-2.5 transition-all duration-300",
                           active 
-                            ? "bg-primary text-white shadow-md shadow-primary/20" 
-                            : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+                            ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30" 
+                            : "text-slate-400 hover:bg-blue-500/10 dark:hover:bg-blue-500/15 hover:text-blue-100",
                           isCollapsed && "justify-center px-0 h-12 w-12 mx-auto rounded-xl"
                         )}
                       >
                         <div className={cn(
                           "flex h-6 w-6 shrink-0 items-center justify-center transition-all duration-300",
-                          active ? "text-white" : "text-muted-foreground group-hover:text-foreground",
+                          active ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground",
                           isCollapsed && active && "scale-110"
                         )}>
                           <item.icon className="h-5 w-5" />
@@ -275,7 +290,7 @@ export function Sidebar({ role, tier = 'normal' }: SidebarProps) {
                       return (
                         <Tooltip key={item.href}>
                           <TooltipTrigger asChild>{content}</TooltipTrigger>
-                          <TooltipContent side="right" sideOffset={20} className="font-black uppercase tracking-[0.2em] text-[10px] bg-slate-900 text-white border-none px-3 py-2 rounded-xl">
+                          <TooltipContent side="right" sideOffset={20} className="font-black uppercase tracking-[0.2em] text-[10px] bg-slate-900 dark:bg-blue-950 text-white border-none px-3 py-2 rounded-xl shadow-lg">
                             {item.label}
                           </TooltipContent>
                         </Tooltip>
@@ -295,19 +310,19 @@ export function Sidebar({ role, tier = 'normal' }: SidebarProps) {
                 <TooltipTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="h-12 w-full justify-center rounded-2xl text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-all"
+                    className="h-12 w-full justify-center rounded-2xl text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 dark:hover:bg-rose-500/20 transition-all"
                   >
                     <LogOut className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent side="right" sideOffset={20} className="font-black uppercase tracking-[0.2em] text-[10px] bg-slate-900 dark:bg-white dark:text-slate-900 text-white border-none px-3 py-2 rounded-xl shadow-lg">
+                <TooltipContent side="right" sideOffset={20} className="font-black uppercase tracking-[0.2em] text-[10px] bg-slate-900 dark:bg-blue-950 text-white border-none px-3 py-2 rounded-xl shadow-lg">
                   Sign out
                 </TooltipContent>
               </Tooltip>
             ) : (
               <Button
                 variant="ghost"
-                className="h-12 w-full justify-start rounded-2xl text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-all"
+                className="h-12 w-full justify-start rounded-2xl text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 dark:hover:bg-rose-500/20 transition-all"
               >
                 <LogOut className="h-4 w-4 mr-3" />
                 <span className="text-xs font-bold uppercase tracking-wider">Sign out</span>

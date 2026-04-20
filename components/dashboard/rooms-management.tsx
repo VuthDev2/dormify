@@ -60,12 +60,11 @@ interface RoomsManagementProps {
   title: string;
   description: string;
   rooms: Room[];
-  tier: 'normal' | 'pro' | 'premium';
 }
 
 const ITEMS_PER_PAGE = 12;
 
-export function RoomsManagement({ title, description, rooms, tier }: RoomsManagementProps) {
+export function RoomsManagement({ title, description, rooms }: RoomsManagementProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFloor, setSelectedFloor] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
@@ -186,9 +185,9 @@ export function RoomsManagement({ title, description, rooms, tier }: RoomsManage
         ))}
       </div>
 
-      {/* Control Surface: Unified Toolbar */}
-      <div className="p-2 border border-border/40 bg-white/40 dark:bg-white/[0.02] backdrop-blur-xl rounded-[1.5rem] shadow-sm">
-        <div className="flex flex-col lg:flex-row gap-2">
+      {/* Control Bar: Efficient & Minimal */}
+      <div className="p-2 border border-border/40 bg-white/40 dark:bg-white/[0.02] backdrop-blur-xl rounded-[1.5rem]">
+        <div className="flex flex-col lg:flex-row gap-4">
           {/* Main Search Command */}
           <div className="relative flex-1 group">
             <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none z-10">

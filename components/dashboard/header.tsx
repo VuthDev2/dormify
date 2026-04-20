@@ -34,8 +34,11 @@ export function Header({ role, tier = 'normal' }: HeaderProps) {
 
   return (
     <header className="sticky top-0 z-40 transition-all duration-500 px-6 py-4">
-      <div className="w-full flex items-center justify-between gap-8 transition-all duration-500 bg-white/70 dark:bg-muted/10 backdrop-blur-3xl border border-border/40 rounded-[2rem] px-6 h-16 shadow-2xl shadow-primary/5">
-        <div className="flex-1 max-w-md relative group hidden sm:block">
+      <div className="w-full flex items-center justify-between gap-8 transition-all duration-500 bg-white/80 dark:bg-gradient-to-b dark:from-[#070e1b] dark:to-[#01040a] backdrop-blur-2xl border border-border/40 dark:border-blue-500/15 rounded-[2rem] px-6 h-16 relative overflow-hidden">
+        {/* Dark Mode Gradient Glow */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.08),transparent_50%)] opacity-0 dark:opacity-100 pointer-events-none" />
+        
+        <div className="flex-1 max-w-md relative group hidden sm:block z-10">
           <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none z-10">
             <div className="p-2 text-muted-foreground group-focus-within:text-foreground transition-colors">
               <Search className="w-4 h-4" />
@@ -53,7 +56,7 @@ export function Header({ role, tier = 'normal' }: HeaderProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 md:gap-4">
+        <div className="flex items-center gap-2 md:gap-4 z-10">
           <ThemeToggle />
 
           <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-xl text-muted-foreground hover:bg-muted transition-all">
@@ -86,7 +89,7 @@ export function Header({ role, tier = 'normal' }: HeaderProps) {
                 <ChevronDown className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
               </div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 rounded-[1.5rem] p-2 shadow-2xl border-border/40 bg-popover/80 backdrop-blur-2xl">
+            <DropdownMenuContent align="end" className="w-56 rounded-[1.5rem] p-2 shadow-2xl border-border/40 bg-popover/80 dark:bg-[#0f172a]/95 backdrop-blur-2xl">
               <DropdownMenuLabel className="font-bold text-xs uppercase tracking-widest text-muted-foreground/70 px-3 py-2">Global Account</DropdownMenuLabel>
               <DropdownMenuSeparator className="bg-border/40" />
               <DropdownMenuItem className="rounded-xl cursor-pointer py-3 px-3 font-semibold text-sm">Profile Settings</DropdownMenuItem>

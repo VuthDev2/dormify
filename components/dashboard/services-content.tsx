@@ -18,6 +18,16 @@ export function ServicesContent({ title, tier = 'normal', role = 'admin' }: Serv
     return <TenantMaintenanceView />;
   }
 
+  const showLaundry = tier !== 'normal';
+
+  if (!showLaundry) {
+    return (
+      <div className="space-y-4 animate-in fade-in duration-500">
+        <MaintenanceContent title={title} tier={tier} role={role} />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4 animate-in fade-in duration-500">
       

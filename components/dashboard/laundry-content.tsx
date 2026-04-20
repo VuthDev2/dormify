@@ -99,9 +99,9 @@ export function LaundryContent({ title, tier = 'normal', role = 'admin' }: Laund
             className="group relative p-5 rounded-3xl bg-card/40 backdrop-blur-2xl border border-white/20 dark:border-white/5 shadow-lg overflow-hidden hover:-translate-y-1 transition-all duration-300"
           >
              <div className={cn("absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-5 transition-opacity duration-500", s.bg)}></div>
-             <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-2 flex items-center justify-between">
+             <div className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-2 flex items-center justify-between">
                 {s.label} <s.icon className={cn("w-3.5 h-3.5", s.color)} />
-             </p>
+             </div>
              <div className="flex items-baseline justify-between mt-1 relative z-10">
                 <span className="text-3xl font-black tracking-tighter text-foreground">{s.value}</span>
                 <span className={cn("text-[10px] font-black uppercase tracking-wider", s.color)}>{s.trend}</span>

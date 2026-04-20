@@ -99,7 +99,7 @@ export function DataTable<T>({ title, description, columns, data, tier, actionLa
 
         <div className="overflow-auto flex-1 scrollbar-thin scrollbar-thumb-border/40 scrollbar-track-transparent">
           <table className="w-full text-left border-collapse">
-            <thead className="sticky top-0 z-10 bg-card border-b border-border/40 shadow-sm">
+            <thead className="sticky top-0 z-10 bg-card border-b border-border/40">
               <tr className="border-b border-border/40">
                 {columns.map((col, i) => (
                   <th key={i} className="p-3 pl-6 text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60 bg-muted/50">

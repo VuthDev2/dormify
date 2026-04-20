@@ -78,16 +78,16 @@ export function PropertiesContent({ tier = 'pro' }: { tier?: string }) {
     <div className="max-w-[1400px] mx-auto space-y-6 animate-in fade-in duration-700 pb-10">
       
       {/* 1. PROFESSIONAL HUB HEADER */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-background/50 backdrop-blur-md p-4 rounded-2xl border border-border/40 sticky top-0 z-30 shadow-sm">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-background/50 backdrop-blur-md p-4 rounded-2xl border border-border/40 sticky top-0 z-30">
         <div className="flex items-center gap-4">
           <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/20">
              <Building2 className="w-5 h-5" />
           </div>
           <div>
              <h1 className="text-xl font-bold tracking-tight text-foreground uppercase">Asset Terminal</h1>
-             <p className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest flex items-center gap-2">
+             <div className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]" /> Portfolio Live Uplink
-             </p>
+             </div>
           </div>
         </div>
         
