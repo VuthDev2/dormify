@@ -6,7 +6,9 @@ import {
   ArrowDownRight,
   MoreVertical,
   Download,
-  Filter
+  Filter,
+  Banknote,
+  Building
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -20,6 +22,7 @@ interface Transaction {
   type: 'Credit' | 'Debit';
   status: 'Completed' | 'Pending' | 'Failed';
   date: string;
+  method?: 'Cash' | 'Bank Transfer' | 'Card';
 }
 
 interface FinanceLedgerProps {
@@ -29,6 +32,14 @@ interface FinanceLedgerProps {
 }
 
 export function FinanceLedger({ title, transactions, tier }: FinanceLedgerProps) {
+  const getMethodIcon = (method?: string) => {
+    switch (method) {
+      case 'Cash': return <Banknote className="w-4 h-4 text-emerald-500" />;
+      case 'Bank Transfer': return <Building className="w-4 h-4 text-blue-500" />;
+      default: return <CreditCard className="w-4 h-4 text-muted-foreground/40" />;
+    }
+  };
+
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex items-center justify-between">
@@ -52,10 +63,11 @@ export function FinanceLedger({ title, transactions, tier }: FinanceLedgerProps)
             <thead>
               <tr className="bg-muted/30 border-b border-border/40">
                 <th className="p-5 pl-8 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">Transaction ID</th>
-                <th className="p-5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">User / Entity</th>
-                <th className="p-5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">Method</th>
-                <th className="p-5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">Status</th>
-                <th className="p-5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">Date</th>
+                <th className="p-5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">Resident</th>
+                <th className="p-5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40 text-center">Fee Type</th>
+                <th className="p-5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40 text-center">Method</th>
+                <th className="p-5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40 text-center">Status</th>
+                <th className="p-4 text-[10px] font-bold uppercase text-muted-foreground tracking-widest">Date</th>
                 <th className="p-5 pr-8 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40 text-right">Amount</th>
               </tr>
             </thead>
@@ -64,13 +76,18 @@ export function FinanceLedger({ title, transactions, tier }: FinanceLedgerProps)
                 <tr key={i} className="group hover:bg-muted/10 transition-colors">
                   <td className="p-5 pl-8 text-xs font-mono text-muted-foreground/40">{t.id}</td>
                   <td className="p-5 text-sm font-black text-foreground">{t.user}</td>
-                  <td className="p-5">
-                    <div className="flex items-center gap-2">
-                      <CreditCard className="w-4 h-4 text-muted-foreground/40" />
-                      <span className="text-xs font-medium text-muted-foreground/60">**** 4521</span>
-                    </div>
+                  <td className="p-5 text-center">
+                    <Badge variant="outline" className="text-[10px] font-bold uppercase border-primary/20 bg-primary/5 text-primary">
+                      {(t as any).category || 'Room Fee'}
+                    </Badge>
                   </td>
                   <td className="p-5">
+                    <div className="flex items-center justify-center gap-2">
+                      {getMethodIcon(t.method)}
+                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t.method || 'Transfer'}</span>
+                    </div>
+                  </td>
+                  <td className="p-5 text-center">
                     <Badge className={cn(
                       "text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border-none",
                       t.status === 'Completed' ? "bg-emerald-500/10 text-emerald-500" :

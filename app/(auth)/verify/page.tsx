@@ -15,7 +15,7 @@ export default function VerifyPage() {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      window.location.href = '/auth/reset';
+      window.location.href = '/reset';
     }, 1000);
   };
 
@@ -71,14 +71,14 @@ export default function VerifyPage() {
             <div className="space-y-3 pt-2">
               <p className="text-center text-sm font-medium text-muted-foreground">
                 Didn&apos;t receive a code?{' '}
-                <Link href="/auth/forgot-password" className="text-blue-600 font-bold hover:text-blue-700 transition-colors">
+                <Link href="/forgot" className="text-blue-600 font-bold hover:text-blue-700 transition-colors">
                   Resend
                 </Link>
               </p>
 
               <div className="flex justify-center">
                 <Link
-                  href="/auth/login"
+                  href="/login"
                   className="inline-flex items-center justify-center gap-2 text-blue-600 font-bold hover:text-blue-700 transition-colors text-sm"
                 >
                   <ArrowLeft className="w-4 h-4" />

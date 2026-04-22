@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -14,15 +15,31 @@ import {
   FileText,
   PieChart,
   ShieldCheck,
+  Layers,
+  Sparkles,
   Zap,
   CreditCard,
   History,
   Activity,
   ChevronRight,
-  Waves
+  ChevronLeft,
+  Waves,
+  Briefcase,
+  TrendingUp,
+  Receipt,
+  Boxes,
+  Home,
+  Wrench
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
 
 interface SidebarProps {
   role: 'admin' | 'tenant' | 'chef';
@@ -31,9 +48,29 @@ interface SidebarProps {
 
 export function Sidebar({ role, tier = 'normal' }: SidebarProps) {
   const pathname = usePathname();
-  const isPremium = tier === 'premium' && role === 'admin';
-  const isPro = tier === 'pro' && role === 'admin';
-  const isNormal = tier === 'normal' && role === 'admin';
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const saved = localStorage.getItem('sidebar-collapsed');
+    if (saved !== null) {
+      setIsCollapsed(JSON.parse(saved));
+    }
+  }, []);
+
+  const toggleSidebar = () => {
+    const nextState = !isCollapsed;
+    setIsCollapsed(nextState);
+    localStorage.setItem('sidebar-collapsed', JSON.stringify(nextState));
+  };
+
+  const base = 
+    role === 'chef' 
+      ? '/dashboard/chef' 
+      : role === 'tenant' 
+      ? '/dashboard/tenants' 
+      : `/dashboard/${tier}`;
 
   const getMenuGroups = () => {
     if (role === 'tenant') {
@@ -41,17 +78,16 @@ export function Sidebar({ role, tier = 'normal' }: SidebarProps) {
         {
           label: 'My Portal',
           items: [
-            { label: 'Home', href: '/dashboard/tenants', icon: LayoutDashboard },
-            { label: 'Meals', href: '/dashboard/tenants/meals', icon: UtensilsCrossed },
-            { label: 'Laundry', href: '/dashboard/tenants/laundry', icon: Waves },
-            { label: 'Invoices', href: '/dashboard/tenants/invoices', icon: CreditCard },
+            { label: 'Home', href: base, icon: LayoutDashboard },
+            { label: 'Meals', href: `${base}/meals`, icon: UtensilsCrossed },
+            { label: 'Invoices', href: `${base}/invoices`, icon: CreditCard },
           ]
         },
         {
           label: 'Support',
           items: [
-            { label: 'Maintenance', href: '/dashboard/tenants/maintenance', icon: Settings },
-            { label: 'My Profile', href: '/dashboard/tenants/profile', icon: Users },
+            { label: 'Services', href: `${base}/services`, icon: Wrench },
+            { label: 'My Profile', href: `${base}/profile`, icon: Users },
           ]
         }
       ];
@@ -60,30 +96,57 @@ export function Sidebar({ role, tier = 'normal' }: SidebarProps) {
     if (role === 'chef') {
       return [
         {
-          label: 'Kitchen Ops',
+          label: 'Culinary Ops',
           items: [
-            { label: 'Overview', href: '/dashboard/chef', icon: LayoutDashboard },
-            { label: 'Meal Plan', href: '/dashboard/chef/plan', icon: UtensilsCrossed },
-            { label: 'Meal Counts', href: '/dashboard/chef/counts', icon: BarChart3 },
+            { label: 'Overview', href: base, icon: LayoutDashboard },
+            { label: 'Menu Builder', href: `${base}/plan`, icon: UtensilsCrossed },
+            { label: 'Service Counts', href: `${base}/counts`, icon: BarChart3 },
+            { label: 'Inventory & Stock', href: `${base}/stock`, icon: Layers },
+          ]
+        },
+        {
+          label: 'Insights & Team',
+          items: [
+            { label: 'Resident Sentiment', href: `${base}/feedback`, icon: Sparkles },
+            { label: 'Kitchen Team', href: `${base}/staff`, icon: ShieldCheck },
           ]
         }
       ];
     }
 
-    const base = `/dashboard/${tier}`;
-    if (isNormal) {
+    if (tier === 'normal' && role === 'admin') {
       return [
         {
-          label: '',
+          label: 'Overview',
           items: [
             { label: 'Overview', href: base, icon: LayoutDashboard },
-            { label: 'Rooms', href: `${base}/rooms`, icon: Users },
+          ]
+        },
+        {
+          label: 'Property',
+          items: [
+            { label: 'Rooms', href: `${base}/rooms`, icon: Home },
             { label: 'Residents', href: `${base}/residents`, icon: Building2 },
+          ]
+        },
+        {
+          label: 'Operations',
+          items: [
             { label: 'Meals', href: `${base}/meals`, icon: UtensilsCrossed },
+            { label: 'Services', href: `${base}/services`, icon: Wrench },
             { label: 'Staff', href: `${base}/staff`, icon: ShieldCheck },
-            { label: 'Laundry', href: `${base}/laundry`, icon: Waves },
+          ]
+        },
+        {
+          label: 'Finance',
+          items: [
             { label: 'Payments', href: `${base}/payments`, icon: Wallet },
             { label: 'Reports', href: `${base}/reports`, icon: FileText },
+          ]
+        },
+        {
+          label: 'System',
+          items: [
             { label: 'Settings', href: `${base}/settings`, icon: Settings },
           ]
         }
@@ -92,183 +155,185 @@ export function Sidebar({ role, tier = 'normal' }: SidebarProps) {
 
     return [
       {
-        label: 'platform',
+        label: 'Intelligence',
         items: [
           { label: 'Overview', href: base, icon: LayoutDashboard },
-          ...(tier !== 'normal' ? [{ label: 'Analytics', href: `${base}/analytics`, icon: PieChart }] : []),
+          { label: 'Analytics', href: `${base}/analytics`, icon: TrendingUp },
         ]
       },
       {
-        label: 'Management',
+        label: 'Operations',
         items: [
+          { label: 'Properties', href: `${base}/rooms`, icon: Building2 },
           { label: 'Residents', href: `${base}/residents`, icon: Users },
-          { label: 'Rooms', href: `${base}/rooms`, icon: Building2 },
-          ...(tier === 'pro' ? [{ label: 'Dorms', href: `${base}/dorms`, icon: Building2 }] : []),
-          ...(tier === 'premium' ? [{ label: 'Dorms', href: `${base}/dorms`, icon: Building2 }] : []),
-          { label: 'Meals', href: `${base}/meals`, icon: UtensilsCrossed },
-          { label: 'Staff', href: `${base}/staff`, icon: ShieldCheck },
-          { label: 'Laundry', href: `${base}/laundry`, icon: Waves },
-          ...(tier !== 'normal' ? [{ label: 'Maintenance', href: `${base}/maintenance`, icon: Settings }] : []),
+          { label: 'Culinary', href: `${base}/meals`, icon: UtensilsCrossed },
+          { label: 'Services', href: `${base}/services`, icon: Wrench },
         ]
       },
       {
-        label: 'Finance',
+        label: 'Organization',
         items: [
-          { label: 'Payments', href: `${base}/payments`, icon: Wallet },
-          ...(tier !== 'normal' ? [{ label: 'Billing', href: `${base}/billing`, icon: CreditCard }] : []),
-          ...(tier !== 'normal' ? [{ label: 'Revenue', href: `${base}/revenue`, icon: Activity }] : []),
-          { label: 'Reports', href: `${base}/reports`, icon: FileText },
+          { label: 'Finance', href: `${base}/payments`, icon: Receipt },
+          { label: 'Team', href: `${base}/staff`, icon: Briefcase },
         ]
       },
       {
-        label: 'System',
+        label: 'Infrastructure',
         items: [
-          ...(tier === 'premium' ? [{ label: 'Audit Log', href: `${base}/audit-log`, icon: History }] : []),
           { label: 'Integrations', href: `${base}/integrations`, icon: Zap },
+          { label: 'Audit Log', href: `${base}/audit-log`, icon: History },
           { label: 'Settings', href: `${base}/settings`, icon: Settings },
         ]
       }
     ];
   };
 
-  const isActive = (href: string) => pathname === href;
-
-  const shellStyles = cn(
-    "hidden lg:block shrink-0 lg:w-[296px] xl:w-[320px] p-4 md:p-5"
-  );
-
-  const panelStyles = cn(
-    "relative flex h-full flex-col overflow-hidden rounded-[2rem] border backdrop-blur-2xl",
-    "border-slate-300/55 bg-slate-100/60 shadow-[0_12px_28px_rgba(15,23,42,0.06),inset_0_1px_0_rgba(255,255,255,0.55)]",
-    "dark:border-white/10 dark:bg-white/[0.04] dark:shadow-[0_24px_64px_rgba(2,6,23,0.45)]"
-  );
-
-  const logoStyles = cn(
-    "flex h-12 w-12 items-center justify-center rounded-2xl transition-transform duration-500 group-hover:scale-105 shadow-lg",
-    isPremium ? "bg-primary text-white shadow-primary/30" :
-    isPro ? "bg-primary/80 text-white shadow-primary/20" :
-    "bg-primary/60 text-white shadow-primary/10"
-  );
-
-  const groupLabelStyles = cn(
-    "px-3 text-[10px] font-bold uppercase tracking-[0.32em] transition-colors",
-    "text-slate-500 dark:text-slate-400/80"
-  );
-
-  const itemStyles = (active: boolean) => cn(
-    "group relative flex items-center gap-3 rounded-2xl border px-3 py-3 transition-all duration-300",
-    active
-      ? "border-primary/20 bg-primary/[0.10] text-slate-900 shadow-[0_10px_24px_rgba(99,102,241,0.12)] dark:border-white/10 dark:bg-white/[0.09] dark:text-white dark:shadow-[0_18px_40px_rgba(2,6,23,0.36)]"
-      : "border-transparent text-slate-600 hover:border-slate-300/55 hover:bg-slate-200/55 hover:text-slate-900 dark:text-slate-300 dark:hover:border-white/10 dark:hover:bg-white/[0.06] dark:hover:text-white"
-  );
-
-  const iconWrapStyles = (active: boolean) => cn(
-    "flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-300",
-    active
-      ? "border-primary/20 bg-primary/15 text-primary dark:border-white/10 dark:bg-white/10 dark:text-white"
-      : "border-transparent bg-slate-300/45 text-slate-500 group-hover:bg-slate-300/70 group-hover:text-slate-900 dark:bg-white/[0.05] dark:text-slate-300 dark:group-hover:bg-white/[0.08] dark:group-hover:text-white"
-  );
+  const isActive = (href: string) => {
+    if (href === pathname) return true;
+    if (href !== base && pathname.startsWith(href)) return true;
+    return false;
+  };
 
   const experienceLabel =
     role === 'tenant'
       ? 'Resident Portal'
       : role === 'chef'
       ? 'Kitchen Console'
-      : isPremium
-      ? 'Premium Operations'
-      : isPro
+      : tier === 'premium'
+      ? 'Premium Enterprise'
+      : tier === 'pro'
       ? 'Pro Operations'
-      : 'Operations Suite';
+      : 'Standard Operations';
+
+  if (!mounted) return <aside className="hidden lg:block shrink-0 lg:w-[320px] p-5" />;
 
   return (
-    <aside className={shellStyles}>
-      <div className={panelStyles}>
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.06),transparent_72%)] dark:bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.18),transparent_72%)]" />
+    <TooltipProvider delayDuration={0}>
+      <motion.aside 
+        initial={false}
+        animate={{ width: isCollapsed ? 120 : 320 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        className="hidden lg:block shrink-0 px-5 py-5"
+      >
+        <div className="relative flex h-full flex-col overflow-hidden rounded-[2.5rem] border border-slate-200/50 bg-white/80 dark:border-white/10 dark:bg-black/40 backdrop-blur-3xl shadow-sm">
+          <div className={cn("relative pt-8 pb-6 flex flex-col gap-6", isCollapsed ? "px-4" : "px-6")}>
+            <div className={cn(
+              "flex transition-all duration-500",
+              isCollapsed ? "flex-col-reverse items-end gap-2" : "flex-row items-center justify-between"
+            )}>
+              <Link href="/" className={cn(
+                "group flex transition-all duration-500",
+                 isCollapsed ? "self-center justify-center pt-2" : "items-center gap-3"
+              )}>
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-primary text-white shadow-lg shadow-primary/20">
+                  <Building2 className="h-5 w-5" />
+                </div>
+                {!isCollapsed && (
+                  <div className="flex flex-col">
+                    <span className="text-lg font-black tracking-tight text-foreground leading-none">Dormify</span>
+                    <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-1.5 opacity-60">
+                      {experienceLabel}
+                    </span>
+                  </div>
+                )}
+              </Link>
 
-        <div className="relative p-6">
-          <Link href="/" className="group flex items-start gap-4">
-            <div className={logoStyles}>
-              <Building2 className="h-5 w-5" />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleSidebar}
+                className="h-9 w-9 shrink-0 rounded-xl hover:bg-muted transition-all duration-500"
+              >
+                {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+              </Button>
             </div>
-
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2">
-                <span className="truncate text-lg font-semibold tracking-tight text-foreground">Dormify</span>
-                <span className="rounded-full border border-slate-300/70 bg-slate-200/70 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.24em] text-slate-500 shadow-sm dark:border-white/10 dark:bg-white/[0.06] dark:text-slate-300">
-                  Live
-                </span>
-              </div>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {experienceLabel}
-              </p>
-            </div>
-          </Link>
-
-          <div className="mt-5 flex flex-wrap items-center gap-2">
-            <span className="rounded-full border border-primary/15 bg-primary/8 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.24em] text-primary dark:border-primary/20 dark:bg-primary/10">
-              {role === 'admin' ? tier : role}
-            </span>
-            <span className="rounded-full border border-slate-300/70 bg-slate-200/70 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-500 dark:border-white/10 dark:bg-white/[0.05] dark:text-slate-300">
-              Control Surface
-            </span>
           </div>
-        </div>
 
-        <nav className="relative flex-1 overflow-y-auto px-3 pb-4 scrollbar-none">
-          <div className="space-y-7">
+          <nav className="flex-1 overflow-y-auto px-4 pb-4 scrollbar-none space-y-8">
             {getMenuGroups().map((group, i) => (
               <div key={i} className="space-y-3">
-                {group.label && (
-                  <h3 className={groupLabelStyles}>
+                {group.label && !isCollapsed && (
+                  <h3 className="px-4 text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground/40">
                     {group.label}
                   </h3>
                 )}
 
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   {group.items.map((item) => {
                     const active = isActive(item.href);
-
-                    return (
+                    
+                    const content = (
                       <Link
-                        key={item.href}
                         href={item.href}
-                        className={itemStyles(active)}
+                        className={cn(
+                          "group relative flex items-center gap-3 rounded-2xl px-3 py-2.5 transition-all duration-300",
+                          active 
+                            ? "bg-primary text-white shadow-md shadow-primary/20" 
+                            : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+                          isCollapsed && "justify-center px-0 h-12 w-12 mx-auto rounded-xl"
+                        )}
                       >
-                        <div className={iconWrapStyles(active)}>
-                          <item.icon className="h-[18px] w-[18px]" />
+                        <div className={cn(
+                          "flex h-6 w-6 shrink-0 items-center justify-center transition-all duration-300",
+                          active ? "text-white" : "text-muted-foreground group-hover:text-foreground",
+                          isCollapsed && active && "scale-110"
+                        )}>
+                          <item.icon className="h-5 w-5" />
                         </div>
 
-                        <div className="min-w-0 flex-1">
-                          <span className="block truncate text-sm font-semibold">
+                        {!isCollapsed && (
+                          <span className="truncate text-xs font-bold uppercase tracking-wider">
                             {item.label}
                           </span>
-                        </div>
-
-                        <ChevronRight className={cn(
-                          "h-4 w-4 transition-all duration-300",
-                          active
-                            ? "translate-x-0 opacity-100 text-primary dark:text-white/80"
-                            : "translate-x-1 opacity-0 text-slate-400 group-hover:translate-x-0 group-hover:opacity-100 dark:text-slate-500"
-                        )} />
+                        )}
                       </Link>
                     );
+
+                    if (isCollapsed) {
+                      return (
+                        <Tooltip key={item.href}>
+                          <TooltipTrigger asChild>{content}</TooltipTrigger>
+                          <TooltipContent side="right" sideOffset={20} className="font-black uppercase tracking-[0.2em] text-[10px] bg-slate-900 text-white border-none px-3 py-2 rounded-xl">
+                            {item.label}
+                          </TooltipContent>
+                        </Tooltip>
+                      );
+                    }
+
+                    return <div key={item.href}>{content}</div>;
                   })}
                 </div>
               </div>
             ))}
-          </div>
-        </nav>
+          </nav>
 
-        <div className="relative mt-auto border-t border-slate-300/60 p-4 dark:border-white/10">
-          <Button
-            variant="ghost"
-            className="group h-12 w-full justify-start rounded-2xl border border-transparent px-4 text-sm font-semibold text-muted-foreground transition-all hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive"
-          >
-            <LogOut className="mr-3 h-4 w-4 transition-transform duration-500 group-hover:rotate-180" />
-            Sign out
-          </Button>
+          <div className="mt-auto p-4 border-t border-border/10">
+            {isCollapsed ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="h-12 w-full justify-center rounded-2xl text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-all"
+                  >
+                    <LogOut className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right" sideOffset={20} className="font-black uppercase tracking-[0.2em] text-[10px] bg-slate-900 dark:bg-white dark:text-slate-900 text-white border-none px-3 py-2 rounded-xl shadow-lg">
+                  Sign out
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <Button
+                variant="ghost"
+                className="h-12 w-full justify-start rounded-2xl text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-all"
+              >
+                <LogOut className="h-4 w-4 mr-3" />
+                <span className="text-xs font-bold uppercase tracking-wider">Sign out</span>
+              </Button>
+            )}
+          </div>
         </div>
-      </div>
-    </aside>
+      </motion.aside>
+    </TooltipProvider>
   );
 }

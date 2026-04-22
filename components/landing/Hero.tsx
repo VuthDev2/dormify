@@ -1,43 +1,131 @@
 'use client';
 
 import { useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import Link from 'next/link';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Home, Zap } from 'lucide-react';
+import { 
+  ArrowRight, Home, Zap, Play, Pause, 
+  RotateCcw, RotateCw, Volume2, VolumeX 
+} from 'lucide-react';
 import { TypingHeadline } from './Typography';
 import { DriftingElement } from './DriftingElement';
 
 export const Hero = () => {
-  const heroRef = useRef<HTMLDivElement>(null);
-  const [mounted, setMounted] = useState(false);
+  const containerRef = useRef<HTMLElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlayingDemo, setIsPlayingDemo] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [isMuted, setIsMuted] = useState(true);
   
-  // Wait until next animation frame to ensure DOM is settled
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const id = requestAnimationFrame(() => {
-      setMounted(true);
-    });
-    return () => cancelAnimationFrame(id);
-  }, []);
-  
-  // Always call useScroll, but give it an empty object until ref is ready
-  const { scrollYProgress: heroScroll } = useScroll(
-    mounted && heroRef.current
-      ? {
-          target: heroRef,
-          offset: ["start start", "end start"]
-        }
-      : ({} as any)
-  );
+  const { scrollYProgress: heroScroll } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"]
+  });
 
   const heroOpacity = useTransform(heroScroll, [0, 0.6], [1, 0]);
   const heroScale = useTransform(heroScroll, [0, 0.6], [1, 0.85]);
   const heroTextY = useTransform(heroScroll, [0, 0.6], [0, -100]);
+  
+  useEffect(() => {
+    if (isPlayingDemo && videoRef.current) {
+      videoRef.current.playbackRate = 0.75;
+    }
+  }, [isPlayingDemo]);
+
+  const togglePlay = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (videoRef.current) {
+      if (videoRef.current.paused) {
+        videoRef.current.play();
+        setIsPaused(false);
+      } else {
+        videoRef.current.pause();
+        setIsPaused(true);
+      }
+    }
+  };
+
+  const skip = (e: React.MouseEvent, seconds: number) => {
+    e.stopPropagation();
+    if (videoRef.current) {
+      videoRef.current.currentTime += seconds;
+    }
+  };
+
+  const toggleMute = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (videoRef.current) {
+      videoRef.current.muted = !videoRef.current.muted;
+      setIsMuted(videoRef.current.muted);
+    }
+  };
+
+  const onTimeUpdate = () => {
+    if (videoRef.current) {
+      const p = (videoRef.current.currentTime / videoRef.current.duration) * 100;
+      setProgress(p);
+    }
+  };
+
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    if (videoRef.current) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const percentage = x / rect.width;
+      videoRef.current.currentTime = percentage * videoRef.current.duration;
+    }
+  };
 
   return (
-    <section ref={heroRef} className="relative h-screen flex items-center justify-center overflow-hidden">
+    <section ref={containerRef} className="relative h-screen flex items-center justify-center overflow-hidden bg-black">
+      {/* Instant Video Demo Overlay (Pure Video, No Controls) */}
+      <AnimatePresence>
+        {isPlayingDemo && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/95 backdrop-blur-2xl"
+            onClick={() => setIsPlayingDemo(false)}
+          >
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative w-full max-w-5xl aspect-video rounded-[3rem] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] border border-white/5 bg-black"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <video 
+                ref={videoRef}
+                autoPlay 
+                muted={isMuted}
+                playsInline
+                loop
+                className="w-full h-full object-cover"
+                onEnded={() => setIsPlayingDemo(false)}
+              >
+                <source src="/dorm-demo.mp4" type="video/mp4" />
+              </video>
+              
+              {/* Minimal Close Hint on Hover */}
+              <div 
+                className="absolute top-8 right-8 opacity-0 hover:opacity-100 transition-opacity cursor-pointer"
+                onClick={() => setIsPlayingDemo(false)}
+              >
+                <div className="h-12 w-12 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white">
+                  <Zap className="w-6 h-6 rotate-45" />
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <motion.div 
-        style={{ scale: heroScale, opacity: heroOpacity }}
+        style={{ scale: heroScale, opacity: isPlayingDemo ? 0 : heroOpacity }}
         className="absolute inset-0 z-0"
       >
         <img 
@@ -61,7 +149,7 @@ export const Hero = () => {
       </DriftingElement>
 
       <motion.div 
-        style={{ opacity: heroOpacity, y: heroTextY, scale: heroScale }}
+        style={{ opacity: isPlayingDemo ? 0 : heroOpacity, y: heroTextY, scale: heroScale }}
         className="relative z-10 max-w-5xl mx-auto px-6 text-center"
       >
         <div className="space-y-8">
@@ -78,13 +166,21 @@ export const Hero = () => {
           
           <div className="flex flex-col sm:flex-row gap-5 justify-center pt-8">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button size="lg" className="h-16 px-10 rounded-full bg-primary text-primary-foreground text-base font-bold shadow-2xl shadow-primary/40">
-                Get Started <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
+              <Link href="/signup">
+                <Button size="lg" className="h-16 px-10 rounded-full bg-primary text-primary-foreground text-base font-bold shadow-2xl shadow-primary/40">
+                  Get Started <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+              </Link>
             </motion.div>
+            
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button size="lg" variant="outline" className="h-16 px-10 rounded-full border-white/20 text-white bg-white/5 backdrop-blur-md hover:bg-white/10 text-base font-bold transition-all">
-                View Demo!
+              <Button 
+                onClick={() => setIsPlayingDemo(true)}
+                size="lg" 
+                variant="outline" 
+                className="h-16 px-10 rounded-full border-white/20 text-white bg-white/5 backdrop-blur-md hover:bg-white/10 text-base font-bold transition-all shadow-xl"
+              >
+                <Play className="mr-2 w-5 h-5 fill-primary" /> View Demo
               </Button>
             </motion.div>
           </div>

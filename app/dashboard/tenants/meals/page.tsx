@@ -1,10 +1,10 @@
 import { DashboardLayout } from '@/components/dashboard/layout';
-import { ModuleContent } from '@/components/dashboard/module-content';
+import { TenantMealsView } from '@/components/dashboard/tenant-views';
 
 export default function TenantMealsPage() {
   return (
     <DashboardLayout role="tenant" tier="normal">
-      <ModuleContent title="Meal Selection - Resident Portal" type="meals" tier="normal" role="tenant" />
+      <TenantMealsView />
     </DashboardLayout>
   );
 }

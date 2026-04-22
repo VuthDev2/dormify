@@ -11,7 +11,7 @@ export const STATS = [
 export const SERVICES = [
   {
     id: '01',
-    title: 'Resident Housing',
+    title: 'Residents Housing',
     desc: 'Secure room allocation, digital contracts, and key management.',
     icon: Home,
     color: 'from-blue-500/20 to-blue-500/0',
@@ -112,18 +112,18 @@ export const PRICING_PLANS = [
   },
   { 
     name: "Pro", 
-    price: "50$", 
+    price: "$50", 
     desc: "High-Quality for whole dorms management.",
-    features: ["Up to 5 dorms management", " 300 limit residents", "IoT Laundry Sync", "Advanced Nutrition AI", "Priority Support", "Revenue Ops Suite"],
-    cta: "Connect Portfolio",
+    features: ["Up to 5 dorms management", " 300 limit residents", "IoT Laundry Sync", "Advanced meals management ", "Priority Support", "Revenue Ops Suite"],
+    cta: "Connect",
     highlighted: true 
   },
   { 
     name: "Premium", 
-    price: "80$", 
+    price: "$80", 
     desc: "Advanced mode with premium features.",
-    features: ["Unlimited dorms management", "Unlimited rooms and residents", "Dedicated Data Analyst", "Priority support", "Advanced finance system", "Audit-Ready Logs"],
-    cta: "Request Demo",
+    features: ["Unlimited dorms management", "Unlimited rooms and residents","IoT Laundry Sync", "Meals nutrition tracking","Dedicated Data Analyst", "Priority support", "Advanced finance system", "Audit-Ready Logs"],
+    cta: "Connect",
     highlighted: false 
   }
 ];
@@ -140,6 +140,45 @@ export const FAQ_ITEMS = [
   { 
     q: "Can we integrate with our SIS?", 
     a: "Yes, we support Banner, PeopleSoft, and Workday via robust APIs." 
+  }
+];
+
+export const FOOTER_LINKS = [
+  {
+    title: "Ecosystem",
+    links: [
+      { label: "Housing", href: "#" },
+      { label: "Dining", href: "#" },
+      { label: "Laundry", href: "#" },
+      { label: "Maintenance", href: "#" },
+    ]
+  },
+  {
+    title: "Resources",
+    links: [
+      { label: "Documentation", href: "#" },
+      { label: "API Reference", href: "#" },
+      { label: "Community", href: "#" },
+      { label: "Support", href: "#" },
+    ]
+  },
+  {
+    title: "Corporate",
+    links: [
+      { label: "About Us", href: "#" },
+      { label: "Careers", href: "#" },
+      { label: "Blog", href: "#" },
+      { label: "Press", href: "#" },
+    ]
+  },
+  {
+    title: "Legal",
+    links: [
+      { label: "Privacy Policy", href: "#" },
+      { label: "Terms of Service", href: "#" },
+      { label: "Cookie Policy", href: "#" },
+      { label: "Compliance", href: "#" },
+    ]
   }
 ];
 

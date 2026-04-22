@@ -43,7 +43,7 @@ export function AdminLaundryView({ tier = 'normal' }: AdminLaundryViewProps) {
   const stats = [
     { label: 'Active Tasks', value: '14', icon: RefreshCcw, color: 'text-primary', sub: '4 urgent' },
     { label: 'Machine Load', value: '75%', icon: Cpu, color: 'text-emerald-500', sub: '9/12 active' },
-    { label: 'Daily Revenue', value: '£184', icon: DollarSign, color: 'text-indigo-500', sub: '+12% vs yesterday' },
+    { label: 'Daily Revenue', value: '$184', icon: DollarSign, color: 'text-indigo-500', sub: '+12% vs yesterday' },
   ];
 
   return (

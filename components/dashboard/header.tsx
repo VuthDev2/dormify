@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ThemeToggle } from './theme-toggle';
+import { cn } from '@/lib/utils';
 
 interface HeaderProps {
   role: 'admin' | 'tenant' | 'chef';
@@ -20,6 +21,10 @@ interface HeaderProps {
 }
 
 export function Header({ role, tier = 'normal' }: HeaderProps) {
+  const isChef = role === 'chef';
+  const isTenant = role === 'tenant';
+  const isAdmin = role === 'admin';
+
   const searchPlaceholder =
     role === 'admin'
       ? 'Search residents, rooms, reports'
@@ -28,78 +33,75 @@ export function Header({ role, tier = 'normal' }: HeaderProps) {
       : 'Search payments, meals, profile';
 
   return (
-    <header className="sticky top-0 z-40 px-4 pt-4 md:px-6 md:pt-5">
-      <div className="mx-auto max-w-[1680px]">
-        <div className="flex items-center gap-3 rounded-2xl border border-black/5 bg-white/72 p-2.5 shadow-[0_12px_28px_rgba(15,23,42,0.06)] backdrop-blur-xl dark:border-white/10 dark:bg-white/[0.04] dark:shadow-[0_12px_28px_rgba(2,6,23,0.28)] md:p-3">
-          <div className="px-2 text-sm font-semibold text-foreground sm:hidden">Dashboard</div>
-
-          <div className="relative hidden min-w-0 flex-1 sm:block">
-            <div className="pointer-events-none absolute inset-y-0 left-4 flex items-center text-slate-400 dark:text-slate-400">
-              <Search className="h-4 w-4" />
-            </div>
-
-            <Input
-              placeholder={searchPlaceholder}
-              className="h-11 rounded-xl border-black/5 bg-white/78 pl-12 pr-20 text-sm font-medium shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] transition-all hover:bg-white focus-visible:ring-4 focus-visible:ring-primary/10 dark:border-white/10 dark:bg-white/[0.06] dark:text-slate-100 dark:placeholder:text-slate-400 dark:hover:bg-white/[0.08] dark:focus-visible:ring-primary/20"
-            />
-
-            <div className="pointer-events-none absolute right-2.5 top-1/2 hidden -translate-y-1/2 items-center gap-1.5 rounded-lg border border-black/5 bg-white px-2 py-1 text-[11px] font-semibold text-slate-500 dark:border-white/10 dark:bg-white/[0.06] dark:text-slate-300 lg:flex">
-              <Command className="h-3.5 w-3.5" />
-              <span>K</span>
+    <header className="sticky top-0 z-40 transition-all duration-500 px-6 py-4">
+      <div className="w-full flex items-center justify-between gap-8 transition-all duration-500 bg-white/80 dark:bg-gradient-to-b dark:from-[#070e1b] dark:to-[#01040a] backdrop-blur-2xl border border-border/40 dark:border-blue-500/15 rounded-[2rem] px-6 h-16 relative overflow-hidden">
+        {/* Dark Mode Gradient Glow */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.08),transparent_50%)] opacity-0 dark:opacity-100 pointer-events-none" />
+        
+        <div className="flex-1 max-w-md relative group hidden sm:block z-10">
+          <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none z-10">
+            <div className="p-2 text-muted-foreground group-focus-within:text-foreground transition-colors">
+              <Search className="w-4 h-4" />
             </div>
           </div>
 
-          <div className="ml-auto flex items-center gap-2">
-            <ThemeToggle />
+          <Input
+            placeholder={searchPlaceholder}
+            className="w-full pl-12 transition-all duration-300 text-sm font-semibold tracking-tight bg-background/50 dark:bg-muted/30 border-border h-10 rounded-lg focus:bg-background placeholder:text-muted-foreground/50 shadow-none pr-16"
+          />
 
-            <Button
-              variant="ghost"
-              size="icon"
-              className="relative h-11 w-11 rounded-xl text-slate-500 transition-all hover:bg-black/[0.04] hover:text-slate-950 dark:text-slate-300 dark:hover:bg-white/[0.08] dark:hover:text-white"
-            >
-              <Bell className="h-5 w-5" />
-              <span className="absolute right-3 top-3 h-2.5 w-2.5 rounded-full border-2 border-white bg-primary dark:border-[#11192b]" />
-            </Button>
+          <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 hidden items-center gap-1.5 rounded-lg border border-border/40 bg-background/50 dark:bg-muted/30 px-2 py-1 text-[10px] font-semibold text-muted-foreground group-focus-within:bg-background lg:flex transition-all">
+            <Command className="h-3 w-3" />
+            <span>K</span>
+          </div>
+        </div>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <div className="flex cursor-pointer items-center gap-2 rounded-xl border border-black/5 bg-white/78 px-2.5 py-2 shadow-[0_8px_18px_rgba(15,23,42,0.05)] transition-all hover:border-primary/20 dark:border-white/10 dark:bg-white/[0.05] dark:hover:border-primary/25">
-                  <Avatar className="h-9 w-9 border border-black/5 shadow-sm dark:border-white/10">
-                    <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">Sv</AvatarFallback>
-                  </Avatar>
+        <div className="flex items-center gap-2 md:gap-4 z-10">
+          <ThemeToggle />
 
-                  <div className="hidden min-w-0 lg:block">
-                    <p className="truncate text-sm font-semibold leading-tight text-foreground">Saravuth</p>
-                    <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-                      {tier} Plan
-                    </p>
-                  </div>
+          <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-xl text-muted-foreground hover:bg-muted transition-all">
+            <Bell className="w-5 h-5" />
+            <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-primary border-2 border-background"></span>
+          </Button>
 
-                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <div className="flex items-center gap-3 pl-4 border-l border-border/40 transition-all group cursor-pointer">
+                <Avatar className={cn(
+                  "h-9 w-9 border-2 shadow-sm transition-all",
+                  tier === 'premium' ? "border-primary/20 group-hover:border-primary/60" : "border-border/40 group-hover:border-primary/40"
+                )}>
+                  <AvatarFallback className="bg-primary/5 text-primary font-bold text-xs">
+                    {isChef ? 'CH' : isTenant ? 'SA' : 'AU'}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col hidden lg:flex">
+                  <p className="text-sm font-bold leading-tight text-foreground">
+                    {isChef ? 'Chef Marco' : isTenant ? 'Sarah J.' : 'Admin User'}
+                  </p>
+                  <p className={cn(
+                    "text-[10px] font-bold uppercase tracking-wider capitalize",
+                    tier === 'premium' ? "text-primary/70" : tier === 'pro' ? "text-primary/60" : "text-muted-foreground/60"
+                  )}>
+                    {isAdmin ? `${tier} Plan` : isChef ? 'Head Chef' : 'Resident'}
+                  </p>
                 </div>
-              </DropdownMenuTrigger>
-
-              <DropdownMenuContent
-                align="end"
-                className="w-56 rounded-[1.25rem] border border-black/5 bg-popover/88 p-2 shadow-2xl backdrop-blur-2xl dark:border-white/10"
-              >
-                <DropdownMenuLabel className="px-3 py-2 text-xs font-bold uppercase tracking-widest text-muted-foreground/70">
-                  Global Account
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-border/40" />
-                <DropdownMenuItem className="cursor-pointer rounded-xl px-3 py-3 text-sm font-semibold">
-                  Profile Settings
-                </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer rounded-xl px-3 py-3 text-sm font-semibold">
-                  Organization
-                </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-border/40" />
-                <DropdownMenuItem className="cursor-pointer rounded-xl px-3 py-3 text-sm font-bold text-destructive focus:bg-destructive/5 focus:text-destructive">
-                  Sign Out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+                <ChevronDown className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56 rounded-[1.5rem] p-2 shadow-2xl border-border/40 bg-popover/80 dark:bg-[#0f172a]/95 backdrop-blur-2xl">
+              <DropdownMenuLabel className="font-bold text-xs uppercase tracking-widest text-muted-foreground/70 px-3 py-2">Global Account</DropdownMenuLabel>
+              <DropdownMenuSeparator className="bg-border/40" />
+              <DropdownMenuItem className="rounded-xl cursor-pointer py-3 px-3 font-semibold text-sm">Profile Settings</DropdownMenuItem>
+              <DropdownMenuItem className="rounded-xl cursor-pointer py-3 px-3 font-semibold text-sm">
+                {isChef ? 'Kitchen Settings' : isTenant ? 'Room Details' : 'Organization'}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator className="bg-border/40" />
+              <DropdownMenuItem className="rounded-xl cursor-pointer py-3 px-3 font-bold text-sm text-destructive focus:text-destructive focus:bg-destructive/5">
+                Sign Out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>
