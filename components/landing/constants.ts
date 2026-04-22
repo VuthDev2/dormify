@@ -112,7 +112,7 @@ export const PRICING_PLANS = [
   },
   { 
     name: "Pro", 
-    price: "50$", 
+    price: "$50", 
     desc: "High-Quality for whole dorms management.",
     features: ["Up to 5 dorms management", " 300 limit residents", "IoT Laundry Sync", "Advanced meals management ", "Priority Support", "Revenue Ops Suite"],
     cta: "Connect",
@@ -120,7 +120,7 @@ export const PRICING_PLANS = [
   },
   { 
     name: "Premium", 
-    price: "80$", 
+    price: "$80", 
     desc: "Advanced mode with premium features.",
     features: ["Unlimited dorms management", "Unlimited rooms and residents","IoT Laundry Sync", "Meals nutrition tracking","Dedicated Data Analyst", "Priority support", "Advanced finance system", "Audit-Ready Logs"],
     cta: "Connect",

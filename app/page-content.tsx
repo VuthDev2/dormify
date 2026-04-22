@@ -601,7 +601,7 @@ export default function LandingPage() {
             <div>&copy; {new Date().getFullYear()} Dormify Systems Inc.</div>
             <div className="flex gap-8 uppercase tracking-widest text-[9px]">
               <span>Silicon Valley</span>
-              <span>London</span>
+              <span>New York</span>
               <span>Singapore</span>
             </div>
           </div>

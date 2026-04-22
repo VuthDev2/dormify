@@ -29,7 +29,7 @@ export function FeedbackContent({ title, role = 'admin' }: FeedbackContentProps)
   };
 
   return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-700 max-w-7xl mx-auto pb-12 px-1">
+    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-700 w-full pb-12 px-1">
       {/* 1. Industrial Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-border/40 pb-10">
         <div className="space-y-1">

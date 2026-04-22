@@ -59,7 +59,7 @@ export function IntegrationsContent({ title, tier = 'normal', role = 'admin' }: 
   ];
 
   return (
-    <div className="max-w-[1250px] mx-auto space-y-8 animate-in fade-in duration-500 pb-12">
+    <div className="w-full space-y-8 animate-in fade-in duration-500 pb-12">
       
       {/* Professional Header - Theme Aware */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-border">

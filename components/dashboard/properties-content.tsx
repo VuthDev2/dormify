@@ -51,17 +51,17 @@ export function PropertiesContent({ tier = 'pro' }: { tier?: string }) {
   const [searchTerm, setSearchTerm] = useState('');
 
   const buildings: BuildingData[] = [
-    { id: 'BL-01', name: 'Bloomsbury Hall', address: 'London, WC1E', totalUnits: 124, occupiedUnits: 118, revenue: '£142,000', image: 'https://images.pexels.com/photos/439391/pexels-photo-439391.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2', status: 'Active', systems: { wifi: 'ok', water: 'ok', heat: 'ok' } },
-    { id: 'BW-02', name: 'Borough Wing', address: 'London, SE1', totalUnits: 86, occupiedUnits: 72, revenue: '£98,500', image: 'https://images.pexels.com/photos/259950/pexels-photo-259950.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2', status: 'Active', systems: { wifi: 'issue', water: 'ok', heat: 'ok' } },
-    { id: 'PC-03', name: 'Paddington Court', address: 'London, W2', totalUnits: 210, occupiedUnits: 194, revenue: '£215,000', image: 'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2', status: 'Active', systems: { wifi: 'ok', water: 'ok', heat: 'ok' } },
+    { id: 'BL-01', name: 'Manhattan Central', address: 'New York, WC1E', totalUnits: 124, occupiedUnits: 118, revenue: '$142,000', image: 'https://images.pexels.com/photos/439391/pexels-photo-439391.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2', status: 'Active', systems: { wifi: 'ok', water: 'ok', heat: 'ok' } },
+    { id: 'BW-02', name: 'Brooklyn Wing', address: 'New York, SE1', totalUnits: 86, occupiedUnits: 72, revenue: '$98,500', image: 'https://images.pexels.com/photos/259950/pexels-photo-259950.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2', status: 'Active', systems: { wifi: 'issue', water: 'ok', heat: 'ok' } },
+    { id: 'PC-03', name: 'Times Square Court', address: 'New York, W2', totalUnits: 210, occupiedUnits: 194, revenue: '$215,000', image: 'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2', status: 'Active', systems: { wifi: 'ok', water: 'ok', heat: 'ok' } },
   ];
 
   const rooms: RoomData[] = [
-    { id: 'R-101', name: 'Studio A1', floor: '1', buildingId: 'BL-01', buildingName: 'Bloomsbury', type: 'Studio', status: 'Occupied', resident: 'Sarah Johnson', rent: '£1,200', housekeeping: 'Clean', lastService: '2d ago' },
-    { id: 'R-102', name: 'Standard B2', floor: '1', buildingId: 'BL-01', buildingName: 'Bloomsbury', type: 'Standard', status: 'Vacant', rent: '£950', housekeeping: 'Dirty', lastService: '1w ago' },
-    { id: 'R-204', name: 'Exec Suite', floor: '2', buildingId: 'BW-02', buildingName: 'Borough', type: 'Suite', status: 'Occupied', resident: 'Michael Chen', rent: '£1,800', housekeeping: 'Inspected', lastService: 'Today' },
-    { id: 'R-305', name: 'Standard C1', floor: '3', buildingId: 'PC-03', buildingName: 'Paddington', type: 'Standard', status: 'Maintenance', rent: '£1,050', housekeeping: 'Dirty', lastService: '3d ago' },
-    { id: 'R-105', name: 'Studio A5', floor: '1', buildingId: 'BL-01', buildingName: 'Bloomsbury', type: 'Standard', status: 'Arriving', resident: 'Elena Rodriguez', rent: '£950', housekeeping: 'Inspected', lastService: '4h ago' },
+    { id: 'R-101', name: 'Studio A1', floor: '1', buildingId: 'BL-01', buildingName: 'Bloomsbury', type: 'Studio', status: 'Occupied', resident: 'Sarah Johnson', rent: '$1,200', housekeeping: 'Clean', lastService: '2d ago' },
+    { id: 'R-102', name: 'Standard B2', floor: '1', buildingId: 'BL-01', buildingName: 'Bloomsbury', type: 'Standard', status: 'Vacant', rent: '$950', housekeeping: 'Dirty', lastService: '1w ago' },
+    { id: 'R-204', name: 'Exec Suite', floor: '2', buildingId: 'BW-02', buildingName: 'Borough', type: 'Suite', status: 'Occupied', resident: 'Michael Chen', rent: '$1,800', housekeeping: 'Inspected', lastService: 'Today' },
+    { id: 'R-305', name: 'Standard C1', floor: '3', buildingId: 'PC-03', buildingName: 'Paddington', type: 'Standard', status: 'Maintenance', rent: '$1,050', housekeeping: 'Dirty', lastService: '3d ago' },
+    { id: 'R-105', name: 'Studio A5', floor: '1', buildingId: 'BL-01', buildingName: 'Bloomsbury', type: 'Standard', status: 'Arriving', resident: 'Elena Rodriguez', rent: '$950', housekeeping: 'Inspected', lastService: '4h ago' },
   ];
 
   const selectedBuilding = useMemo(() => buildings.find(b => b.id === selectedBuildingId), [selectedBuildingId]);
@@ -75,7 +75,7 @@ export function PropertiesContent({ tier = 'pro' }: { tier?: string }) {
   }, [activeTab, selectedBuildingId, searchTerm]);
 
   return (
-    <div className="max-w-[1400px] mx-auto space-y-6 animate-in fade-in duration-700 pb-10">
+    <div className="w-full space-y-6 animate-in fade-in duration-700 pb-10">
       
       {/* 1. PROFESSIONAL HUB HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-background/50 backdrop-blur-md p-4 rounded-2xl border border-border/40 sticky top-0 z-30">

@@ -37,7 +37,7 @@ export function DashboardLayout({ children, role, tier = 'normal' }: DashboardLa
         <div className="flex min-w-0 flex-1 flex-col">
           <Header role={role} tier={tier} />
           <main className="relative flex-1 overflow-y-auto">
-            <div className="mx-auto w-full max-w-[1680px] px-4 pb-6 pt-1 md:px-6 md:pb-8">
+            <div className="w-full px-4 pb-6 pt-1 md:px-6 md:pb-8">
               <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
                 {children}
               </div>

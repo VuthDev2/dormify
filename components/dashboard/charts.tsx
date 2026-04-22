@@ -233,11 +233,11 @@ export function RevenueVsBudgetChart({ data }: { data: any[] }) {
                   <div className="space-y-1">
                     <div className="flex items-center justify-between gap-8">
                        <span className="text-[10px] font-bold text-primary uppercase">Actual</span>
-                       <span className="text-xs font-black text-foreground">£{payload[0].value?.toLocaleString()}</span>
+                       <span className="text-xs font-black text-foreground">${payload[0].value?.toLocaleString()}</span>
                     </div>
                     <div className="flex items-center justify-between gap-8">
                        <span className="text-[10px] font-bold text-muted-foreground uppercase">Budget</span>
-                       <span className="text-xs font-black text-foreground">£{payload[1].value?.toLocaleString()}</span>
+                       <span className="text-xs font-black text-foreground">${payload[1].value?.toLocaleString()}</span>
                     </div>
                   </div>
                 </div>

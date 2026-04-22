@@ -113,7 +113,7 @@ export function StaffContent({ tier = 'normal', role = 'admin' }: { tier?: strin
   );
 
   return (
-    <div className="max-w-[1300px] mx-auto space-y-6 animate-in fade-in duration-700 pb-12">
+    <div className="w-full space-y-6 animate-in fade-in duration-700 pb-12">
       <Header />
 
       <div className="grid lg:grid-cols-12 gap-8">

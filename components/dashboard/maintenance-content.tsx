@@ -37,7 +37,7 @@ export function MaintenanceContent({ title, tier = 'normal', role = 'admin' }: M
   const ownerStats = useMemo(() => [
     { label: 'SLA Adherence', value: '96.2%', trend: '+1.5% this month', color: 'from-emerald-400 to-emerald-600', text: 'text-emerald-500' },
     { label: 'Mean Time to Repair', value: '1.8 Days', trend: 'Optimal Speed', color: 'from-blue-400 to-blue-600', text: 'text-blue-500' },
-    { label: 'MTD Spend (OpEx)', value: '£3,410', trend: '£1,090 Under Budget', color: 'from-indigo-400 to-indigo-600', text: 'text-indigo-500' },
+    { label: 'MTD Spend (OpEx)', value: '$3,410', trend: '$1,090 Under Budget', color: 'from-indigo-400 to-indigo-600', text: 'text-indigo-500' },
     { label: 'Pending Critical', value: '2', trend: 'Immediate Action', color: 'from-rose-400 to-rose-600', text: 'text-rose-500' },
   ], []);
 
@@ -47,7 +47,7 @@ export function MaintenanceContent({ title, tier = 'normal', role = 'admin' }: M
       id: 'WO-8842', unit: 'Apt A-402',
       issue: 'Burst Pipe in Master Bathroom',
       category: 'Plumbing', priority: 'Critical',
-      status: 'Requires Action', cost: 'Est. £850',
+      status: 'Requires Action', cost: 'Est. $850',
       vendor: null, slaStatus: 'Expiring in 2h',
       icon: AlertCircle, text: 'text-rose-500', bg: 'bg-rose-500/10', glow: 'shadow-rose-500/20'
     },
@@ -55,7 +55,7 @@ export function MaintenanceContent({ title, tier = 'normal', role = 'admin' }: M
       id: 'WO-8840', unit: 'HVAC Roof Unit 3',
       issue: 'Compressor Failure / No AC',
       category: 'HVAC', priority: 'High',
-      status: 'In Progress', cost: '£1,240',
+      status: 'In Progress', cost: '$1,240',
       vendor: { name: 'Sarah M.', company: 'Flow HVAC Ltd', avatar: 'Sarah' }, slaStatus: 'In Compliance',
       icon: Zap, text: 'text-amber-500', bg: 'bg-amber-500/10', glow: 'shadow-amber-500/20'
     },
@@ -63,7 +63,7 @@ export function MaintenanceContent({ title, tier = 'normal', role = 'admin' }: M
       id: 'WO-8835', unit: 'Bldg F - Main Lobby',
       issue: 'Drywall Patch & Repaint',
       category: 'Structural', priority: 'Normal',
-      status: 'Resolved', cost: '£320',
+      status: 'Resolved', cost: '$320',
       vendor: { name: 'David B.', company: 'Internal Staff', avatar: 'David' }, slaStatus: 'Resolved',
       icon: Hammer, text: 'text-emerald-500', bg: 'bg-emerald-500/10', glow: 'shadow-emerald-500/20'
     },
@@ -80,7 +80,7 @@ export function MaintenanceContent({ title, tier = 'normal', role = 'admin' }: M
       const order = workOrders.find(o => o.id === workId);
       if (order) setEditForm({ issue: order.issue, category: order.category, unit: order.unit, cost: order.cost, status: order.status, priority: order.priority });
     } else {
-      setEditForm({ issue: '', category: 'General', unit: '', cost: '£0.00', status: 'Requires Action', priority: 'Normal' });
+      setEditForm({ issue: '', category: 'General', unit: '', cost: '$0.00', status: 'Requires Action', priority: 'Normal' });
     }
     setIsManaging(true);
   };
@@ -108,7 +108,7 @@ export function MaintenanceContent({ title, tier = 'normal', role = 'admin' }: M
   }, [selectedFilter, workOrders]);
 
   return (
-    <div className="max-w-[1400px] mx-auto space-y-8 pb-12">
+    <div className="w-full space-y-8 pb-12">
 
       <Sheet open={isManaging} onOpenChange={setIsManaging}>
 
@@ -381,7 +381,7 @@ export function MaintenanceContent({ title, tier = 'normal', role = 'admin' }: M
                   <Input 
                      className="h-12 rounded-xl bg-background/50 dark:bg-blue-950/20 border-white/10 dark:border-blue-500/20 shadow-inner font-bold"
                      value={editForm.cost}
-                     placeholder="£0.00"
+                     placeholder="$0.00"
                      onChange={e => setEditForm({ ...editForm, cost: e.target.value })}
                   />
                </div>

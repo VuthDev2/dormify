@@ -51,7 +51,7 @@ export function LaundryContent({ title, tier = 'normal', role = 'admin' }: Laund
   };
 
   const businessStats = useMemo(() => [
-    { label: 'Month-to-Date Revenue', value: '£4,240', sub: 'Gross Intake', icon: Wallet, color: 'text-indigo-500', bg: 'from-indigo-400 to-indigo-600', trend: '+14% vs Last Month' },
+    { label: 'Month-to-Date Revenue', value: '$4,240', sub: 'Gross Intake', icon: Wallet, color: 'text-indigo-500', bg: 'from-indigo-400 to-indigo-600', trend: '+14% vs Last Month' },
     { label: 'Machine Uptime', value: '98.5%', sub: 'Global Average', icon: ShieldCheck, color: 'text-emerald-500', bg: 'from-emerald-400 to-emerald-600', trend: 'Stable Operation' },
     { label: 'Active Equipment', value: '22 / 24', sub: 'Washers & Dryers', icon: Waves, color: 'text-blue-500', bg: 'from-blue-400 to-blue-600', trend: 'High Capacity' },
     { label: 'Out of Order', value: '2 Units', sub: 'Requires Maintenance', icon: Wrench, color: 'text-rose-500', bg: 'from-rose-400 to-rose-600', trend: 'Immediate Action' },
@@ -68,7 +68,7 @@ export function LaundryContent({ title, tier = 'normal', role = 'admin' }: Laund
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="max-w-[1400px] mx-auto space-y-8 pb-12"
+      className="w-full space-y-8 pb-12"
     >
       {/* Clean Horizon Header */}
       <motion.div 
@@ -162,7 +162,7 @@ export function LaundryContent({ title, tier = 'normal', role = 'admin' }: Laund
                 <div className="flex items-center justify-between">
                    <div className="space-y-1">
                       <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-foreground">Weekly Revenue</h4>
-                      <p className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-widest">Gross Intake (£)</p>
+                      <p className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-widest">Gross Intake ($)</p>
                    </div>
                    <div className="p-2 rounded-xl bg-indigo-500/10 text-indigo-500">
                       <BarChart3 className="w-4 h-4" />
@@ -254,10 +254,10 @@ export function LaundryContent({ title, tier = 'normal', role = 'admin' }: Laund
              </div>
              <div className="space-y-2">
                {[
-                 { icon: Clock, label: 'Average Wash Cycle', value: '£3.50', color: 'text-emerald-500' },
-                 { icon: RefreshCw, label: 'Average Dry Cycle', value: '£2.00', color: 'text-blue-500' },
+                 { icon: Clock, label: 'Average Wash Cycle', value: '$3.50', color: 'text-emerald-500' },
+                 { icon: RefreshCw, label: 'Average Dry Cycle', value: '$2.00', color: 'text-blue-500' },
                  { icon: CheckCircle2, label: 'Digital Payments', value: '92.4%', color: 'text-indigo-500' },
-                 { label: 'Refund Claims (MTD)', value: '£12.50', color: 'text-rose-500', isRefund: true },
+                 { label: 'Refund Claims (MTD)', value: '$12.50', color: 'text-rose-500', isRefund: true },
                ].map((item, i) => (
                  <div key={i} className={cn("flex items-center justify-between p-4 rounded-xl transition-all", item.isRefund ? "bg-rose-500/5 hover:bg-rose-500/10" : "hover:bg-muted/40")}>
                    <div className="flex items-center gap-3">

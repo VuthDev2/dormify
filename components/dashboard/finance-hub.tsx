@@ -52,10 +52,10 @@ export function FinanceHub({ tier }: FinanceHubProps) {
   ];
 
   const revenueStreams = [
-    { label: 'Room Fees', value: '£542,800', growth: '+4.2%', color: 'bg-primary' },
-    { label: 'Meal Fees', value: '£182,400', growth: '+12.1%', color: 'bg-indigo-500' },
-    { label: 'Event Bookings', value: '£42,000', growth: '+8.5%', color: 'bg-sky-500' },
-    { label: 'Misc Services', value: '£12,300', growth: '-1.4%', color: 'bg-slate-400' },
+    { label: 'Room Fees', value: '$542,800', growth: '+4.2%', color: 'bg-primary' },
+    { label: 'Meal Fees', value: '$182,400', growth: '+12.1%', color: 'bg-indigo-500' },
+    { label: 'Event Bookings', value: '$42,000', growth: '+8.5%', color: 'bg-sky-500' },
+    { label: 'Misc Services', value: '$12,300', growth: '-1.4%', color: 'bg-slate-400' },
   ];
 
   return (
@@ -108,10 +108,10 @@ export function FinanceHub({ tier }: FinanceHubProps) {
             {/* High-Impact Stat Strip */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               {[
-                { label: 'Annualized Revenue', value: '£6.24M', trend: '+14.2%', icon: DollarSign, c: 'text-primary' },
+                { label: 'Annualized Revenue', value: '$6.24M', trend: '+14.2%', icon: DollarSign, c: 'text-primary' },
                 { label: 'Operating Margin', value: '78.4%', trend: 'Stable', icon: Target, c: 'text-indigo-500' },
-                { label: 'Outstanding Debt', value: '£14,250', trend: '-2.1%', icon: AlertCircle, c: 'text-rose-500' },
-                { label: 'Yield per Unit', value: '£1,142', trend: '+£42', icon: TrendingUp, c: 'text-emerald-500' },
+                { label: 'Outstanding Debt', value: '$14,250', trend: '-2.1%', icon: AlertCircle, c: 'text-rose-500' },
+                { label: 'Yield per Unit', value: '$1,142', trend: '+$42', icon: TrendingUp, c: 'text-emerald-500' },
               ].map((s, i) => (
                 <div key={i} className="px-6 py-5 rounded-[2rem] border border-border/40 bg-card shadow-sm flex flex-col gap-1 relative overflow-hidden group hover:shadow-xl transition-all cursor-default">
                    <div className="flex items-center justify-between relative z-10">
@@ -159,7 +159,7 @@ export function FinanceHub({ tier }: FinanceHubProps) {
                               className="w-full bg-gradient-to-t from-primary/60 to-primary rounded-t-xl relative shadow-lg shadow-primary/10 group-hover/bar:brightness-110 group-hover/bar:shadow-primary/20 transition-all cursor-pointer"
                            >
                               <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-foreground text-background px-3 py-1.5 rounded-lg text-[9px] font-black opacity-0 group-hover/bar:opacity-100 transition-all pointer-events-none whitespace-nowrap shadow-xl">
-                                 £{(h * 12).toFixed(1)}k
+                                 ${(h * 12).toFixed(1)}k
                               </div>
                            </motion.div>
                            <span className="text-[8px] font-black text-center text-muted-foreground/30 uppercase">M{i+1}</span>
@@ -228,9 +228,9 @@ export function FinanceHub({ tier }: FinanceHubProps) {
             {/* Invoice Action Bar */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                {[
-                 { label: 'Overdue Total', value: '£8,420', icon: ShieldAlert, color: 'text-rose-500', bg: 'bg-rose-500/5' },
-                 { label: 'Unsent Drafts', value: '£2,100', icon: FileDown, color: 'text-amber-500', bg: 'bg-amber-500/5' },
-                 { label: 'Recent Paid', value: '£14,250', icon: ShieldCheck, color: 'text-emerald-500', bg: 'bg-emerald-500/5' },
+                 { label: 'Overdue Total', value: '$8,420', icon: ShieldAlert, color: 'text-rose-500', bg: 'bg-rose-500/5' },
+                 { label: 'Unsent Drafts', value: '$2,100', icon: FileDown, color: 'text-amber-500', bg: 'bg-amber-500/5' },
+                 { label: 'Recent Paid', value: '$14,250', icon: ShieldCheck, color: 'text-emerald-500', bg: 'bg-emerald-500/5' },
                ].map((s, i) => (
                  <div key={i} className="px-5 py-4 rounded-2xl border border-border/40 bg-card/50 flex items-center justify-between group cursor-pointer hover:border-primary/20 transition-all">
                     <div className="space-y-0.5">
@@ -307,7 +307,7 @@ export function FinanceHub({ tier }: FinanceHubProps) {
                                     <span className="text-[7px] font-black uppercase tracking-tighter">{inv.method}</span>
                                  </div>
                               </td>
-                              <td className="py-5 px-8 text-right font-mono font-black text-foreground">£{inv.amount}</td>
+                              <td className="py-5 px-8 text-right font-mono font-black text-foreground">${inv.amount}</td>
                            </tr>
                         ))}
                      </tbody>

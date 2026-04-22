@@ -46,9 +46,9 @@ const realisticResidents: Resident[] = [
     joinDate: 'Sept 2024', 
     leaseEnd: 'Aug 2026', 
     paymentStatus: 'Paid',
-    university: 'University College London',
+    university: 'NYU',
     course: 'MSc Data Science & AI',
-    nationality: 'British'
+    nationality: 'American'
   },
   { 
     id: 'RES-8821', 
@@ -61,7 +61,7 @@ const realisticResidents: Resident[] = [
     joinDate: 'Sept 2024', 
     leaseEnd: 'Aug 2025', 
     paymentStatus: 'Paid',
-    university: 'Imperial College London',
+    university: 'Columbia University',
     course: 'BEng Robotic Systems',
     nationality: 'Singaporean'
   },
@@ -76,7 +76,7 @@ const realisticResidents: Resident[] = [
     joinDate: 'Oct 2024', 
     leaseEnd: 'Sept 2026', 
     paymentStatus: 'Pending',
-    university: 'London School of Economics',
+    university: 'Princeton',
     course: 'BSc International Relations',
     nationality: 'Canadian'
   },
@@ -91,9 +91,9 @@ const realisticResidents: Resident[] = [
     joinDate: 'Sept 2023', 
     leaseEnd: 'Aug 2026', 
     paymentStatus: 'Paid',
-    university: 'Kings College London',
+    university: 'Harvard',
     course: 'LLB Law / Global Ethics',
-    nationality: 'British'
+    nationality: 'American'
   },
   { 
     id: 'RES-8824', 
@@ -106,7 +106,7 @@ const realisticResidents: Resident[] = [
     joinDate: 'Jan 2024', 
     leaseEnd: 'Dec 2025', 
     paymentStatus: 'Paid',
-    university: 'University of the Arts London',
+    university: 'Parsons',
     course: 'BA Fine Art / Digital Media',
     nationality: 'Spanish'
   },
@@ -121,7 +121,7 @@ const realisticResidents: Resident[] = [
     joinDate: 'Sept 2022', 
     leaseEnd: 'Jun 2026', 
     paymentStatus: 'Paid',
-    university: 'University College London',
+    university: 'NYU',
     course: 'PhD Quantum Computing',
     nationality: 'German'
   },
@@ -136,7 +136,7 @@ const realisticResidents: Resident[] = [
     joinDate: 'Sept 2024', 
     leaseEnd: 'Aug 2027', 
     paymentStatus: 'Overdue',
-    university: 'SOAS University of London',
+    university: 'Stanford',
     course: 'MA East Asian Studies',
     nationality: 'Japanese'
   },
@@ -261,10 +261,10 @@ export function ModuleContent({ title, type, subType, tier = 'normal', role = 'a
   if (type === 'dorms') {
     const dorms = [
       {
-        name: 'Bloomsbury Hall',
+        name: 'Manhattan Central',
         campus: 'North Campus',
         occupancy: 98,
-        yield: '£42,500',
+        yield: '$42,500',
         status: 'Optimal',
         tickets: 2,
         systems: { power: 'ok', water: 'ok', security: 'ok', wifi: 'issue' },
@@ -272,10 +272,10 @@ export function ModuleContent({ title, type, subType, tier = 'normal', role = 'a
         image: '/bloomsbury-hall.jpg'
       },
       {
-        name: 'Borough Wing',
+        name: 'Brooklyn Wing',
         campus: 'South Campus',
         occupancy: 82,
-        yield: '£31,200',
+        yield: '$31,200',
         status: 'Review',
         tickets: 8,
         systems: { power: 'ok', water: 'alert', security: 'ok', wifi: 'ok' },
@@ -283,10 +283,10 @@ export function ModuleContent({ title, type, subType, tier = 'normal', role = 'a
         image: '/borough-wing.jpg'
       },
       {
-        name: 'Paddington Court',
+        name: 'Times Square Court',
         campus: 'East Campus',
         occupancy: 94,
-        yield: '£38,900',
+        yield: '$38,900',
         status: 'Optimal',
         tickets: 0,
         systems: { power: 'ok', water: 'ok', security: 'ok', wifi: 'ok' },
@@ -400,14 +400,14 @@ export function ModuleContent({ title, type, subType, tier = 'normal', role = 'a
   if (type === 'billing') {
     const billingStats = [
       { label: 'Active Cycles', value: '3', sub: 'Nov Rent, Dec Rent, Q4 Utils', icon: RefreshCcw, color: 'text-primary' },
-      { label: 'Total Outstanding', value: '£18.4k', sub: 'Across 12 accounts', icon: AlertTriangle, color: 'text-warning' },
+      { label: 'Total Outstanding', value: '$18.4k', sub: 'Across 12 accounts', icon: AlertTriangle, color: 'text-warning' },
       { label: 'Collection Rate', value: '98.2%', sub: 'Last 30 days', icon: CheckCircle2, color: 'text-success' },
     ];
 
     const cycles = [
-      { name: 'December Rent', date: 'Dec 01, 2025', progress: 82, total: '£142.5k', collected: '£116.8k', issued: 124, paid: 102 },
-      { name: 'November Rent', date: 'Nov 01, 2025', progress: 100, total: '£142.5k', collected: '£142.5k', issued: 124, paid: 124 },
-      { name: 'Utilities Q4', date: 'Oct 15, 2025', progress: 65, total: '£24.2k', collected: '£15.7k', issued: 124, paid: 81 },
+      { name: 'December Rent', date: 'Dec 01, 2025', progress: 82, total: '$142.5k', collected: '$116.8k', issued: 124, paid: 102 },
+      { name: 'November Rent', date: 'Nov 01, 2025', progress: 100, total: '$142.5k', collected: '$142.5k', issued: 124, paid: 124 },
+      { name: 'Utilities Q4', date: 'Oct 15, 2025', progress: 65, total: '$24.2k', collected: '$15.7k', issued: 124, paid: 81 },
     ];
 
     return (
@@ -491,15 +491,15 @@ export function ModuleContent({ title, type, subType, tier = 'normal', role = 'a
 
   if (type === 'revenue') {
     const revenueStats = [
-      { label: 'Gross Revenue', value: '£842.5k', change: '+12.4%', up: true, icon: DollarSign, trend: [40, 50, 45, 60, 55, 70] },
-      { label: 'Net Profit', value: '£612.2k', change: '+8.1%', up: true, icon: TrendingUp, trend: [30, 40, 35, 50, 45, 60] },
-      { label: 'Avg. Rev/Unit', value: '£942', change: '-2.4%', up: false, icon: Target, trend: [50, 48, 52, 49, 47, 46] },
+      { label: 'Gross Revenue', value: '$842.5k', change: '+12.4%', up: true, icon: DollarSign, trend: [40, 50, 45, 60, 55, 70] },
+      { label: 'Net Profit', value: '$612.2k', change: '+8.1%', up: true, icon: TrendingUp, trend: [30, 40, 35, 50, 45, 60] },
+      { label: 'Avg. Rev/Unit', value: '$942', change: '-2.4%', up: false, icon: Target, trend: [50, 48, 52, 49, 47, 46] },
     ];
 
     const recentEvents = [
-      { id: 'REV-901', source: 'Room Rental (RM-102)', amount: '£850.00', date: 'Today, 10:42', type: 'Credit' },
-      { id: 'REV-900', source: 'Service Fee (Laundry)', amount: '£12.50', date: 'Today, 09:15', type: 'Credit' },
-      { id: 'REV-899', source: 'Meal Plan (Premium)', amount: '£320.00', date: 'Yesterday', type: 'Credit' },
+      { id: 'REV-901', source: 'Room Rental (RM-102)', amount: '$850.00', date: 'Today, 10:42', type: 'Credit' },
+      { id: 'REV-900', source: 'Service Fee (Laundry)', amount: '$12.50', date: 'Today, 09:15', type: 'Credit' },
+      { id: 'REV-899', source: 'Meal Plan (Premium)', amount: '$320.00', date: 'Yesterday', type: 'Credit' },
     ];
 
     return (
@@ -564,7 +564,7 @@ export function ModuleContent({ title, type, subType, tier = 'normal', role = 'a
                    <div key={i} className="flex-1 flex flex-col justify-end gap-2 h-full group/bar">
                       <div className="w-full bg-primary/10 rounded-t-xl group-hover/bar:bg-primary/20 transition-all relative" style={{ height: `${h}%` }}>
                          <div className="absolute top-0 left-0 w-full bg-primary rounded-t-xl" style={{ height: '70%' }} />
-                         <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-foreground text-background px-2 py-1 rounded text-[8px] font-black opacity-0 group-hover/bar:opacity-100 transition-all whitespace-nowrap">£{(h*8)}k</div>
+                         <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-foreground text-background px-2 py-1 rounded text-[8px] font-black opacity-0 group-hover/bar:opacity-100 transition-all whitespace-nowrap">${(h*8)}k</div>
                       </div>
                       <span className="text-[9px] font-black text-center text-muted-foreground/30">WEEK {i+1}</span>
                    </div>
@@ -658,9 +658,9 @@ export function ModuleContent({ title, type, subType, tier = 'normal', role = 'a
     ];
 
     const performanceAudit = [
-      { n: 'Bloomsbury Hall', v: '+12.4%', s: 'Optimal', y: '9.2%' },
+      { n: 'Manhattan Central', v: '+12.4%', s: 'Optimal', y: '9.2%' },
       { n: 'Manchester Central', v: '-2.1%', s: 'Under Review', y: '8.4%' },
-      { n: 'London Hub', v: '+5.4%', s: 'Growth', y: '9.5%' },
+      { n: 'NYC Hub', v: '+5.4%', s: 'Growth', y: '9.5%' },
     ];
 
     // --- Pro: Operational Efficiency Data ---
@@ -705,7 +705,7 @@ export function ModuleContent({ title, type, subType, tier = 'normal', role = 'a
               </div>
               <div className="mt-8 pt-6 border-t border-border grid grid-cols-2 gap-4">
                  <div className="text-center"><p className="text-[9px] font-black uppercase text-muted-foreground mb-1">Portfolio Velocity</p><p className="text-lg font-black">+14.2%</p></div>
-                 <div className="text-center border-l border-border"><p className="text-[9px] font-black uppercase text-muted-foreground mb-1">Yield Delta</p><p className="text-lg font-black text-primary">£52K</p></div>
+                 <div className="text-center border-l border-border"><p className="text-[9px] font-black uppercase text-muted-foreground mb-1">Yield Delta</p><p className="text-lg font-black text-primary">$52K</p></div>
               </div>
             </Card>
 
@@ -962,25 +962,25 @@ export function ModuleContent({ title, type, subType, tier = 'normal', role = 'a
 
   if (type === 'rooms') {
     const rooms = [
-      { id: '101', name: '101', type: 'Studio', status: 'Occupied', housekeeping: 'Clean', maintenance: 'none', resident: 'Sarah Jenkins', rent: '£1,100', floor: 'Floor 1', lastChecked: '10:30 AM' },
-      { id: '102', name: '102', type: 'Standard', status: 'Vacant', housekeeping: 'Dirty', maintenance: 'none', resident: undefined, rent: '£850', floor: 'Floor 1', lastChecked: 'Yesterday' },
-      { id: '103', name: '103', type: 'Standard', status: 'Vacant', housekeeping: 'Inspected', maintenance: 'issue', resident: undefined, rent: '£850', floor: 'Floor 1', lastChecked: '09:15 AM' },
-      { id: '201', name: '201', type: 'Suite', status: 'Occupied', housekeeping: 'Clean', maintenance: 'none', resident: 'David Lawson', rent: '£1,450', floor: 'Floor 2', lastChecked: '08:45 AM' },
-      { id: '202', name: '202', type: 'Standard', status: 'Arriving', housekeeping: 'Dirty', maintenance: 'none', resident: 'Marcus Reade', rent: '£850', floor: 'Floor 2', lastChecked: '11:20 AM' },
-      { id: '203', name: '203', type: 'Standard', status: 'Departing', housekeeping: 'Clean', maintenance: 'none', resident: 'Emma Wilson', rent: '£850', floor: 'Floor 2', lastChecked: '07:30 AM' },
-      { id: '301', name: '301', type: 'Studio', status: 'Vacant', housekeeping: 'Maintenance', maintenance: 'alert', resident: undefined, rent: '£1,100', floor: 'Floor 3', lastChecked: 'Just now' },
-      { id: '302', name: '302', type: 'Standard', status: 'Occupied', housekeeping: 'Clean', maintenance: 'none', resident: 'James Bond', rent: '£850', floor: 'Floor 3', lastChecked: '06:00 AM' },
+      { id: '101', name: '101', type: 'Studio', status: 'Occupied', housekeeping: 'Clean', maintenance: 'none', resident: 'Sarah Jenkins', rent: '$1,100', floor: 'Floor 1', lastChecked: '10:30 AM' },
+      { id: '102', name: '102', type: 'Standard', status: 'Vacant', housekeeping: 'Dirty', maintenance: 'none', resident: undefined, rent: '$850', floor: 'Floor 1', lastChecked: 'Yesterday' },
+      { id: '103', name: '103', type: 'Standard', status: 'Vacant', housekeeping: 'Inspected', maintenance: 'issue', resident: undefined, rent: '$850', floor: 'Floor 1', lastChecked: '09:15 AM' },
+      { id: '201', name: '201', type: 'Suite', status: 'Occupied', housekeeping: 'Clean', maintenance: 'none', resident: 'David Lawson', rent: '$1,450', floor: 'Floor 2', lastChecked: '08:45 AM' },
+      { id: '202', name: '202', type: 'Standard', status: 'Arriving', housekeeping: 'Dirty', maintenance: 'none', resident: 'Marcus Reade', rent: '$850', floor: 'Floor 2', lastChecked: '11:20 AM' },
+      { id: '203', name: '203', type: 'Standard', status: 'Departing', housekeeping: 'Clean', maintenance: 'none', resident: 'Emma Wilson', rent: '$850', floor: 'Floor 2', lastChecked: '07:30 AM' },
+      { id: '301', name: '301', type: 'Studio', status: 'Vacant', housekeeping: 'Maintenance', maintenance: 'alert', resident: undefined, rent: '$1,100', floor: 'Floor 3', lastChecked: 'Just now' },
+      { id: '302', name: '302', type: 'Standard', status: 'Occupied', housekeeping: 'Clean', maintenance: 'none', resident: 'James Bond', rent: '$850', floor: 'Floor 3', lastChecked: '06:00 AM' },
       // Extended data for testing with many rooms
-      { id: '304', name: '304', type: 'Standard', status: 'Occupied', housekeeping: 'Clean', maintenance: 'none', resident: 'Lisa Anderson', rent: '£850', floor: 'Floor 3', lastChecked: '05:15 AM' },
-      { id: '305', name: '305', type: 'Studio', status: 'Vacant', housekeeping: 'Dirty', maintenance: 'none', resident: undefined, rent: '£1,100', floor: 'Floor 3', lastChecked: 'Yesterday' },
-      { id: '401', name: '401', type: 'Suite', status: 'Occupied', housekeeping: 'Clean', maintenance: 'none', resident: 'Tom Bradley', rent: '£1,450', floor: 'Floor 4', lastChecked: '10:00 AM' },
-      { id: '402', name: '402', type: 'Standard', status: 'Vacant', housekeeping: 'Inspected', maintenance: 'issue', resident: undefined, rent: '£850', floor: 'Floor 4', lastChecked: 'Just now' },
-      { id: '403', name: '403', type: 'Standard', status: 'Occupied', housekeeping: 'Clean', maintenance: 'none', resident: 'Rachel Green', rent: '£850', floor: 'Floor 4', lastChecked: '09:30 AM' },
-      { id: '404', name: '404', type: 'Standard', status: 'Maintenance', housekeeping: 'Maintenance', maintenance: 'alert', resident: undefined, rent: '£0', floor: 'Floor 4', lastChecked: 'In Progress' },
-      { id: '405', name: '405', type: 'Standard', status: 'Arriving', housekeeping: 'Dirty', maintenance: 'none', resident: 'Noah Jackson', rent: '£850', floor: 'Floor 4', lastChecked: 'Today' },
-      { id: '501', name: '501', type: 'Studio', status: 'Occupied', housekeeping: 'Clean', maintenance: 'none', resident: 'Sophie Turner', rent: '£1,100', floor: 'Floor 5', lastChecked: '08:20 AM' },
-      { id: '502', name: '502', type: 'Standard', status: 'Vacant', housekeeping: 'Clean', maintenance: 'none', resident: undefined, rent: '£850', floor: 'Floor 5', lastChecked: 'Yesterday' },
-      { id: '503', name: '503', type: 'Standard', status: 'Occupied', housekeeping: 'Clean', maintenance: 'issue', resident: 'Alex Morgan', rent: '£850', floor: 'Floor 5', lastChecked: '07:45 AM' },
+      { id: '304', name: '304', type: 'Standard', status: 'Occupied', housekeeping: 'Clean', maintenance: 'none', resident: 'Lisa Anderson', rent: '$850', floor: 'Floor 3', lastChecked: '05:15 AM' },
+      { id: '305', name: '305', type: 'Studio', status: 'Vacant', housekeeping: 'Dirty', maintenance: 'none', resident: undefined, rent: '$1,100', floor: 'Floor 3', lastChecked: 'Yesterday' },
+      { id: '401', name: '401', type: 'Suite', status: 'Occupied', housekeeping: 'Clean', maintenance: 'none', resident: 'Tom Bradley', rent: '$1,450', floor: 'Floor 4', lastChecked: '10:00 AM' },
+      { id: '402', name: '402', type: 'Standard', status: 'Vacant', housekeeping: 'Inspected', maintenance: 'issue', resident: undefined, rent: '$850', floor: 'Floor 4', lastChecked: 'Just now' },
+      { id: '403', name: '403', type: 'Standard', status: 'Occupied', housekeeping: 'Clean', maintenance: 'none', resident: 'Rachel Green', rent: '$850', floor: 'Floor 4', lastChecked: '09:30 AM' },
+      { id: '404', name: '404', type: 'Standard', status: 'Maintenance', housekeeping: 'Maintenance', maintenance: 'alert', resident: undefined, rent: '$0', floor: 'Floor 4', lastChecked: 'In Progress' },
+      { id: '405', name: '405', type: 'Standard', status: 'Arriving', housekeeping: 'Dirty', maintenance: 'none', resident: 'Noah Jackson', rent: '$850', floor: 'Floor 4', lastChecked: 'Today' },
+      { id: '501', name: '501', type: 'Studio', status: 'Occupied', housekeeping: 'Clean', maintenance: 'none', resident: 'Sophie Turner', rent: '$1,100', floor: 'Floor 5', lastChecked: '08:20 AM' },
+      { id: '502', name: '502', type: 'Standard', status: 'Vacant', housekeeping: 'Clean', maintenance: 'none', resident: undefined, rent: '$850', floor: 'Floor 5', lastChecked: 'Yesterday' },
+      { id: '503', name: '503', type: 'Standard', status: 'Occupied', housekeeping: 'Clean', maintenance: 'issue', resident: 'Alex Morgan', rent: '$850', floor: 'Floor 5', lastChecked: '07:45 AM' },
     ];
 
     return <RoomsManagement title={title} description="Comprehensive room management with filtering, search, and multiple view modes" rooms={rooms as any[]} />;

@@ -116,15 +116,15 @@ export function FinanceContent() {
   };
 
   return (
-    <div className="max-w-[1400px] mx-auto space-y-5 animate-in fade-in duration-500 pb-20">
+    <div className="w-full space-y-5 animate-in fade-in duration-500 pb-20">
       
       {/* 1. Dashboard Metrics (Larger with Radius) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         {[
-          { l: 'Projected Total', v: '£84,200', c: 'text-indigo-500', b: 'bg-indigo-500/5', i: Receipt },
-          { l: 'Fees Collected', v: '£72,850', c: 'text-emerald-500', b: 'bg-emerald-500/5', i: CheckCircle2 },
-          { l: 'Pending Audit', v: '£4,150', c: 'text-amber-500', b: 'bg-amber-500/5', i: Clock },
-          { l: 'System Arrears', v: '£7,200', c: 'text-rose-500', b: 'bg-rose-500/5', i: ShieldAlert },
+          { l: 'Projected Total', v: '$84,200', c: 'text-indigo-500', b: 'bg-indigo-500/5', i: Receipt },
+          { l: 'Fees Collected', v: '$72,850', c: 'text-emerald-500', b: 'bg-emerald-500/5', i: CheckCircle2 },
+          { l: 'Pending Audit', v: '$4,150', c: 'text-amber-500', b: 'bg-amber-500/5', i: Clock },
+          { l: 'System Arrears', v: '$7,200', c: 'text-rose-500', b: 'bg-rose-500/5', i: ShieldAlert },
         ].map((s, i) => (
           <Card key={i} className="p-5 border-border/40 bg-card rounded-[1.5rem] border shadow-sm group hover:shadow-lg hover:border-primary/20 transition-all cursor-pointer relative overflow-hidden">
              <div className="relative z-10 flex items-center gap-5">
@@ -184,7 +184,7 @@ export function FinanceContent() {
                    <StatusIndicator status={r.roomFee.status} />
                 </td>
                 <td className="py-3 px-4 bg-indigo-500/[0.01] text-right">
-                   <span className="text-[11px] font-mono font-black text-foreground">£{r.roomFee.amount}</span>
+                   <span className="text-[11px] font-mono font-black text-foreground">${r.roomFee.amount}</span>
                 </td>
                 <td className="py-3 px-4 bg-indigo-500/[0.01] text-center border-r border-border/5">
                    <MethodBadge method={r.roomFee.method} />
@@ -195,7 +195,7 @@ export function FinanceContent() {
                    <StatusIndicator status={r.mealFee.status} />
                 </td>
                 <td className="py-3 px-4 bg-amber-500/[0.01] text-right">
-                   <span className="text-[11px] font-mono font-black text-foreground">£{r.mealFee.amount}</span>
+                   <span className="text-[11px] font-mono font-black text-foreground">${r.mealFee.amount}</span>
                 </td>
                 <td className="py-3 px-4 bg-amber-500/[0.01] text-center">
                    <MethodBadge method={r.mealFee.method} />
@@ -251,7 +251,7 @@ export function FinanceContent() {
                           </div>
                           <div className="text-right">
                              <p className="text-[8px] font-black uppercase text-muted-foreground/40 mb-1">Fee Amount</p>
-                             <p className="text-lg font-mono font-black text-foreground">£{selectedResident.roomFee.amount}</p>
+                             <p className="text-lg font-mono font-black text-foreground">${selectedResident.roomFee.amount}</p>
                           </div>
                        </div>
                        <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border/10">
@@ -279,7 +279,7 @@ export function FinanceContent() {
                           </div>
                           <div className="text-right">
                              <p className="text-[8px] font-black uppercase text-muted-foreground/40 mb-1">Fee Amount</p>
-                             <p className="text-lg font-mono font-black text-foreground">£{selectedResident.mealFee.amount}</p>
+                             <p className="text-lg font-mono font-black text-foreground">${selectedResident.mealFee.amount}</p>
                           </div>
                        </div>
                        <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border/10">

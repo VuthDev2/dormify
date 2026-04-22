@@ -108,7 +108,7 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
 
         {/* --- Top Metrics Bar --- */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard tier="premium" label="Net Rental Income" value="£1.24M" trend="up" change="+4.2%" icon={Wallet} sparklineData={[40, 45, 42, 50, 48, 55, 60]} />
+          <StatCard tier="premium" label="Net Rental Income" value="$1.24M" trend="up" change="+4.2%" icon={Wallet} sparklineData={[40, 45, 42, 50, 48, 55, 60]} />
           <StatCard tier="premium" label="Portfolio Occupancy" value="98.2%" trend="neutral" change="Stable" icon={Building2} sparklineData={[80, 82, 85, 84, 88, 90, 92]} />
           <StatCard tier="premium" label="Operating Margin" value="92.4%" trend="up" change="+0.8%" icon={TrendingUp} sparklineData={[85, 87, 88, 90, 91, 92, 92.4]} />
           <StatCard tier="premium" label="Maintenance SLA" value="99.1%" trend="up" change="Optimal" icon={ShieldCheck} sparklineData={[96, 97, 98, 98.5, 99, 99.1]} />
@@ -119,7 +119,7 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 border-b border-border/10 pb-4">
                  <div className="space-y-0.5">
                     <h3 className="text-[10px] font-bold uppercase tracking-[0.25em] text-foreground">Revenue Performance</h3>
-                    <p className="text-[11px] text-muted-foreground font-medium italic">Actual vs. Forecasted Budget (GBP)</p>
+                    <p className="text-[11px] text-muted-foreground font-medium italic">Actual vs. Forecasted Budget (USD)</p>
                  </div>
                  <div className="flex items-center gap-4">
                     <div className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-primary" /> <span className="text-[9px] font-bold uppercase text-muted-foreground">Actual</span></div>
@@ -131,8 +131,8 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
               </div>
               <div className="grid grid-cols-4 gap-4 pt-8 border-t border-border/10 mt-6">
                  {[
-                   { l: 'Total Revenue', v: '£5.42M' },
-                   { l: 'Variance', v: '+£120K', c: 'text-emerald-500' },
+                   { l: 'Total Revenue', v: '$5.42M' },
+                   { l: 'Variance', v: '+$120K', c: 'text-emerald-500' },
                    { l: 'Exp. Ratio', v: '8.4%' },
                    { l: 'Net Yield', v: '9.21%' },
                  ].map((d, i) => (
@@ -151,10 +151,10 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
               </div>
               <div className="space-y-1 flex-1 overflow-auto max-h-[380px] scrollbar-hide">
                  {[
-                   { n: 'Bloomsbury Hall', s: 'Operational', o: '98%', y: '9.2%', st: 'emerald' },
+                   { n: 'Manhattan Central', s: 'Operational', o: '98%', y: '9.2%', st: 'emerald' },
                    { n: 'Manchester Central', s: 'Maintenance', o: '94%', y: '8.8%', st: 'amber' },
                    { n: 'Birmingham Port', s: 'Operational', o: '100%', y: '9.5%', st: 'emerald' },
-                   { n: 'London Hub', s: 'Critical Issue', o: '82%', y: '7.4%', st: 'rose' },
+                   { n: 'NYC Hub', s: 'Critical Issue', o: '82%', y: '7.4%', st: 'rose' },
                    { n: 'Leeds Quarter', s: 'Operational', o: '97%', y: '9.1%', st: 'emerald' },
                    { n: 'Southampton Bay', s: 'Operational', o: '99%', y: '9.0%', st: 'emerald' },
                  ].map((asset, i) => (
@@ -186,7 +186,7 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
                        <span className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest italic">Internal Protocol Only</span>
                     </div>
                     <h3 className="text-3xl font-bold text-foreground leading-tight tracking-tight">Projected Yield Growth: +12.4% <br /> via Automated Rent Indexing.</h3>
-                    <p className="text-[13px] font-medium text-muted-foreground/60 leading-relaxed">Financial modeling for the next fiscal period indicates significant upside in the London residential sector. Audit revealed 40% of properties are under-market, suggesting a potential uplift of £400k annually.</p>
+                    <p className="text-[13px] font-medium text-muted-foreground/60 leading-relaxed">Financial modeling for the next fiscal period indicates significant upside in the New York residential sector. Audit revealed 40% of properties are under-market, suggesting a potential uplift of $400k annually.</p>
                  </div>
                  <div className="flex flex-col gap-2.5 w-full md:w-auto min-w-[180px]">
                     <Button className="h-10 rounded-lg bg-primary text-white font-bold text-[10px] uppercase tracking-widest hover:translate-y-[-1px] transition-all shadow-sm">
@@ -223,7 +223,7 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard tier="pro" label="Current Occupancy" value="94.2%" trend="up" change="+1.4%" icon={Users} sparklineData={[60, 65, 70, 75, 80, 85, 94]} />
           <StatCard tier="pro" label="Open Incidents" value="12" trend="down" change="-2" icon={AlertCircle} sparklineData={[15, 14, 13, 14, 15, 13, 12]} />
-          <StatCard tier="pro" label="Daily Maintenance" value="£4.2k" trend="neutral" change="Stable" icon={Wrench} sparklineData={[3, 4, 3.5, 4.2, 3.8, 4.1, 4.2]} />
+          <StatCard tier="pro" label="Daily Maintenance" value="$4.2k" trend="neutral" change="Stable" icon={Wrench} sparklineData={[3, 4, 3.5, 4.2, 3.8, 4.1, 4.2]} />
           <StatCard tier="pro" label="Staffing Health" value="98%" trend="up" change="Optimal" icon={ShieldCheck} sparklineData={[90, 92, 95, 96, 97, 98, 98]} />
         </div>
 
@@ -240,7 +240,7 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
                  {[
                    { t: 'Urgent: Leak Reported', r: 'Sarah J. (A-402)', s: 'Dispatch Pending', time: '14m ago', p: 'high' },
                    { t: 'Contract Review Due', r: 'John D. (C-102)', s: 'Under Review', time: '1h ago', p: 'med' },
-                   { t: 'Safety Inspection', r: 'Bloomsbury Hall', s: 'In Progress', time: '2h ago', p: 'med' },
+                   { t: 'Safety Inspection', r: 'Manhattan Central', s: 'In Progress', time: '2h ago', p: 'med' },
                    { t: 'Staff Scheduling', r: 'Kitchen Node', s: 'Awaiting Sign-off', time: '4h ago', p: 'low' },
                  ].map((item, i) => (
                    <div key={i} className="p-4 flex items-center justify-between hover:bg-muted/30 transition-all cursor-pointer group">
@@ -366,10 +366,10 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
                 <div className="w-10 h-10 rounded-xl bg-indigo-500/5 flex items-center justify-center text-indigo-500 shadow-inner">
                    <Receipt className="w-5 h-5" />
                 </div>
-                <Badge className="bg-indigo-500/10 text-indigo-600 border-none text-[8px] font-black">+£8.2k</Badge>
+                <Badge className="bg-indigo-500/10 text-indigo-600 border-none text-[8px] font-black">+$8.2k</Badge>
              </div>
              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 mb-1">Fee Collection</p>
-             <h3 className="text-2xl font-black tracking-tight">£14,420 <span className="text-xs text-muted-foreground/20 font-medium ml-1">Current</span></h3>
+             <h3 className="text-2xl font-black tracking-tight">$14,420 <span className="text-xs text-muted-foreground/20 font-medium ml-1">Current</span></h3>
           </Card>
 
           <Card className="p-5 border-border/40 bg-card rounded-[1.5rem] border shadow-sm group hover:shadow-xl hover:border-primary/20 transition-all cursor-pointer">
@@ -433,9 +433,9 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
                  </div>
                  <div className="space-y-5">
                     {[
-                      { t: 'Pending Revenue', v: '£1,420', c: 'text-amber-500', sub: 'Meal Fees' },
+                      { t: 'Pending Revenue', v: '$1,420', c: 'text-amber-500', sub: 'Meal Fees' },
                       { t: 'Over Duedate', v: '2 Units', c: 'text-rose-500', sub: 'Room Fees' },
-                      { t: 'Completed Total', v: '£72,850', c: 'text-emerald-500', sub: 'Current Month' },
+                      { t: 'Completed Total', v: '$72,850', c: 'text-emerald-500', sub: 'Current Month' },
                     ].map((alert, i) => (
                       <div key={i} className="flex justify-between items-center group cursor-pointer border-b border-border/5 pb-4 last:border-0 last:pb-0">
                          <div className="space-y-0.5">
@@ -677,7 +677,7 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-1">
               <div className="space-y-1">
                  <div className="flex items-center gap-2 mb-1">
-                    <Badge variant="outline" className="text-[10px] font-bold text-primary border-primary/20 bg-primary/5 px-2 py-0 h-5">Bloomsbury Hall</Badge>
+                    <Badge variant="outline" className="text-[10px] font-bold text-primary border-primary/20 bg-primary/5 px-2 py-0 h-5">Manhattan Central</Badge>
                     <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">Room A-402</span>
                  </div>
                  <h1 className="text-2xl font-bold tracking-tight text-foreground">
@@ -697,7 +697,7 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
 
            {/* 2. Key Metrics Row: Compact & Informative */}
            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <StatCard tier="pro" label="Next Rent Due" value="£1,240" trend="neutral" change="Due Oct 1" icon={CreditCard} />
+              <StatCard tier="pro" label="Next Rent Due" value="$1,240" trend="neutral" change="Due Oct 1" icon={CreditCard} />
               <StatCard tier="pro" label="Room Temperature" value="21.4°C" trend="up" change="+0.2°" icon={Zap} />
               <StatCard tier="pro" label="WiFi Bandwidth" value="942 Mbps" trend="up" change="Optimal" icon={Activity} />
               <StatCard tier="pro" label="Meal Credits" value="18" trend="neutral" change="This Month" icon={UtensilsCrossed} />

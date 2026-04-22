@@ -76,7 +76,7 @@ export function SettingsContent({ title, tier = 'normal' }: SettingsContentProps
   ];
 
   return (
-    <div className="max-w-[1200px] mx-auto space-y-8 animate-in fade-in duration-700 pb-20">
+    <div className="w-full space-y-8 animate-in fade-in duration-700 pb-20">
       
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-border/40">
@@ -220,7 +220,7 @@ export function SettingsContent({ title, tier = 'normal' }: SettingsContentProps
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl border-border/40">
-                      <SelectItem value="gmt" className="text-[10px] font-black uppercase">London (GMT+0)</SelectItem>
+                      <SelectItem value="gmt" className="text-[10px] font-black uppercase">New York (GMT+0)</SelectItem>
                       <SelectItem value="est" className="text-[10px] font-black uppercase">New York (EST-5)</SelectItem>
                     </SelectContent>
                   </Select>
@@ -255,18 +255,18 @@ export function SettingsContent({ title, tier = 'normal' }: SettingsContentProps
                     <Input defaultValue="Global Student Living Ltd." className="h-12 rounded-2xl bg-muted/20 border-border/30 font-bold text-sm" />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">Tax Registration ID (VAT)</Label>
-                    <Input defaultValue="GB123456789" className="h-12 rounded-2xl bg-muted/20 border-border/30 font-bold text-sm font-mono" />
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">Tax Registration ID (EIN)</Label>
+                    <Input defaultValue="12-3456789" className="h-12 rounded-2xl bg-muted/20 border-border/30 font-bold text-sm font-mono" />
                   </div>
                   <div className="space-y-2">
                     <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">Primary Currency</Label>
-                    <Select defaultValue="gbp">
+                    <Select defaultValue="usd">
                       <SelectTrigger className="h-12 rounded-2xl bg-muted/20 border-border/30 font-bold text-sm">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="rounded-xl border-border/40 shadow-2xl">
-                        <SelectItem value="gbp" className="font-bold py-3 px-4">British Pound (£)</SelectItem>
                         <SelectItem value="usd" className="font-bold py-3 px-4">US Dollar ($)</SelectItem>
+                        <SelectItem value="gbp" className="font-bold py-3 px-4">British Pound (£)</SelectItem>
                         <SelectItem value="eur" className="font-bold py-3 px-4">Euro (€)</SelectItem>
                       </SelectContent>
                     </Select>
@@ -280,7 +280,7 @@ export function SettingsContent({ title, tier = 'normal' }: SettingsContentProps
                       <MapPin className="absolute left-4 top-4 w-4 h-4 text-muted-foreground/40" />
                       <textarea 
                         className="w-full min-h-[120px] pl-11 p-4 rounded-2xl bg-muted/20 border-border/30 font-bold text-sm resize-none focus:ring-2 focus:ring-primary/20 outline-none"
-                        defaultValue="24 Finsbury Square, London, EC2A 1BB, United Kingdom"
+                        defaultValue="24 Fifth Avenue, New York, NY 10011, United States"
                       />
                     </div>
                   </div>
@@ -340,8 +340,8 @@ export function SettingsContent({ title, tier = 'normal' }: SettingsContentProps
                 <h4 className="text-xs font-black uppercase tracking-[0.2em] text-foreground/50 px-2">Active Administrative Sessions</h4>
                 <div className="space-y-3">
                   {[
-                    { device: 'MacBook Pro 16"', location: 'London, UK', ip: '192.168.1.1', status: 'Current', icon: Laptop },
-                    { device: 'iPhone 15 Pro', location: 'London, UK', ip: '10.0.0.45', status: 'Active', icon: Smartphone },
+                    { device: 'MacBook Pro 16"', location: 'New York, USA', ip: '192.168.1.1', status: 'Current', icon: Laptop },
+                    { device: 'iPhone 15 Pro', location: 'New York, USA', ip: '10.0.0.45', status: 'Active', icon: Smartphone },
                   ].map((session, i) => (
                     <div key={i} className="flex items-center justify-between p-5 rounded-2xl bg-muted/10 border border-border/20 group hover:border-primary/20 transition-all">
                       <div className="flex items-center gap-4">
