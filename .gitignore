@@ -15,3 +15,8 @@ next.user-config.*
 node_modules/
 .next/
 .DS_Store
+
+# Build artifacts & env
+.env
+dist/
+tsconfig.tsbuildinfo

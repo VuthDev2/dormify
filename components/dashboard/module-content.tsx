@@ -615,7 +615,7 @@ export function ModuleContent({ title, type, tier = 'normal', role = 'admin' }: 
       { id: '503', name: '503', type: 'Standard', status: 'Occupied', housekeeping: 'Clean', maintenance: 'issue', resident: 'Alex Morgan', rent: '£850', floor: 'Floor 5', lastChecked: '07:45 AM' },
     ];
 
-    return <RoomsManagement title={title} description="Comprehensive room management with filtering, search, and multiple view modes" rooms={rooms} tier={tier} />;
+    return <RoomsManagement title={title} description="Comprehensive room management with filtering, search, and multiple view modes" rooms={rooms as any} tier={tier} />;
   }
 
   if (type === 'settings') {
