@@ -81,6 +81,16 @@ export interface TenantRoom {
   end_date: string | null
   monthly_rent_override: number | null
   is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface DormChef {
+  id: string
+  chef_id: string
+  dorm_id: string
+  assigned_at: string
+  is_active: boolean
 }
 
 export interface Invoice {
@@ -126,6 +136,8 @@ export interface MealPlan {
   week_start_date: string
   created_by: string | null
   notes: string | null
+  created_at: string
+  updated_at: string
 }
 
 export interface MealPlanItem {
@@ -146,6 +158,20 @@ export interface MealToggle {
   meal_type: MealType
   is_on: boolean
   toggled_at: string
+}
+
+export type NotificationType = 'payment' | 'meal' | 'maintenance' | 'system' | 'subscription'
+
+export interface Notification {
+  id: string
+  user_id: string
+  dorm_id: string | null
+  title: string
+  body: string
+  type: NotificationType
+  is_read: boolean
+  metadata: Record<string, unknown> | null
+  created_at: string
 }
 
 export interface ApiResponse<T> {
