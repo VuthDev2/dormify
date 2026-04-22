@@ -20,3 +20,6 @@ node_modules/
 .env
 dist/
 tsconfig.tsbuildinfo
+
+# Claude Code local config (contains session data, not for source control)
+.claude/
