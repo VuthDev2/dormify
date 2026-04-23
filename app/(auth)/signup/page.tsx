@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Mail, Lock, Eye, EyeOff, User, Building2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
-import { TIER_TO_PLAN, PLAN_TO_TIER } from '@/lib/supabase/types';
+import { TIER_TO_PLAN } from '@/lib/supabase/types';
 
 const PLAN_PRICE: Record<string, number | null> = {
   normal: null,
@@ -38,53 +38,56 @@ export default function SignupPage() {
     setIsLoading(true);
     setError('');
 
-    const supabase = createClient();
-    const dbPlan = TIER_TO_PLAN[formData.plan];
+    try {
+      const supabase = createClient();
+      const dbPlan = TIER_TO_PLAN[formData.plan];
 
-    // 1. Sign up the user (trigger auto-creates profile row)
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email: formData.email,
-      password: formData.password,
-      options: {
-        data: { full_name: formData.name, role: 'admin' },
-      },
-    });
+      // 1. Sign up the user (trigger auto-creates profile row)
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: { full_name: formData.name, role: 'admin' },
+        },
+      });
 
-    if (authError || !authData.user) {
-      setError(authError?.message ?? 'Signup failed');
+      if (authError || !authData.user) {
+        setError(authError?.message ?? 'Signup failed');
+        return;
+      }
+
+      const userId = authData.user.id;
+
+      // 2. Create subscription
+      const { error: subError } = await supabase.from('subscriptions').insert({
+        admin_id: userId,
+        plan: dbPlan,
+        status: 'active',
+        price_per_month: PLAN_PRICE[formData.plan],
+      });
+
+      if (subError) {
+        setError(subError.message);
+        return;
+      }
+
+      // 3. Create first dorm
+      const { error: dormError } = await supabase.from('dorms').insert({
+        owner_id: userId,
+        name: formData.dorm,
+      });
+
+      if (dormError) {
+        setError(dormError.message);
+        return;
+      }
+
+      router.push(`/dashboard/${formData.plan}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unable to create your account right now.');
+    } finally {
       setIsLoading(false);
-      return;
     }
-
-    const userId = authData.user.id;
-
-    // 2. Create subscription
-    const { error: subError } = await supabase.from('subscriptions').insert({
-      admin_id: userId,
-      plan: dbPlan,
-      status: 'active',
-      price_per_month: PLAN_PRICE[formData.plan],
-    });
-
-    if (subError) {
-      setError(subError.message);
-      setIsLoading(false);
-      return;
-    }
-
-    // 3. Create first dorm
-    const { error: dormError } = await supabase.from('dorms').insert({
-      owner_id: userId,
-      name: formData.dorm,
-    });
-
-    if (dormError) {
-      setError(dormError.message);
-      setIsLoading(false);
-      return;
-    }
-
-    router.push(`/dashboard/${formData.plan}`);
   };
 
   return (

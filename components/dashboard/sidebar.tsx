@@ -180,7 +180,6 @@ export function Sidebar({ role, tier = 'normal' }: SidebarProps) {
       {
         label: 'Infrastructure',
         items: [
-          { label: 'Integrations', href: `${base}/integrations`, icon: Zap },
           { label: 'Audit Log', href: `${base}/audit-log`, icon: History },
           { label: 'Settings', href: `${base}/settings`, icon: Settings },
         ]

@@ -2,16 +2,16 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Mail, Lock, Eye, EyeOff, Building2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/client';
 import { PLAN_TO_TIER } from '@/lib/supabase/types';
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -23,42 +23,47 @@ export default function LoginPage() {
     setIsLoading(true);
     setError('');
 
-    const supabase = createClient();
-    const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
+    try {
+      const supabase = createClient();
+      const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
 
-    if (authError) {
-      setError(authError.message);
+      if (authError) {
+        setError(authError.message);
+        return;
+      }
+
+      // Determine redirect based on subscription plan
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        // Check if user is a tenant (not an admin)
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+
+        if (profile?.role === 'tenant') {
+          router.push('/dashboard/tenants');
+          return;
+        }
+        if (profile?.role === 'chef') {
+          router.push('/dashboard/chef');
+          return;
+        }
+
+        const { data: sub } = await supabase
+          .from('subscriptions')
+          .select('plan')
+          .eq('admin_id', user.id)
+          .single();
+
+        const tier = sub ? PLAN_TO_TIER[sub.plan as keyof typeof PLAN_TO_TIER] : 'normal';
+        router.push(`/dashboard/${tier}`);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unable to sign in right now.');
+    } finally {
       setIsLoading(false);
-      return;
-    }
-
-    // Determine redirect based on subscription plan
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      // Check if user is a tenant (not an admin)
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single();
-
-      if (profile?.role === 'tenant') {
-        router.push('/dashboard/tenants');
-        return;
-      }
-      if (profile?.role === 'chef') {
-        router.push('/dashboard/chef');
-        return;
-      }
-
-      const { data: sub } = await supabase
-        .from('subscriptions')
-        .select('plan')
-        .eq('admin_id', user.id)
-        .single();
-
-      const tier = sub ? PLAN_TO_TIER[sub.plan as keyof typeof PLAN_TO_TIER] : 'normal';
-      router.push(`/dashboard/${tier}`);
     }
   };
 
@@ -84,6 +89,12 @@ export default function LoginPage() {
             {error && (
               <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm font-medium">
                 {error}
+              </div>
+            )}
+
+            {searchParams.get('reset') === 'success' && (
+              <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-medium">
+                Password updated. Sign in with your new password.
               </div>
             )}
 
@@ -130,7 +141,7 @@ export default function LoginPage() {
                     </button>
                   </div>
                   <div className="flex justify-end pt-2">
-                    <Link href="/forgot-password" className="text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors">
+                    <Link href="/forgot" className="text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors">
                       Forgot Password?
                     </Link>
                   </div>

@@ -17,16 +17,21 @@ export default function ForgotPasswordPage() {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-    const supabase = createClient();
-    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
-    });
-    if (resetError) {
-      setError(resetError.message);
-    } else {
-      setIsSent(true);
+    try {
+      const supabase = createClient();
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/callback?next=/reset`,
+      });
+      if (resetError) {
+        setError(resetError.message);
+      } else {
+        setIsSent(true);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unable to send a reset link right now.');
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return (
@@ -77,6 +82,12 @@ export default function ForgotPasswordPage() {
                 {isLoading ? 'Sending...' : 'Send Reset Link'}
               </Button>
             </form>
+
+            {error ? (
+              <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 font-medium text-center shadow-sm">
+                {error}
+              </div>
+            ) : null}
 
             {isSent ? (
               <div className="rounded-xl border border-blue-100 bg-blue-50/80 px-4 py-3 text-sm text-blue-900 font-medium text-center shadow-sm">
