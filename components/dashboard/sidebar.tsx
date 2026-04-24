@@ -76,9 +76,10 @@ export function Sidebar({ role, tier = 'normal' }: SidebarProps) {
         {
           label: '',
           items: [
-            { label: 'Overview', href: base, icon: LayoutDashboard },
-            { label: 'Rooms', href: `${base}/rooms`, icon: Users },
-            { label: 'Residents', href: `${base}/residents`, icon: Building2 },
+            { label: 'Dashboard', href: base, icon: LayoutDashboard },
+            { label: 'Dorms', href: `${base}/dorms`, icon: Building2 },
+            { label: 'Rooms', href: `${base}/rooms`, icon: Building2 },
+            { label: 'Residents', href: `${base}/residents`, icon: Users },
             { label: 'Meals', href: `${base}/meals`, icon: UtensilsCrossed },
             { label: 'Staff', href: `${base}/staff`, icon: ShieldCheck },
             { label: 'Laundry', href: `${base}/laundry`, icon: Waves },
@@ -92,23 +93,22 @@ export function Sidebar({ role, tier = 'normal' }: SidebarProps) {
 
     return [
       {
-        label: 'platform',
+        label: 'Platform',
         items: [
-          { label: 'Overview', href: base, icon: LayoutDashboard },
+          { label: 'Dashboard', href: base, icon: LayoutDashboard },
           ...(tier !== 'normal' ? [{ label: 'Analytics', href: `${base}/analytics`, icon: PieChart }] : []),
         ]
       },
       {
         label: 'Management',
         items: [
-          { label: 'Residents', href: `${base}/residents`, icon: Users },
+          ...(tier !== 'normal' ? [{ label: 'Dorms', href: `${base}/dorms`, icon: Building2 }] : []),
           { label: 'Rooms', href: `${base}/rooms`, icon: Building2 },
-          ...(tier === 'pro' ? [{ label: 'Dorms', href: `${base}/dorms`, icon: Building2 }] : []),
-          ...(tier === 'premium' ? [{ label: 'Dorms', href: `${base}/dorms`, icon: Building2 }] : []),
+          { label: 'Residents', href: `${base}/residents`, icon: Users },
           { label: 'Meals', href: `${base}/meals`, icon: UtensilsCrossed },
+          ...(tier !== 'normal' ? [{ label: 'Services', href: `${base}/maintenance`, icon: Settings }] : []),
           { label: 'Staff', href: `${base}/staff`, icon: ShieldCheck },
           { label: 'Laundry', href: `${base}/laundry`, icon: Waves },
-          ...(tier !== 'normal' ? [{ label: 'Maintenance', href: `${base}/maintenance`, icon: Settings }] : []),
         ]
       },
       {
