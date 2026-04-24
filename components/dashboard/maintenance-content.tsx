@@ -21,13 +21,22 @@ import { cn } from '@/lib/utils';
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+
 interface MaintenanceContentProps {
   title: string;
   tier?: 'normal' | 'pro' | 'premium';
   role?: 'admin' | 'tenant' | 'chef';
+  hideTitle?: boolean;
 }
 
-export function MaintenanceContent({ title, tier = 'normal', role = 'admin' }: MaintenanceContentProps) {
+export function MaintenanceContent({ title, tier = 'normal', role = 'admin', hideTitle = false }: MaintenanceContentProps) {
   const [selectedFilter, setSelectedFilter] = useState('Requires Action');
   const [isManaging, setIsManaging] = useState(false);
   const [selectedWorkOrderId, setSelectedWorkOrderId] = useState<string | null>(null);
@@ -41,7 +50,7 @@ export function MaintenanceContent({ title, tier = 'normal', role = 'admin' }: M
     { label: 'Pending Critical', value: '2', trend: 'Immediate Action', color: 'from-rose-400 to-rose-600', text: 'text-rose-500' },
   ], []);
 
-  // Stateful Work Orders
+  // Stateful Work Orders with Resident Info
   const [workOrders, setWorkOrders] = useState([
     {
       id: 'WO-8842', unit: 'Apt A-402',
@@ -49,7 +58,8 @@ export function MaintenanceContent({ title, tier = 'normal', role = 'admin' }: M
       category: 'Plumbing', priority: 'Critical',
       status: 'Requires Action', cost: 'Est. $850',
       vendor: null, slaStatus: 'Expiring in 2h',
-      icon: AlertCircle, text: 'text-rose-500', bg: 'bg-rose-500/10', glow: 'shadow-rose-500/20'
+      icon: AlertCircle, text: 'text-rose-500', bg: 'bg-rose-500/10', glow: 'shadow-rose-500/20',
+      resident: { name: 'Jordan Smith', email: 'jordan.s@example.com', phone: '+1 (555) 123-4567', avatar: 'Jordan' }
     },
     {
       id: 'WO-8840', unit: 'HVAC Roof Unit 3',
@@ -57,7 +67,8 @@ export function MaintenanceContent({ title, tier = 'normal', role = 'admin' }: M
       category: 'HVAC', priority: 'High',
       status: 'In Progress', cost: '$1,240',
       vendor: { name: 'Sarah M.', company: 'Flow HVAC Ltd', avatar: 'Sarah' }, slaStatus: 'In Compliance',
-      icon: Zap, text: 'text-amber-500', bg: 'bg-amber-500/10', glow: 'shadow-amber-500/20'
+      icon: Zap, text: 'text-amber-500', bg: 'bg-amber-500/10', glow: 'shadow-amber-500/20',
+      resident: { name: 'Internal Facility', email: 'facility@dormify.com', phone: 'Ext. 402', avatar: 'Facility' }
     },
     {
       id: 'WO-8835', unit: 'Bldg F - Main Lobby',
@@ -65,41 +76,18 @@ export function MaintenanceContent({ title, tier = 'normal', role = 'admin' }: M
       category: 'Structural', priority: 'Normal',
       status: 'Resolved', cost: '$320',
       vendor: { name: 'David B.', company: 'Internal Staff', avatar: 'David' }, slaStatus: 'Resolved',
-      icon: Hammer, text: 'text-emerald-500', bg: 'bg-emerald-500/10', glow: 'shadow-emerald-500/20'
+      icon: Hammer, text: 'text-emerald-500', bg: 'bg-emerald-500/10', glow: 'shadow-emerald-500/20',
+      resident: { name: 'Alex Rivera', email: 'alex.r@example.com', phone: '+1 (555) 987-6543', avatar: 'Alex' }
     },
   ]);
 
-  // Form State
-  const [editForm, setEditForm] = useState({
-    issue: '', category: '', unit: '', cost: '', status: '', priority: ''
-  });
+  const selectedOrder = useMemo(() => 
+    workOrders.find(o => o.id === selectedWorkOrderId), 
+  [selectedWorkOrderId, workOrders]);
 
   const openManager = (workId: string | null) => {
     setSelectedWorkOrderId(workId);
-    if (workId) {
-      const order = workOrders.find(o => o.id === workId);
-      if (order) setEditForm({ issue: order.issue, category: order.category, unit: order.unit, cost: order.cost, status: order.status, priority: order.priority });
-    } else {
-      setEditForm({ issue: '', category: 'General', unit: '', cost: '$0.00', status: 'Requires Action', priority: 'Normal' });
-    }
     setIsManaging(true);
-  };
-
-  const handleSave = () => {
-    if (selectedWorkOrderId) {
-       setWorkOrders(prev => prev.map(o => o.id === selectedWorkOrderId ? { ...o, ...editForm } : o));
-    } else {
-       const oCount = workOrders.length + 1;
-       const newOrder = {
-         id: `WO-90${oCount}`,
-         ...editForm,
-         vendor: null,
-         slaStatus: 'Action Required',
-         icon: FileText, text: 'text-primary', bg: 'bg-primary/10', glow: 'shadow-primary/20'
-       };
-       setWorkOrders([newOrder, ...workOrders]);
-    }
-    setIsManaging(false);
   };
 
   const filteredOrders = useMemo(() => {
@@ -108,53 +96,62 @@ export function MaintenanceContent({ title, tier = 'normal', role = 'admin' }: M
   }, [selectedFilter, workOrders]);
 
   return (
-    <div className="w-full space-y-8 pb-12">
+    <div className="w-full space-y-2 pb-12">
 
-      <Sheet open={isManaging} onOpenChange={setIsManaging}>
+      <Dialog open={isManaging} onOpenChange={setIsManaging}>
 
-      {/* Clean Horizon Header */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-border/30 dark:border-blue-500/10"
-      >
-        <div className="space-y-1.5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground/50">Facilities / Operations</p>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">{title}</h1>
-          <p className="text-sm text-muted-foreground/60 font-medium">Active work orders, SLA compliance, and vendor coordination.</p>
-        </div>
-        <div className="flex items-center gap-3 shrink-0">
-          <Button variant="outline" className="h-10 rounded-xl gap-2 font-semibold px-4 border-border/40 dark:border-blue-500/20 hover:bg-muted/30 dark:hover:bg-blue-500/5 transition-colors text-sm bg-card dark:bg-blue-950/20">
-             <Settings2 className="w-4 h-4" /> Settings
-          </Button>
-          <Button onClick={() => openManager(null)} className="h-10 rounded-xl gap-2 font-semibold px-5 bg-foreground text-background dark:bg-blue-600 dark:text-white shadow-md hover:shadow-lg transition-shadow text-sm border-none">
-             <Plus className="w-4 h-4" /> Dispatch Order
-          </Button>
-        </div>
-      </motion.div>
+      {!hideTitle && (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/30 dark:border-blue-500/10"
+        >
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="text-[9px] font-black uppercase tracking-[0.15em] text-primary/70 border-primary/20 bg-primary/5 px-2 py-0 h-auto rounded-md">
+                Facilities / Operations
+              </Badge>
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground leading-tight">{title}</h1>
+          </div>
+
+          <div className="flex flex-col sm:items-end gap-2">
+            <div className="flex items-center gap-2 shrink-0">
+              <Button variant="outline" className="h-8 rounded-lg gap-2 font-semibold px-3 border-border/40 dark:border-blue-500/20 hover:bg-muted/30 dark:hover:bg-blue-500/5 transition-colors text-[10px] bg-card dark:bg-blue-950/20">
+                <Settings2 className="w-3.5 h-3.5" /> Settings
+              </Button>
+              <Button onClick={() => openManager(null)} className="h-8 rounded-lg gap-2 font-semibold px-4 bg-foreground text-background dark:bg-blue-600 dark:text-white shadow-md hover:shadow-lg transition-shadow text-[10px] border-none">
+                <Plus className="w-3.5 h-3.5" /> Dispatch Order
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {hideTitle && <div className="h-2" />}
 
       {/* Dynamic KPI Ribbons (Operational Expenditure & SLA) */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {ownerStats.map((s, i) => (
           <motion.div 
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: i * 0.1, ease: "easeOut" }}
             key={i} 
-            className="group relative p-5 rounded-3xl bg-card/40 dark:bg-blue-950/20 backdrop-blur-2xl border border-white/20 dark:border-blue-500/10 shadow-lg overflow-hidden hover:-translate-y-1 transition-all duration-300"
+            className="group relative p-4 rounded-2xl bg-card/40 dark:bg-blue-950/20 backdrop-blur-2xl border border-white/20 dark:border-blue-500/10 shadow-lg overflow-hidden hover:-translate-y-1 transition-all duration-300"
           >
              <div className={cn("absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-5 transition-opacity duration-500", s.color)}></div>
-             <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-2">{s.label}</p>
+             <p className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1">{s.label}</p>
              <div className="flex items-baseline justify-between mt-1 relative z-10">
-                <span className="text-3xl font-black tracking-tighter text-foreground">{s.value}</span>
-                <span className={cn("text-[10px] font-black uppercase tracking-wider", s.text)}>{s.trend}</span>
+                <span className="text-2xl font-black tracking-tighter text-foreground">{s.value}</span>
+                <span className={cn("text-[9px] font-black uppercase tracking-wider", s.text)}>{s.trend}</span>
              </div>
           </motion.div>
         ))}
       </div>
 
-      <div className="grid lg:grid-cols-12 gap-8">
+      <div className="grid lg:grid-cols-12 gap-6 items-stretch">
         {/* Main Work Order Pipeline */}
         <div className="lg:col-span-8 flex flex-col gap-6">
           
@@ -187,7 +184,7 @@ export function MaintenanceContent({ title, tier = 'normal', role = 'admin' }: M
           </motion.div>
 
           {/* Liquid Layout Record Items */}
-          <div className="rounded-[2.5rem] bg-card/40 dark:bg-blue-950/10 backdrop-blur-3xl border border-white/20 dark:border-blue-500/10 shadow-xl overflow-hidden flex flex-col relative min-h-[400px]">
+          <div className="rounded-[2.5rem] bg-card/40 dark:bg-blue-950/10 backdrop-blur-3xl border border-white/20 dark:border-blue-500/10 shadow-xl overflow-hidden flex flex-col relative min-h-[450px]">
             <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 dark:via-blue-500/20 to-transparent"></div>
             
             <div className="p-6 border-b border-border/10 dark:border-blue-500/10 flex items-center justify-between z-10 bg-muted/10 dark:bg-blue-500/5">
@@ -272,168 +269,161 @@ export function MaintenanceContent({ title, tier = 'normal', role = 'admin' }: M
         {/* Minimal Analytical Sidebar */}
         <motion.div 
           initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5, duration: 0.6 }}
-          className="lg:col-span-4 flex flex-col gap-6"
+          className="lg:col-span-4 h-full"
         >
-          {/* Glowing SLA Alert */}
-          <div className="p-6 rounded-[2.5rem] bg-rose-500/5 dark:bg-rose-950/20 backdrop-blur-2xl border border-rose-500/20 shadow-[0_0_40px_rgba(244,63,94,0.05)] relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-6 opacity-20 transform translate-x-1/4 -translate-y-1/4 group-hover:scale-150 transition-transform duration-700 pointer-events-none">
-               <AlertCircle className="w-32 h-32 text-rose-500" />
-            </div>
-            <div className="relative z-10 flex items-start gap-5">
-               <div className="w-10 h-10 rounded-2xl bg-rose-500 flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(244,63,94,0.4)] animate-pulse">
-                  <Clock className="w-5 h-5 text-white" />
-               </div>
-               <div>
-                  <p className="text-[10px] font-black text-rose-500 uppercase tracking-[0.2em] mb-1.5">SLA Breach Warning</p>
-                  <p className="text-sm font-bold text-rose-900 dark:text-rose-200 leading-snug">
-                     Work Order #8842 (Plumbing) is nearing its 4-hour critical SLA threshold.
-                  </p>
-                  <Button variant="link" className="text-rose-600 dark:text-rose-400 p-0 h-auto text-[10px] font-black uppercase tracking-widest mt-3 hover:text-rose-700 dark:hover:text-rose-300 flex items-center gap-1">
-                     Dispatch Vendor Instantly <ArrowUpRight className="w-3 h-3" />
-                  </Button>
-               </div>
-            </div>
-          </div>
-
-          {/* Live Vendor Rollcall */}
-          <div className="p-6 rounded-[2.5rem] bg-card/40 dark:bg-blue-950/20 backdrop-blur-3xl border border-white/20 dark:border-blue-500/10 shadow-xl flex-1 flex flex-col relative overflow-hidden group">
+          {/* Facility Health & Compliance Index */}
+          <div className="p-8 rounded-[2.5rem] bg-card/40 dark:bg-blue-950/20 backdrop-blur-3xl border border-white/20 dark:border-blue-500/10 shadow-xl flex flex-col relative overflow-hidden group min-h-[500px]">
             <div className="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-primary/5 dark:from-blue-500/10 to-transparent pointer-events-none"></div>
-            <div>
-               <div className="flex items-center justify-between mb-8">
+            <div className="flex-1 flex flex-col">
+               <div className="flex items-center justify-between mb-10">
                   <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-2">
-                     Vendor Telemetry
+                     Facility Health Index
                   </h3>
-                  <div className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5">
-                     <span className="relative flex h-1.5 w-1.5 rounded-full bg-emerald-500">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                     </span> On Site Status
+                  <div className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-500 text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5">
+                     Next Audit: 12d
                   </div>
                </div>
                
-               <div className="space-y-6 relative z-10">
+               <div className="space-y-8 relative z-10 flex-1 flex flex-col justify-center">
                  {[
-                   { name: 'Sarah M.', company: 'Flow Plumbing', status: 'On Site', avatar: 'Sarah' },
-                   { name: 'David B.', company: 'Internal Handyman', status: 'Available', avatar: 'David' },
-                   { name: 'Alex K.', company: 'Spark Electric', status: 'Off Duty', avatar: 'Alex' },
+                   { name: 'HVAC Systems', status: 'Optimal', health: 94, icon: Zap, color: 'text-emerald-500' },
+                   { name: 'Elevator Units', status: 'Service Due', health: 78, icon: Activity, color: 'text-amber-500' },
+                   { name: 'Fire Safety', status: 'Certified', health: 100, icon: ShieldCheck, color: 'text-emerald-500' },
+                   { name: 'Main Power Grid', status: 'Stable', health: 98, icon: Zap, color: 'text-emerald-500' },
                  ].map((v, i) => (
-                   <div key={i} className="flex justify-between items-center group/item hover:bg-muted/30 dark:hover:bg-blue-500/10 p-2 -mx-2 rounded-xl transition-all cursor-pointer">
-                      <div className="flex items-center gap-4">
-                        <Avatar className="h-10 w-10 border border-white/10 dark:border-blue-500/20 shadow-sm transition-transform group-hover/item:scale-110">
-                          <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${v.avatar}`} />
-                          <AvatarFallback className="text-[10px] font-black bg-muted dark:bg-blue-900/40">{v.name.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="text-sm font-black text-foreground">{v.name}</p>
-                          <p className="text-[9px] font-black text-muted-foreground/60 uppercase tracking-widest">{v.company}</p>
+                   <div key={i} className="space-y-3 group/item cursor-pointer">
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-4">
+                          <div className={cn("p-2.5 rounded-xl bg-muted/50 dark:bg-blue-900/40", v.color.replace('text', 'bg').replace('500', '500/10'))}>
+                            <v.icon className={cn("w-4 h-4", v.color)} />
+                          </div>
+                          <div>
+                            <p className="text-sm font-black text-foreground">{v.name}</p>
+                            <p className="text-[9px] font-black text-muted-foreground/60 uppercase tracking-widest">{v.status}</p>
+                          </div>
                         </div>
+                        <span className="text-xs font-black text-foreground">{v.health}%</span>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                         <div className={cn("w-1.5 h-1.5 rounded-full", v.status === 'Off Duty' ? "bg-muted-foreground/30" : v.status === 'Available' ? "bg-blue-500" : "bg-emerald-500")} />
-                         <span className="text-[8px] font-black uppercase tracking-tighter text-muted-foreground/60">{v.status}</span>
+                      <div className="h-2 w-full bg-muted dark:bg-blue-900/40 rounded-full overflow-hidden">
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: `${v.health}%` }}
+                          transition={{ duration: 1, delay: 0.5 + (i * 0.1) }}
+                          className={cn("h-full rounded-full", v.health > 90 ? "bg-emerald-500" : v.health > 70 ? "bg-amber-500" : "bg-rose-500")}
+                        />
                       </div>
                    </div>
                  ))}
                </div>
                
-               <Button variant="outline" className="w-full h-11 rounded-2xl border-border/40 dark:border-blue-500/20 bg-muted/30 dark:bg-blue-900/20 mt-8 text-[10px] font-black uppercase tracking-widest hover:bg-muted/50 dark:hover:bg-blue-900/40 transition-all transition-all">
-                   Manage Vendor Book
+               <Button variant="outline" className="w-full h-12 rounded-2xl border-border/40 dark:border-blue-500/20 bg-muted/30 dark:bg-blue-900/20 mt-10 text-[10px] font-black uppercase tracking-widest hover:bg-muted/50 dark:hover:bg-blue-900/40 transition-all">
+                   System Audit History
                </Button>
             </div>
           </div>
-
         </motion.div>
       </div>
 
-      {/* Editor Sheet */}
-      <SheetContent className="bg-card/60 dark:bg-slate-950/80 backdrop-blur-3xl border-l border-white/20 dark:border-blue-500/20 sm:max-w-md w-full z-[100] shadow-2xl">
-         <SheetHeader className="pb-6 border-b border-border/10 dark:border-blue-500/10">
-            <SheetTitle className="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/50 dark:from-white dark:to-white/40">
-               {selectedWorkOrderId ? 'Manage Work Order' : 'Dispatch New Order'}
-            </SheetTitle>
-            <SheetDescription className="text-xs font-bold text-muted-foreground">
-               Update standard operational parameters, assign vendors, and track OpEx accurately.
-            </SheetDescription>
-         </SheetHeader>
+      {/* Centered Detail Dialog */}
+      <DialogContent className="max-w-2xl bg-card/60 dark:bg-slate-950/80 backdrop-blur-3xl border border-white/20 dark:border-blue-500/20 z-[100] shadow-2xl rounded-[2.5rem] overflow-hidden p-0">
+         <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
          
-         <div className="py-8 space-y-6">
-            <div className="space-y-3">
-               <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Work Order Narrative</Label>
-               <Input 
-                  className="h-12 rounded-xl bg-background/50 dark:bg-blue-950/20 border-white/10 dark:border-blue-500/20 shadow-inner focus-visible:ring-primary/20 font-bold"
-                  value={editForm.issue}
-                  placeholder="E.g., Window Seal Broken"
-                  onChange={e => setEditForm({ ...editForm, issue: e.target.value })}
-               />
+         <DialogHeader className="p-8 pb-4">
+            <div className="flex justify-between items-start w-full">
+              <div className="space-y-1">
+                <DialogTitle className="text-2xl font-black tracking-tighter uppercase text-foreground">
+                   Request Information
+                </DialogTitle>
+                <DialogDescription className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                   Reference: {selectedOrder?.id} • {selectedOrder?.category}
+                </DialogDescription>
+              </div>
+              <Badge className={cn(
+                  "text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full border border-white/10 dark:border-blue-500/20 shadow-lg",
+                  selectedOrder?.status === 'Resolved' ? "bg-emerald-500 text-white" : 
+                  selectedOrder?.status === 'In Progress' ? "bg-amber-500 text-white" : "bg-rose-500 text-white"
+              )}>{selectedOrder?.status}</Badge>
             </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-               <div className="space-y-3">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Unit Designation</Label>
-                  <Input 
-                     className="h-12 rounded-xl bg-background/50 dark:bg-blue-950/20 border-white/10 dark:border-blue-500/20 shadow-inner font-bold"
-                     value={editForm.unit}
-                     placeholder="Apt A-402"
-                     onChange={e => setEditForm({ ...editForm, unit: e.target.value })}
-                  />
+         </DialogHeader>
+         
+         <div className="px-8 pb-8 space-y-8">
+            {/* Resident & Unit Context */}
+            <div className="grid grid-cols-2 gap-6">
+              <div className="p-5 rounded-3xl bg-muted/20 dark:bg-blue-950/20 border border-border/10 dark:border-blue-500/10 space-y-4">
+                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+                   <User className="w-3.5 h-3.5" /> Resident Contact
+                </div>
+                <div className="flex items-center gap-4">
+                  <Avatar className="h-12 w-12 border-2 border-primary/20">
+                    <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedOrder?.resident?.avatar}`} />
+                    <AvatarFallback className="font-black">{selectedOrder?.resident?.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <div className="space-y-0.5">
+                    <p className="text-sm font-black text-foreground leading-none">{selectedOrder?.resident?.name}</p>
+                    <p className="text-[10px] font-bold text-muted-foreground">{selectedOrder?.resident?.email}</p>
+                    <p className="text-[10px] font-bold text-primary/80 mt-1">{selectedOrder?.resident?.phone}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-5 rounded-3xl bg-muted/20 dark:bg-blue-950/20 border border-border/10 dark:border-blue-500/10 space-y-4">
+                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+                   <MapPin className="w-3.5 h-3.5" /> Location Detail
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xl font-black text-foreground tracking-tight">{selectedOrder?.unit}</p>
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Main Residential Wing</p>
+                  <div className="flex items-center gap-1.5 mt-2">
+                    <Badge variant="outline" className="text-[8px] font-black uppercase border-primary/20 text-primary px-2 py-0">Occupied</Badge>
+                    <Badge variant="outline" className="text-[8px] font-black uppercase border-emerald-500/20 text-emerald-500 px-2 py-0">Standard Tier</Badge>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Maintenance Narrative */}
+            <div className="p-6 rounded-[2rem] bg-foreground/5 dark:bg-blue-500/5 border border-foreground/10 dark:border-blue-500/10 space-y-4">
+               <div className="flex items-center justify-between">
+                 <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+                    <ClipboardList className="w-4 h-4" /> Issue Narrative
+                 </div>
+                 <span className={cn("text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md", selectedOrder?.text, selectedOrder?.bg)}>
+                    {selectedOrder?.priority} Priority
+                 </span>
                </div>
-               <div className="space-y-3">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Expected OpEx Cost</Label>
-                  <Input 
-                     className="h-12 rounded-xl bg-background/50 dark:bg-blue-950/20 border-white/10 dark:border-blue-500/20 shadow-inner font-bold"
-                     value={editForm.cost}
-                     placeholder="$0.00"
-                     onChange={e => setEditForm({ ...editForm, cost: e.target.value })}
-                  />
+               <p className="text-lg font-bold text-foreground leading-snug">
+                 {selectedOrder?.issue}
+               </p>
+               <div className="pt-4 border-t border-border/10 flex justify-between items-center">
+                  <div className="flex items-center gap-4">
+                    <div className="space-y-0.5">
+                      <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Logged On</p>
+                      <p className="text-[10px] font-bold text-foreground">Oct 24, 2023 · 09:42 AM</p>
+                    </div>
+                    <div className="space-y-0.5">
+                      <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Category</p>
+                      <p className="text-[10px] font-bold text-foreground">{selectedOrder?.category}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest text-right">Estimated OpEx</p>
+                    <p className="text-sm font-black text-foreground">{selectedOrder?.cost}</p>
+                  </div>
                </div>
             </div>
 
-            <div className="space-y-3 pb-2 pt-2">
-               <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">SLA Priority Protocol</Label>
-               <div className="grid grid-cols-3 gap-2">
-                  {['Normal', 'High', 'Critical'].map(level => (
-                     <Button 
-                        key={level}
-                        variant={editForm.priority === level ? 'default' : 'outline'}
-                        onClick={() => setEditForm({ ...editForm, priority: level })}
-                        className={cn(
-                           "h-10 rounded-xl text-[9px] uppercase font-black tracking-widest border-white/10 dark:border-blue-500/20 relative overflow-hidden transition-all",
-                           editForm.priority === level && level === 'Critical' ? "bg-rose-500 text-white border-rose-500" :
-                           editForm.priority === level ? "bg-foreground text-background dark:bg-blue-600 dark:text-white" : "bg-transparent text-muted-foreground hover:bg-muted/20 dark:hover:bg-blue-500/10"
-                        )}
-                     >
-                        {level}
-                     </Button>
-                  ))}
-               </div>
-            </div>
-
-            <div className="space-y-3 mt-4">
-               <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Pipeline Status</Label>
-               <div className="grid grid-cols-3 gap-2">
-                  {['Requires Action', 'In Progress', 'Resolved'].map(status => (
-                     <Button 
-                        key={status}
-                        variant={editForm.status === status ? 'default' : 'outline'}
-                        onClick={() => setEditForm({ ...editForm, status })}
-                        className={cn(
-                           "flex-1 h-12 whitespace-normal leading-tight rounded-xl text-[9px] uppercase font-black tracking-widest border-white/10 dark:border-blue-500/20 transition-all",
-                           editForm.status === status ? "bg-primary text-white border-none shadow-lg shadow-primary/20" : "bg-transparent text-muted-foreground hover:bg-muted/20 dark:hover:bg-blue-500/10"
-                        )}
-                     >
-                        {status}
-                     </Button>
-                  ))}
-               </div>
+            {/* Action Group */}
+            <div className="flex items-center gap-3 pt-2">
+               <Button onClick={() => setIsManaging(false)} variant="outline" className="flex-1 h-12 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] border-border/40 hover:bg-muted transition-all">
+                  Close Detail
+               </Button>
+               <Button className="flex-1 h-12 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] bg-foreground text-background dark:bg-blue-600 dark:text-white shadow-xl border-none">
+                  Acknowledge Ticket
+               </Button>
             </div>
          </div>
-
-         <div className="absolute bottom-0 left-0 right-0 p-6 bg-card/60 dark:bg-slate-900/80 backdrop-blur-xl border-t border-white/10 dark:border-blue-500/10">
-            <Button onClick={handleSave} className="w-full h-12 rounded-xl gap-2 font-bold bg-primary text-white hover:bg-primary/90 shadow-[0_10px_20px_-10px_rgba(37,99,235,0.5)] border-none">
-               <Save className="w-4 h-4" /> Save Operations
-            </Button>
-         </div>
-      </SheetContent>
-      </Sheet>
+      </DialogContent>
+      </Dialog>
     </div>
   );
 }

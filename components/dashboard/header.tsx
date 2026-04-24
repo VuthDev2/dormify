@@ -14,6 +14,8 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ThemeToggle } from './theme-toggle';
 import { cn } from '@/lib/utils';
+import { useModal } from '@/contexts/modal-context';
+import { SettingsContent, ResidentsContent, StaffContent, ActionPlaceholderContent } from '@/components/modal-contents';
 
 interface HeaderProps {
   role: 'admin' | 'tenant' | 'chef';
@@ -21,6 +23,7 @@ interface HeaderProps {
 }
 
 export function Header({ role, tier = 'normal' }: HeaderProps) {
+  const { openModal } = useModal();
   const isChef = role === 'chef';
   const isTenant = role === 'tenant';
   const isAdmin = role === 'admin';
@@ -59,14 +62,27 @@ export function Header({ role, tier = 'normal' }: HeaderProps) {
         <div className="flex items-center gap-2 md:gap-4 z-10">
           <ThemeToggle />
 
-          <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-xl text-muted-foreground hover:bg-muted transition-all">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="relative h-10 w-10 rounded-xl text-muted-foreground hover:bg-muted transition-all"
+            onClick={() => openModal({
+              id: 'notifications',
+              title: 'Notifications',
+              component: <ActionPlaceholderContent action="Notifications center" detail="Notification panel UI is active. Connect this to realtime and message APIs." />,
+              size: 'md'
+            })}
+          >
             <Bell className="w-5 h-5" />
             <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-primary border-2 border-background"></span>
           </Button>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <div className="flex items-center gap-3 pl-4 border-l border-border/40 transition-all group cursor-pointer">
+              <button
+                type="button"
+                className="flex items-center gap-3 pl-4 border-l border-border/40 transition-all group cursor-pointer"
+              >
                 <Avatar className={cn(
                   "h-9 w-9 border-2 shadow-sm transition-all",
                   tier === 'premium' ? "border-primary/20 group-hover:border-primary/60" : "border-border/40 group-hover:border-primary/40"
@@ -87,17 +103,43 @@ export function Header({ role, tier = 'normal' }: HeaderProps) {
                   </p>
                 </div>
                 <ChevronDown className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-              </div>
+              </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56 rounded-[1.5rem] p-2 shadow-2xl border-border/40 bg-popover/80 dark:bg-[#0f172a]/95 backdrop-blur-2xl">
               <DropdownMenuLabel className="font-bold text-xs uppercase tracking-widest text-muted-foreground/70 px-3 py-2">Global Account</DropdownMenuLabel>
               <DropdownMenuSeparator className="bg-border/40" />
-              <DropdownMenuItem className="rounded-xl cursor-pointer py-3 px-3 font-semibold text-sm">Profile Settings</DropdownMenuItem>
-              <DropdownMenuItem className="rounded-xl cursor-pointer py-3 px-3 font-semibold text-sm">
+              <DropdownMenuItem 
+                className="rounded-xl cursor-pointer py-3 px-3 font-semibold text-sm"
+                onClick={() => openModal({
+                  id: 'profile',
+                  title: 'Profile Settings',
+                  component: <ResidentsContent />,
+                  size: 'lg'
+                })}
+              >
+                Profile Settings
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                className="rounded-xl cursor-pointer py-3 px-3 font-semibold text-sm"
+                onClick={() => openModal({
+                  id: 'org',
+                  title: isChef ? 'Kitchen Settings' : isTenant ? 'Room Details' : 'Organization',
+                  component: <StaffContent />,
+                  size: 'lg'
+                })}
+              >
                 {isChef ? 'Kitchen Settings' : isTenant ? 'Room Details' : 'Organization'}
               </DropdownMenuItem>
               <DropdownMenuSeparator className="bg-border/40" />
-              <DropdownMenuItem className="rounded-xl cursor-pointer py-3 px-3 font-bold text-sm text-destructive focus:text-destructive focus:bg-destructive/5">
+              <DropdownMenuItem 
+                className="rounded-xl cursor-pointer py-3 px-3 font-bold text-sm text-destructive focus:text-destructive focus:bg-destructive/5"
+                onClick={() => openModal({
+                  id: 'logout',
+                  title: 'Sign Out',
+                  component: <SettingsContent />,
+                  size: 'md'
+                })}
+              >
                 Sign Out
               </DropdownMenuItem>
             </DropdownMenuContent>

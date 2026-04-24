@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { useModal } from '@/contexts/modal-context';
 import {
   Users,
   Building2,
@@ -64,6 +65,17 @@ import {
   HealthRadar,
   RevenueVsBudgetChart
 } from './charts';
+import {
+  PropertiesContent,
+  ResidentsContent,
+  MealsContent,
+  FinanceContent,
+  MaintenanceContent,
+  StaffContent,
+  SettingsContent,
+  DormitoryFormContent,
+  ActionPlaceholderContent,
+} from '@/components/modal-contents';
 
 interface DashboardContentProps {
   role: 'admin' | 'tenant' | 'chef';
@@ -71,6 +83,7 @@ interface DashboardContentProps {
 }
 
 export function DashboardContent({ role, tier = 'normal' }: DashboardContentProps) {
+  const { openModal } = useModal();
   const isPremium = tier === 'premium' && role === 'admin';
   const isPro = tier === 'pro' && role === 'admin';
   const isNormal = tier === 'normal' && role === 'admin';
@@ -97,10 +110,27 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
             <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Fiscal Report ID: #2026-Q4-BLU • Live Ledger</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" className="h-9 px-4 rounded-lg border-border dark:border-blue-500/10 text-[10px] font-bold uppercase tracking-widest gap-2 hover:bg-muted/50 transition-all">
+            <Button
+              variant="outline"
+              className="h-9 px-4 rounded-lg border-border dark:border-blue-500/10 text-[10px] font-bold uppercase tracking-widest gap-2 hover:bg-muted/50 transition-all"
+              onClick={() => openModal({
+                id: 'portfolio-filter',
+                title: 'Filter Portfolio',
+                component: <ActionPlaceholderContent action="Filter portfolio analytics" detail="Filter panel is ready to map to query params and backend analytics endpoints." />,
+                size: 'md'
+              })}
+            >
               <Filter className="w-3.5 h-3.5" /> Filter Portfolio
             </Button>
-            <Button className="h-9 px-4 rounded-lg bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-widest gap-2 shadow-sm shadow-primary/20 hover:translate-y-[-1px] transition-all">
+            <Button
+              className="h-9 px-4 rounded-lg bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-widest gap-2 shadow-sm shadow-primary/20 hover:translate-y-[-1px] transition-all"
+              onClick={() => openModal({
+                id: 'portfolio-add-property',
+                title: 'Add Property',
+                component: <DormitoryFormContent />,
+                size: 'lg'
+              })}
+            >
               <Plus className="w-3.5 h-3.5" /> Add Property
             </Button>
           </div>
@@ -173,7 +203,16 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
                    </div>
                  ))}
               </div>
-              <Button variant="ghost" className="w-full mt-6 text-[10px] font-bold uppercase tracking-widest text-muted-foreground h-9 hover:text-primary">
+              <Button 
+                variant="ghost" 
+                className="w-full mt-6 text-[10px] font-bold uppercase tracking-widest text-muted-foreground h-9 hover:text-primary"
+                onClick={() => openModal({
+                  id: 'properties',
+                  title: 'Asset Audit Report',
+                  component: <PropertiesContent />,
+                  size: 'xl'
+                })}
+              >
                  Full Asset Audit <ArrowRight className="w-3.5 h-3.5 ml-2" />
               </Button>
            </Card>
@@ -189,10 +228,27 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
                     <p className="text-[13px] font-medium text-muted-foreground/60 leading-relaxed">Financial modeling for the next fiscal period indicates significant upside in the New York residential sector. Audit revealed 40% of properties are under-market, suggesting a potential uplift of $400k annually.</p>
                  </div>
                  <div className="flex flex-col gap-2.5 w-full md:w-auto min-w-[180px]">
-                    <Button className="h-10 rounded-lg bg-primary text-white font-bold text-[10px] uppercase tracking-widest hover:translate-y-[-1px] transition-all shadow-sm">
+                    <Button 
+                      className="h-10 rounded-lg bg-primary text-white font-bold text-[10px] uppercase tracking-widest hover:translate-y-[-1px] transition-all shadow-sm"
+                      onClick={() => openModal({
+                        id: 'finance',
+                        title: 'Financial Audit Report',
+                        component: <FinanceContent />,
+                        size: 'xl'
+                      })}
+                    >
                        Download Audit
                     </Button>
-                    <Button variant="ghost" className="h-10 rounded-lg border border-border/60 text-foreground font-bold text-[10px] uppercase tracking-widest hover:bg-muted/50 transition-all">
+                    <Button 
+                      variant="ghost" 
+                      className="h-10 rounded-lg border border-border/60 text-foreground font-bold text-[10px] uppercase tracking-widest hover:bg-muted/50 transition-all"
+                      onClick={() => openModal({
+                        id: 'properties',
+                        title: 'Summary Report',
+                        component: <PropertiesContent />,
+                        size: 'lg'
+                      })}
+                    >
                        Summary Report
                     </Button>
                  </div>
@@ -214,7 +270,15 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
             <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Daily High-Priority Dispatch Queue</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button className="h-9 px-4 rounded-lg bg-primary text-white text-[10px] font-bold uppercase tracking-widest gap-2 shadow-sm border-none transition-all hover:translate-y-[-1px]">
+            <Button 
+              className="h-9 px-4 rounded-lg bg-primary text-white text-[10px] font-bold uppercase tracking-widest gap-2 shadow-sm border-none transition-all hover:translate-y-[-1px]"
+              onClick={() => openModal({
+                id: 'maintenance',
+                title: 'Create Service Ticket',
+                component: <MaintenanceContent />,
+                size: 'lg'
+              })}
+            >
               <Plus className="w-3.5 h-3.5" /> Service Ticket
             </Button>
           </div>
@@ -262,7 +326,16 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
                  ))}
               </div>
               <div className="p-3 border-t border-border/10 mt-auto bg-muted/5">
-                 <Button variant="ghost" className="w-full text-[10px] font-bold uppercase tracking-widest text-muted-foreground h-9 hover:text-primary transition-all">
+                 <Button 
+                   variant="ghost" 
+                   className="w-full text-[10px] font-bold uppercase tracking-widest text-muted-foreground h-9 hover:text-primary transition-all"
+                   onClick={() => openModal({
+                     id: 'maintenance',
+                     title: 'Task Board',
+                     component: <MaintenanceContent />,
+                     size: 'xl'
+                   })}
+                 >
                     Open Task Board
                  </Button>
               </div>
@@ -300,7 +373,15 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
                        <h4 className="text-lg font-bold uppercase tracking-tight text-foreground">Compliance <br />Audit</h4>
                        <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/40">Next Cycle: Nov 12</p>
                     </div>
-                    <Button className="h-10 w-10 rounded-lg bg-primary text-white p-0 shadow-sm group-hover:scale-105 transition-transform border-none">
+                    <Button 
+                      className="h-10 w-10 rounded-lg bg-primary text-white p-0 shadow-sm group-hover:scale-105 transition-transform border-none"
+                      onClick={() => openModal({
+                        id: 'settings',
+                        title: 'Compliance Audit Report',
+                        component: <SettingsContent />,
+                        size: 'lg'
+                      })}
+                    >
                        <Download className="w-4 h-4" />
                     </Button>
                  </div>
@@ -328,10 +409,27 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
             <p className="text-xs font-bold text-muted-foreground/40 uppercase tracking-widest leading-none">Operational Control • Localized Cluster</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" className="h-10 px-5 rounded-xl border-border/40 text-[10px] font-black uppercase tracking-widest hover:bg-muted/50 transition-all">
+            <Button 
+              variant="outline" 
+              className="h-10 px-5 rounded-xl border-border/40 text-[10px] font-black uppercase tracking-widest hover:bg-muted/50 transition-all"
+              onClick={() => openModal({
+                id: 'properties',
+                title: 'Properties',
+                component: <PropertiesContent />,
+                size: 'xl'
+              })}
+            >
                Quick Search
             </Button>
-            <Button className="h-10 px-6 rounded-xl bg-primary text-white text-[10px] font-black uppercase tracking-[0.15em] shadow-xl shadow-primary/20 transition-all hover:translate-y-[-2px] border-none">
+            <Button 
+              className="h-10 px-6 rounded-xl bg-primary text-white text-[10px] font-black uppercase tracking-[0.15em] shadow-xl shadow-primary/20 transition-all hover:translate-y-[-2px] border-none"
+              onClick={() => openModal({
+                id: 'residents',
+                title: 'Residents',
+                component: <ResidentsContent />,
+                size: 'lg'
+              })}
+            >
               <Plus className="w-4 h-4 mr-2" /> New Entry
             </Button>
           </div>
@@ -418,7 +516,16 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
                    </div>
                  ))}
               </div>
-              <Button variant="ghost" className="w-full text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground h-12 hover:text-primary hover:bg-primary/5 transition-all">
+              <Button 
+                variant="ghost" 
+                className="w-full text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground h-12 hover:text-primary hover:bg-primary/5 transition-all"
+                onClick={() => openModal({
+                  id: 'maintenance',
+                  title: 'Maintenance & Support Tickets',
+                  component: <MaintenanceContent />,
+                  size: 'lg'
+                })}
+              >
                  Full Archive Registry <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
            </Card>
@@ -513,10 +620,27 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
                  </h1>
               </div>
               <div className="flex items-center gap-2">
-                 <Button variant="outline" className="h-9 rounded-lg px-4 border-border dark:border-blue-500/10 text-[10px] font-bold uppercase tracking-widest bg-card/50 backdrop-blur-md">
+                 <Button 
+                   variant="outline" 
+                   className="h-9 rounded-lg px-4 border-border dark:border-blue-500/10 text-[10px] font-bold uppercase tracking-widest bg-card/50 backdrop-blur-md"
+                   onClick={() => openModal({
+                     id: 'meals',
+                     title: 'Daily Meal Audit',
+                     component: <MealsContent />,
+                     size: 'lg'
+                   })}
+                 >
                     Daily Audit
                  </Button>
-                 <Button className="h-9 rounded-lg px-6 bg-primary text-white text-[10px] font-bold uppercase tracking-widest shadow-sm shadow-primary/20 border-none transition-all hover:translate-y-[-1px]">
+                 <Button 
+                   className="h-9 rounded-lg px-6 bg-primary text-white text-[10px] font-bold uppercase tracking-widest shadow-sm shadow-primary/20 border-none transition-all hover:translate-y-[-1px]"
+                   onClick={() => openModal({
+                     id: 'meals',
+                     title: 'New Meal Service',
+                     component: <MealsContent />,
+                     size: 'lg'
+                   })}
+                 >
                     <Plus className="w-3.5 h-3.5 mr-2" /> New Service
                  </Button>
               </div>
@@ -657,7 +781,15 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
                        <p className="text-[11px] text-muted-foreground leading-relaxed font-medium">
                           Review inventory and resident sentiment to optimize week 14 menus.
                        </p>
-                       <Button className="w-full h-10 bg-primary text-white font-bold text-[10px] uppercase tracking-widest rounded-lg shadow-sm transition-all hover:translate-y-[-1px] border-none">
+                       <Button 
+                         className="w-full h-10 bg-primary text-white font-bold text-[10px] uppercase tracking-widest rounded-lg shadow-sm transition-all hover:translate-y-[-1px] border-none"
+                         onClick={() => openModal({
+                           id: 'meals',
+                           title: 'Menu Designer',
+                           component: <MealsContent />,
+                           size: 'lg'
+                         })}
+                       >
                           Menu Designer
                        </Button>
                     </div>
@@ -686,10 +818,27 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
                  <p className="text-xs text-muted-foreground font-medium">Your residency is currently in good standing. All systems operational.</p>
               </div>
               <div className="flex items-center gap-2">
-                 <Button variant="outline" className="h-9 px-4 rounded-lg border-border dark:border-blue-500/10 text-[10px] font-bold uppercase tracking-widest gap-2 hover:bg-muted/50 transition-all">
+                 <Button 
+                   variant="outline" 
+                   className="h-9 px-4 rounded-lg border-border dark:border-blue-500/10 text-[10px] font-bold uppercase tracking-widest gap-2 hover:bg-muted/50 transition-all"
+                   onClick={() => openModal({
+                     id: 'settings',
+                     title: 'Digital Key Settings',
+                     component: <SettingsContent />,
+                     size: 'md'
+                   })}
+                 >
                     <ShieldCheck className="w-3.5 h-3.5" /> Digital Key
                  </Button>
-                 <Button className="h-9 px-4 rounded-lg bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-widest gap-2 shadow-sm shadow-primary/20 hover:translate-y-[-1px] transition-all">
+                 <Button 
+                   className="h-9 px-4 rounded-lg bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-widest gap-2 shadow-sm shadow-primary/20 hover:translate-y-[-1px] transition-all"
+                   onClick={() => openModal({
+                     id: 'maintenance',
+                     title: 'Submit Maintenance Request',
+                     component: <MaintenanceContent />,
+                     size: 'md'
+                   })}
+                 >
                     <Plus className="w-3.5 h-3.5" /> New Request
                  </Button>
               </div>
@@ -737,7 +886,16 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
                        ))}
                     </div>
                     <div className="p-3 border-t border-border dark:border-blue-500/10 bg-muted/5">
-                       <Button variant="ghost" className="w-full text-[10px] font-bold uppercase tracking-widest text-muted-foreground h-9 hover:text-primary transition-all">
+                       <Button 
+                         variant="ghost" 
+                         className="w-full text-[10px] font-bold uppercase tracking-widest text-muted-foreground h-9 hover:text-primary transition-all"
+                         onClick={() => openModal({
+                           id: 'maintenance',
+                           title: 'Activity History',
+                           component: <MaintenanceContent />,
+                           size: 'lg'
+                         })}
+                       >
                           View Activity History
                        </Button>
                     </div>
@@ -786,7 +944,15 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
                           <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> 12:00 - 14:30</span>
                           <span className="text-emerald-500 flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5" /> Available</span>
                        </div>
-                       <Button className="w-full h-9 rounded-lg bg-primary text-primary-foreground font-bold text-[10px] uppercase tracking-widest hover:translate-y-[-1px] transition-all shadow-sm">
+                       <Button 
+                         className="w-full h-9 rounded-lg bg-primary text-primary-foreground font-bold text-[10px] uppercase tracking-widest hover:translate-y-[-1px] transition-all shadow-sm"
+                         onClick={() => openModal({
+                           id: 'meals',
+                           title: 'Pre-Order Meal Portions',
+                           component: <MealsContent />,
+                           size: 'md'
+                         })}
+                       >
                           Pre-Order Portions
                        </Button>
                     </div>
@@ -817,7 +983,16 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
                          </div>
                        ))}
                     </div>
-                    <Button variant="ghost" className="w-full h-8 rounded-lg text-[9px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors">
+                    <Button
+                      variant="ghost"
+                      className="w-full h-8 rounded-lg text-[9px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
+                      onClick={() => openModal({
+                        id: 'tenant-community-events',
+                        title: 'Community Events',
+                        component: <ActionPlaceholderContent action="Discover community events" detail="Events list UI is active; connect to events feed endpoint." />,
+                        size: 'md'
+                      })}
+                    >
                        Discover More Events
                     </Button>
                  </Card>

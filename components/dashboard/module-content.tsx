@@ -31,6 +31,8 @@ import { EfficiencyRadarChart, DualBarComparisonChart } from './charts';
 import { ResidentsManagement, Resident } from './residents-management';
 import { PropertiesContent } from './properties-content';
 import { FinanceContent } from './finance-content';
+import { useModal } from '@/contexts/modal-context';
+import { ActionPlaceholderContent } from '@/components/modal-contents';
 
 import { FinanceHub } from './finance-hub';
 
@@ -166,6 +168,7 @@ interface ModuleContentProps {
 }
 
 export function ModuleContent({ title, type, subType, tier = 'normal', role = 'admin' }: ModuleContentProps) {
+  const { openModal } = useModal();
   const isPremium = tier === 'premium';
   const isNormal = tier === 'normal';
 
@@ -680,10 +683,27 @@ export function ModuleContent({ title, type, subType, tier = 'normal', role = 'a
             <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/50">Tier: {tier.toUpperCase()} · Industrial Data Mode</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" className="h-9 px-4 rounded-xl border-border text-[9px] font-black uppercase tracking-widest gap-2">
+            <Button
+              variant="outline"
+              className="h-9 px-4 rounded-xl border-border text-[9px] font-black uppercase tracking-widest gap-2"
+              onClick={() => openModal({
+                id: 'intelligence-export-audit',
+                title: 'Export Audit',
+                component: <ActionPlaceholderContent action="Export intelligence audit" detail="Export flow is ready for backend report generation API." />,
+                size: 'md'
+              })}
+            >
               <Download className="w-3.5 h-3.5" /> Export Audit
             </Button>
-            <Button className="h-9 px-4 rounded-xl bg-primary text-white text-[9px] font-black uppercase tracking-widest gap-2 shadow-sm">
+            <Button
+              className="h-9 px-4 rounded-xl bg-primary text-white text-[9px] font-black uppercase tracking-widest gap-2 shadow-sm"
+              onClick={() => openModal({
+                id: 'intelligence-recalculate',
+                title: 'Recalculate Performance',
+                component: <ActionPlaceholderContent action="Recalculate analytics metrics" detail="Hook this action to trigger analytics recomputation endpoint." />,
+                size: 'md'
+              })}
+            >
               <RefreshCcw className="w-3.5 h-3.5" /> Recalculate Performance
             </Button>
           </div>
@@ -710,7 +730,7 @@ export function ModuleContent({ title, type, subType, tier = 'normal', role = 'a
             </Card>
 
             {/* Performance Audit Table */}
-            <Card className="col-span-12 lg:col-span-6 p-8 border-border shadow-sm rounded-2xl bg-card flex flex-col items-center">
+            <Card className="col-span-12 lg:col-span-6 p-8 border-border shadow-sm rounded-2xl bg-card flex flex-col">
               <div className="flex items-center justify-between mb-8 pb-4 border-b border-border w-full">
                  <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-foreground">Market Comparison Audit</h3>
                  <History className="w-4 h-4 text-muted-foreground/30" />
@@ -730,7 +750,16 @@ export function ModuleContent({ title, type, subType, tier = 'normal', role = 'a
                  ))}
               </div>
               <div className="w-full pt-8 mt-auto">
-                 <Button variant="ghost" className="w-full text-[10px] font-black uppercase tracking-widest text-muted-foreground h-11 hover:text-primary gap-2">
+                 <Button
+                   variant="ghost"
+                   className="w-full text-[10px] font-black uppercase tracking-widest text-muted-foreground h-11 hover:text-primary gap-2"
+                   onClick={() => openModal({
+                     id: 'external-market-intel',
+                     title: 'External Market Intelligence',
+                     component: <ActionPlaceholderContent action="Open external market intelligence feed" />,
+                     size: 'md'
+                   })}
+                 >
                     External Market Intelligence <ArrowRight className="w-3.5 h-3.5" />
                  </Button>
               </div>
@@ -763,7 +792,16 @@ export function ModuleContent({ title, type, subType, tier = 'normal', role = 'a
                       <h3 className="text-3xl font-black text-foreground italic tracking-tight">SLA Performance has increased by <span className="text-primary not-italic">8.4%</span> since workflow automation.</h3>
                       <p className="text-sm font-medium text-muted-foreground/60 max-w-xl leading-relaxed">Audited service times across the portfolio show an average resolution cycle of 14.2 hours, exceeding the standard target of 24 hours. No critical failures detected in the current period.</p>
                    </div>
-                   <Button variant="outline" className="h-14 px-8 rounded-xl border-border text-foreground font-black text-xs uppercase tracking-[0.2em] hover:bg-muted/30 shrink-0 transition-all hover:scale-[1.02]">
+                   <Button
+                     variant="outline"
+                     className="h-14 px-8 rounded-xl border-border text-foreground font-black text-xs uppercase tracking-[0.2em] hover:bg-muted/30 shrink-0 transition-all hover:scale-[1.02]"
+                     onClick={() => openModal({
+                       id: 'download-performance-log',
+                       title: 'Download Performance Log',
+                       component: <ActionPlaceholderContent action="Download SLA performance log" />,
+                       size: 'md'
+                     })}
+                   >
                       Download Performance Log
                    </Button>
                 </div>

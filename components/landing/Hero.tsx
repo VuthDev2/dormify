@@ -10,8 +10,11 @@ import {
 } from 'lucide-react';
 import { TypingHeadline } from './Typography';
 import { DriftingElement } from './DriftingElement';
+import { useModal } from '@/contexts/modal-context';
+import { ResidentsContent } from '@/components/modal-contents';
 
 export const Hero = () => {
+  const { openModal } = useModal();
   const containerRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlayingDemo, setIsPlayingDemo] = useState(false);
@@ -166,11 +169,18 @@ export const Hero = () => {
           
           <div className="flex flex-col sm:flex-row gap-5 justify-center pt-8">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link href="/signup">
-                <Button size="lg" className="h-16 px-10 rounded-full bg-primary text-primary-foreground text-base font-bold shadow-2xl shadow-primary/40">
-                  Get Started <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
-              </Link>
+              <Button 
+                size="lg" 
+                className="h-16 px-10 rounded-full bg-primary text-primary-foreground text-base font-bold shadow-2xl shadow-primary/40"
+                onClick={() => openModal({
+                  id: 'signup',
+                  title: 'Get Started with Dormify',
+                  component: <ResidentsContent />,
+                  size: 'md'
+                })}
+              >
+                Get Started <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
             </motion.div>
             
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>

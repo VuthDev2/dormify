@@ -35,6 +35,8 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { useModal } from '@/contexts/modal-context';
+import { PropertiesContent, FinanceContent, MaintenanceContent, RoomFormContent, ActionPlaceholderContent } from '@/components/modal-contents';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -65,6 +67,7 @@ interface RoomsManagementProps {
 const ITEMS_PER_PAGE = 12;
 
 export function RoomsManagement({ title, description, rooms }: RoomsManagementProps) {
+  const { openModal } = useModal();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFloor, setSelectedFloor] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
@@ -148,10 +151,27 @@ export function RoomsManagement({ title, description, rooms }: RoomsManagementPr
           <p className="text-sm font-bold text-muted-foreground/60 max-w-xl">{description}</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="ghost" className="rounded-xl h-11 px-5 border border-border/40 text-[10px] font-black uppercase tracking-widest gap-2 hover:bg-muted">
+          <Button 
+            variant="ghost" 
+            className="rounded-xl h-11 px-5 border border-border/40 text-[10px] font-black uppercase tracking-widest gap-2 hover:bg-muted"
+            onClick={() => openModal({
+              id: 'archive-rooms',
+              title: 'Structural Archive',
+              component: <ActionPlaceholderContent action="Open structural archive" detail="Archive and decommission actions can now be connected to backend inventory status APIs." />,
+              size: 'lg'
+            })}
+          >
             <Archive className="w-4 h-4" /> Structural Archive
           </Button>
-          <Button className="rounded-xl h-12 px-6 font-black bg-primary text-white shadow-xl shadow-primary/20 text-[10px] uppercase tracking-[0.2em] transition-all hover:scale-[1.02] active:scale-95 group">
+          <Button 
+            className="rounded-xl h-12 px-6 font-black bg-primary text-white shadow-xl shadow-primary/20 text-[10px] uppercase tracking-[0.2em] transition-all hover:scale-[1.02] active:scale-95 group"
+            onClick={() => openModal({
+              id: 'add-room',
+              title: 'Allocate New Unit',
+              component: <RoomFormContent />,
+              size: 'lg'
+            })}
+          >
             <Plus className="w-4 h-4 mr-2 group-hover:rotate-90 transition-transform" /> Allocate New Unit
           </Button>
         </div>
@@ -256,7 +276,16 @@ export function RoomsManagement({ title, description, rooms }: RoomsManagementPr
               </select>
             </div>
 
-            <Button variant="outline" className="h-11 px-4 rounded-xl border-border/40 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all">
+            <Button 
+              variant="outline" 
+              className="h-11 px-4 rounded-xl border-border/40 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all"
+              onClick={() => openModal({
+                id: 'export-rooms',
+                title: 'Export Structural Inventory',
+                component: <FinanceContent />,
+                size: 'lg'
+              })}
+            >
               <Download className="w-4 h-4 mr-2" /> Export Inventory
             </Button>
           </div>
@@ -317,13 +346,37 @@ export function RoomsManagement({ title, description, rooms }: RoomsManagementPr
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="w-48 rounded-[1.5rem] p-2 border-border/40 shadow-2xl bg-card/80 backdrop-blur-2xl">
                             <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest px-3 py-2 text-muted-foreground/60">Unit Operations</DropdownMenuLabel>
-                            <DropdownMenuItem className="rounded-xl cursor-pointer py-2.5 px-3 text-xs font-bold text-foreground">
+                            <DropdownMenuItem 
+                              className="rounded-xl cursor-pointer py-2.5 px-3 text-xs font-bold text-foreground"
+                              onClick={() => openModal({
+                                id: `inspect-${room.id}`,
+                                title: `Visual Inspection: ${room.name}`,
+                                component: <MaintenanceContent />,
+                                size: 'lg'
+                              })}
+                            >
                               <Eye className="w-4 h-4 mr-2 text-primary" /> Visual Inspection
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="rounded-xl cursor-pointer py-2.5 px-3 text-xs font-bold text-foreground">
+                            <DropdownMenuItem 
+                              className="rounded-xl cursor-pointer py-2.5 px-3 text-xs font-bold text-foreground"
+                              onClick={() => openModal({
+                                id: `modify-${room.id}`,
+                                title: `Modify Allocation: ${room.name}`,
+                                component: <RoomFormContent />,
+                                size: 'lg'
+                              })}
+                            >
                               <Edit2 className="w-4 h-4 mr-2 text-primary" /> Modify Allocation
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="rounded-xl cursor-pointer py-2.5 px-3 text-xs font-bold text-destructive hover:bg-destructive/5">
+                            <DropdownMenuItem 
+                              className="rounded-xl cursor-pointer py-2.5 px-3 text-xs font-bold text-destructive hover:bg-destructive/5"
+                              onClick={() => openModal({
+                                id: `decommission-${room.id}`,
+                                title: `Decommission Unit: ${room.name}`,
+                                component: <ActionPlaceholderContent action={`Decommission ${room.name}`} detail="Use this as confirmation UI before sending a decommission request." />,
+                                size: 'md'
+                              })}
+                            >
                               <Archive className="w-4 h-4 mr-2" /> Decommission Unit
                             </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -367,7 +420,17 @@ export function RoomsManagement({ title, description, rooms }: RoomsManagementPr
                           </div>
                           <span className="text-[9px] font-black text-foreground">{room.rent}</span>
                         </div>
-                        <Button variant="ghost" size="sm" className="h-7 px-2 rounded-lg text-[8px] font-black uppercase tracking-widest bg-primary/5 text-primary hover:bg-primary hover:text-white transition-all">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-7 px-2 rounded-lg text-[8px] font-black uppercase tracking-widest bg-primary/5 text-primary hover:bg-primary hover:text-white transition-all"
+                          onClick={() => openModal({
+                            id: `manage-room-${room.id}`,
+                            title: `Manage Unit: ${room.name}`,
+                            component: <RoomFormContent />,
+                            size: 'lg'
+                          })}
+                        >
                           Manage Unit
                         </Button>
                       </div>
@@ -454,13 +517,37 @@ export function RoomsManagement({ title, description, rooms }: RoomsManagementPr
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end" className="w-48 rounded-[1.5rem] p-2 border-border/40 shadow-2xl bg-card/80 backdrop-blur-2xl">
                                 <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest px-3 py-2 text-muted-foreground/60">Unit Command</DropdownMenuLabel>
-                                <DropdownMenuItem className="rounded-xl cursor-pointer py-2.5 px-3 text-xs font-bold text-foreground">
+                                <DropdownMenuItem
+                                  className="rounded-xl cursor-pointer py-2.5 px-3 text-xs font-bold text-foreground"
+                                  onClick={() => openModal({
+                                    id: `list-inspect-${room.id}`,
+                                    title: `Visual Inspection: ${room.name}`,
+                                    component: <MaintenanceContent />,
+                                    size: 'lg'
+                                  })}
+                                >
                                   <Eye className="w-4 h-4 mr-2 text-primary" /> Detail Analysis
                                 </DropdownMenuItem>
-                                <DropdownMenuItem className="rounded-xl cursor-pointer py-2.5 px-3 text-xs font-bold text-foreground">
+                                <DropdownMenuItem
+                                  className="rounded-xl cursor-pointer py-2.5 px-3 text-xs font-bold text-foreground"
+                                  onClick={() => openModal({
+                                    id: `list-edit-${room.id}`,
+                                    title: `Edit Unit: ${room.name}`,
+                                    component: <RoomFormContent />,
+                                    size: 'lg'
+                                  })}
+                                >
                                   <Edit2 className="w-4 h-4 mr-2 text-primary" /> Structural Edit
                                 </DropdownMenuItem>
-                                <DropdownMenuItem className="rounded-xl cursor-pointer py-2.5 px-3 text-xs font-bold text-destructive hover:bg-destructive/5">
+                                <DropdownMenuItem
+                                  className="rounded-xl cursor-pointer py-2.5 px-3 text-xs font-bold text-destructive hover:bg-destructive/5"
+                                  onClick={() => openModal({
+                                    id: `list-decommission-${room.id}`,
+                                    title: `Decommission Unit: ${room.name}`,
+                                    component: <ActionPlaceholderContent action={`Decommission ${room.name}`} />,
+                                    size: 'md'
+                                  })}
+                                >
                                   <Trash2 className="w-4 h-4 mr-2" /> Decommission Record
                                 </DropdownMenuItem>
                               </DropdownMenuContent>

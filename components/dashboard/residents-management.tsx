@@ -40,6 +40,8 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useModal } from '@/contexts/modal-context';
+import { ResidentFormContent, ActionPlaceholderContent, FinanceContent } from '@/components/modal-contents';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -80,6 +82,7 @@ interface ResidentsManagementProps {
 const ITEMS_PER_PAGE = 8;
 
 export function ResidentsManagement({ title, description, residents }: ResidentsManagementProps) {
+  const { openModal } = useModal();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [selectedFloor, setSelectedFloor] = useState<string>('all');
@@ -152,10 +155,27 @@ export function ResidentsManagement({ title, description, residents }: Residents
           <p className="text-sm text-muted-foreground max-w-2xl">{description}</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="rounded-xl h-11 px-6 border-border/40 bg-background/50 backdrop-blur-sm text-xs font-semibold gap-2 hover:bg-muted transition-all">
+          <Button 
+            variant="outline" 
+            className="rounded-xl h-11 px-6 border-border/40 bg-background/50 backdrop-blur-sm text-xs font-semibold gap-2 hover:bg-muted transition-all"
+            onClick={() => openModal({
+              id: 'archive',
+              title: 'Archive Registry',
+              component: <ActionPlaceholderContent action="Archive resident records" detail="Archive flow UI is active. Connect archive action to backend soft-delete endpoint." />,
+              size: 'lg'
+            })}
+          >
             <Archive className="w-4 h-4" /> Archive
           </Button>
-          <Button className="rounded-xl h-11 px-8 font-bold bg-primary text-white shadow-lg shadow-primary/20 text-xs transition-all hover:scale-[1.02] active:scale-95 group">
+          <Button 
+            className="rounded-xl h-11 px-8 font-bold bg-primary text-white shadow-lg shadow-primary/20 text-xs transition-all hover:scale-[1.02] active:scale-95 group"
+            onClick={() => openModal({
+              id: 'add-resident',
+              title: 'Add New Resident',
+              component: <ResidentFormContent mode="create" />,
+              size: 'lg'
+            })}
+          >
             <UserPlus className="w-4 h-4 mr-2" /> Add Resident
           </Button>
         </div>
@@ -244,7 +264,17 @@ export function ResidentsManagement({ title, description, residents }: Residents
               </select>
             </div>
 
-            <Button variant="outline" size="sm" className="h-11 px-4 rounded-xl border-border/40 bg-background text-[10px] font-bold uppercase tracking-wider hover:bg-primary hover:text-white transition-all">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="h-11 px-4 rounded-xl border-border/40 bg-background text-[10px] font-bold uppercase tracking-wider hover:bg-primary hover:text-white transition-all"
+              onClick={() => openModal({
+                id: 'export',
+                title: 'Export Resident Data',
+                component: <FinanceContent />,
+                size: 'md'
+              })}
+            >
               <Download className="w-4 h-4 mr-2" /> Export
             </Button>
           </div>
@@ -315,10 +345,40 @@ export function ResidentsManagement({ title, description, residents }: Residents
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end" className="w-40 rounded-xl p-1.5 border-border/40 shadow-xl bg-background/95 backdrop-blur-xl">
-                                <DropdownMenuItem className="rounded-lg cursor-pointer text-xs font-medium py-2 px-3">View Profile</DropdownMenuItem>
-                                <DropdownMenuItem className="rounded-lg cursor-pointer text-xs font-medium py-2 px-3">Edit Details</DropdownMenuItem>
+                                <DropdownMenuItem 
+                                  className="rounded-lg cursor-pointer text-xs font-medium py-2 px-3"
+                                  onClick={() => openModal({
+                                    id: `view-${resident.id}`,
+                                    title: `Resident Profile: ${resident.name}`,
+                                    component: <ResidentFormContent mode="edit" residentName={resident.name} />,
+                                    size: 'lg'
+                                  })}
+                                >
+                                  View Profile
+                                </DropdownMenuItem>
+                                <DropdownMenuItem 
+                                  className="rounded-lg cursor-pointer text-xs font-medium py-2 px-3"
+                                  onClick={() => openModal({
+                                    id: `edit-${resident.id}`,
+                                    title: `Edit Resident: ${resident.name}`,
+                                    component: <ResidentFormContent mode="edit" residentName={resident.name} />,
+                                    size: 'lg'
+                                  })}
+                                >
+                                  Edit Details
+                                </DropdownMenuItem>
                                 <DropdownMenuLabel className="border-t border-border/20 mt-1.5 pt-1.5" />
-                                <DropdownMenuItem className="rounded-lg cursor-pointer text-xs font-medium py-2 px-3 text-rose-500">Archive</DropdownMenuItem>
+                                <DropdownMenuItem 
+                                  className="rounded-lg cursor-pointer text-xs font-medium py-2 px-3 text-rose-500"
+                                  onClick={() => openModal({
+                                    id: `archive-${resident.id}`,
+                                    title: `Archive Resident: ${resident.name}`,
+                                    component: <ActionPlaceholderContent action={`Archive ${resident.name}`} detail="Confirmation UI is ready; connect to archive API endpoint." />,
+                                    size: 'md'
+                                  })}
+                                >
+                                  Archive
+                                </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
                           </div>
@@ -351,7 +411,17 @@ export function ResidentsManagement({ title, description, residents }: Residents
 
                           <div className="pt-4 border-t border-border/5 flex items-center justify-between">
                             <Badge className={cn("text-[9px] font-bold uppercase tracking-wider border-none px-2.5 py-0.5 rounded-full", getStatusColor(resident.status))}>{resident.status}</Badge>
-                            <Button variant="ghost" size="sm" className="h-8 px-3 rounded-lg text-[10px] font-bold gap-1.5 hover:bg-primary/5 hover:text-primary transition-all">
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="h-8 px-3 rounded-lg text-[10px] font-bold gap-1.5 hover:bg-primary/5 hover:text-primary transition-all"
+                              onClick={() => openModal({
+                                id: `manage-${resident.id}`,
+                                title: `Manage ${resident.name}`,
+                                component: <ResidentFormContent mode="edit" residentName={resident.name} />,
+                                size: 'lg'
+                              })}
+                            >
                               Manage <ChevronRight className="w-3.5 h-3.5" />
                             </Button>
                           </div>
@@ -425,10 +495,30 @@ export function ResidentsManagement({ title, description, residents }: Residents
                             </td>
                             <td className="p-4 text-right pr-6">
                               <div className="flex items-center justify-end gap-1">
-                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-muted transition-all">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 rounded-lg hover:bg-muted transition-all"
+                                  onClick={() => openModal({
+                                    id: `list-edit-${resident.id}`,
+                                    title: `Edit Resident: ${resident.name}`,
+                                    component: <ResidentFormContent mode="edit" residentName={resident.name} />,
+                                    size: 'lg'
+                                  })}
+                                >
                                   <Edit2 className="w-4 h-4 text-muted-foreground/40" />
                                 </Button>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-muted transition-all text-rose-500">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 rounded-lg hover:bg-muted transition-all text-rose-500"
+                                  onClick={() => openModal({
+                                    id: `list-archive-${resident.id}`,
+                                    title: `Archive Resident: ${resident.name}`,
+                                    component: <ActionPlaceholderContent action={`Archive ${resident.name}`} />,
+                                    size: 'md'
+                                  })}
+                                >
                                   <Trash2 className="w-4 h-4" />
                                 </Button>
                               </div>

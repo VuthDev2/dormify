@@ -21,9 +21,19 @@ import {
   RESIDENT_FEATURES, PRICING_PLANS, FAQ_ITEMS, ANIMATION_VARIANTS
 } from '@/components/landing/constants';
 import { Footer } from '@/components/landing/Footer';
+import { useModal } from '@/contexts/modal-context';
+import { 
+  PropertiesContent, 
+  ResidentsContent, 
+  FinanceContent, 
+  MaintenanceContent,
+  MealsContent,
+  SettingsContent 
+} from '@/components/modal-contents';
 
 export default function LandingPage() {
   const { scrollYProgress: pageScroll } = useScroll();
+  const { openModal } = useModal();
 
   const fadeInUp = ANIMATION_VARIANTS.fadeInUp;
   const staggerContainer = ANIMATION_VARIANTS.staggerContainer;
@@ -149,11 +159,18 @@ export default function LandingPage() {
               </div>
 
               <motion.div variants={fadeInUp}>
-                <Link href="/signup">
-                  <Button size="lg" className="h-14 px-8 rounded-none bg-foreground text-background font-black hover:bg-foreground/90 transition-all uppercase text-[11px] tracking-widest">
-                    Requests Portfolio Audits
-                  </Button>
-                </Link>
+                <Button 
+                  size="lg" 
+                  className="h-14 px-8 rounded-none bg-foreground text-background font-black hover:bg-foreground/90 transition-all uppercase text-[11px] tracking-widest"
+                  onClick={() => openModal({
+                    id: 'audit',
+                    title: 'Portfolio Audit Request',
+                    component: <PropertiesContent />,
+                    size: 'xl'
+                  })}
+                >
+                  Requests Portfolio Audits
+                </Button>
               </motion.div>
             </motion.div>
 
@@ -272,11 +289,18 @@ export default function LandingPage() {
             viewport={{ once: false }}
             transition={{ delay: 0.5 }}
           >
-            <Link href="/ecosystem">
-              <Button size="lg" className="rounded-full px-10 h-14 font-bold bg-white text-black hover:bg-slate-200 transition-all hover:scale-105">
-                Explore the Ecosystem
-              </Button>
-            </Link>
+            <Button 
+              size="lg" 
+              className="rounded-full px-10 h-14 font-bold bg-white text-black hover:bg-slate-200 transition-all hover:scale-105"
+              onClick={() => openModal({
+                id: 'ecosystem',
+                title: 'Platform Ecosystem',
+                component: <PropertiesContent />,
+                size: 'full'
+              })}
+            >
+              Explore the Ecosystem
+            </Button>
           </motion.div>
         </div>
       </section>
@@ -395,7 +419,16 @@ export default function LandingPage() {
                          <Shield className="w-4 h-4 opacity-60" />
                       </div>
                       <p className="text-sm font-bold">Room 402 - Bloomsbury</p>
-                      <Button size="sm" className="w-full bg-white text-primary font-black text-[10px] uppercase tracking-widest h-10 rounded-xl">
+                      <Button 
+                        size="sm" 
+                        className="w-full bg-white text-primary font-black text-[10px] uppercase tracking-widest h-10 rounded-xl"
+                        onClick={() => openModal({
+                          id: 'digital-key',
+                          title: 'Digital Key System',
+                          component: <SettingsContent />,
+                          size: 'sm'
+                        })}
+                      >
                          Hold to Unlock
                       </Button>
                    </div>
@@ -520,15 +553,21 @@ export default function LandingPage() {
                     ))}
                   </ul>
 
-                  <Link href="/signup" className="w-full">
-                    <Button className={`w-full h-14 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all ${
+                  <Button 
+                    className={`w-full h-14 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all ${
                       plan.highlighted 
                         ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:scale-[1.02]' 
                         : 'bg-foreground text-background hover:bg-foreground/90'
-                    }`}>
-                      {plan.cta}
-                    </Button>
-                  </Link>
+                    }`}
+                    onClick={() => openModal({
+                      id: `plan-${plan.name}`,
+                      title: `${plan.name} Tier Enrollment`,
+                      component: <FinanceContent />,
+                      size: 'lg'
+                    })}
+                  >
+                    {plan.cta}
+                  </Button>
                 </Card>
               </motion.div>
             ))}
@@ -591,18 +630,33 @@ export default function LandingPage() {
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                  <Link href="/signup">
-                    <Button size="lg" className="h-16 px-10 rounded-2xl bg-primary text-primary-foreground font-bold text-base shadow-xl shadow-primary/20 transition-all">
-                      Get Started Now
-                    </Button>
-                  </Link>
+                  <Button 
+                    size="lg" 
+                    className="h-16 px-10 rounded-2xl bg-primary text-primary-foreground font-bold text-base shadow-xl shadow-primary/20 transition-all"
+                    onClick={() => openModal({
+                      id: 'signup',
+                      title: 'Create an Account',
+                      component: <ResidentsContent />,
+                      size: 'md'
+                    })}
+                  >
+                    Get Started Now
+                  </Button>
                 </motion.div>
                 <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                  <Link href="/signup">
-                    <Button size="lg" variant="outline" className="h-16 px-10 rounded-2xl border-white/10 text-white bg-white/5 backdrop-blur-md hover:bg-white/10 font-bold text-base transition-all">
-                      Contact Sales
-                    </Button>
-                  </Link>
+                  <Button 
+                    size="lg" 
+                    variant="outline" 
+                    className="h-16 px-10 rounded-2xl border-white/10 text-white bg-white/5 backdrop-blur-md hover:bg-white/10 font-bold text-base transition-all"
+                    onClick={() => openModal({
+                      id: 'contact',
+                      title: 'Contact Sales',
+                      component: <StaffContent />,
+                      size: 'md'
+                    })}
+                  >
+                    Contact Sales
+                  </Button>
                 </motion.div>
               </div>
             </div>

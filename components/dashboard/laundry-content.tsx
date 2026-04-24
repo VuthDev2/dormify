@@ -21,6 +21,7 @@ interface LaundryContentProps {
   title: string;
   tier?: 'normal' | 'pro' | 'premium';
   role?: 'admin' | 'tenant' | 'chef';
+  hideTitle?: boolean;
 }
 
 const peakHoursData = [
@@ -44,17 +45,17 @@ const revenueData = [
   { name: 'Sun', revenue: 460, status: 'Peak' },
 ];
 
-export function LaundryContent({ title, tier = 'normal', role = 'admin' }: LaundryContentProps) {
+export function LaundryContent({ title, tier = 'normal', role = 'admin', hideTitle = false }: LaundryContentProps) {
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.6, staggerChildren: 0.1 } }
   };
 
   const businessStats = useMemo(() => [
-    { label: 'Month-to-Date Revenue', value: '$4,240', sub: 'Gross Intake', icon: Wallet, color: 'text-indigo-500', bg: 'from-indigo-400 to-indigo-600', trend: '+14% vs Last Month' },
-    { label: 'Machine Uptime', value: '98.5%', sub: 'Global Average', icon: ShieldCheck, color: 'text-emerald-500', bg: 'from-emerald-400 to-emerald-600', trend: 'Stable Operation' },
+    { label: 'Total Cycles (MTD)', value: '1,284', sub: 'Loads Processed', icon: RefreshCw, color: 'text-indigo-500', bg: 'from-indigo-400 to-indigo-600', trend: '+12% throughput' },
+    { label: 'Fleet Uptime', value: '98.5%', sub: 'Global Average', icon: ShieldCheck, color: 'text-emerald-500', bg: 'from-emerald-400 to-emerald-600', trend: 'Stable Operation' },
     { label: 'Active Equipment', value: '22 / 24', sub: 'Washers & Dryers', icon: Waves, color: 'text-blue-500', bg: 'from-blue-400 to-blue-600', trend: 'High Capacity' },
-    { label: 'Out of Order', value: '2 Units', sub: 'Requires Maintenance', icon: Wrench, color: 'text-rose-500', bg: 'from-rose-400 to-rose-600', trend: 'Immediate Action' },
+    { label: 'System Alerts', value: '2 Units', sub: 'Requires Attention', icon: AlertTriangle, color: 'text-rose-500', bg: 'from-rose-400 to-rose-600', trend: 'Immediate Action' },
   ], []);
 
   // ─── Tenant View ───────────────────────────────────────────────────────────
@@ -68,49 +69,56 @@ export function LaundryContent({ title, tier = 'normal', role = 'admin' }: Laund
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="w-full space-y-8 pb-12"
+      className="w-full space-y-2 pb-12"
     >
-      {/* Clean Horizon Header */}
-      <motion.div 
-        variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.5 } } }}
-        className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-border/30"
-      >
-        <div className="space-y-1.5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground/50">Services / Laundry Operations</p>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">{title}</h1>
-          <p className="text-sm text-muted-foreground/60 font-medium">Fleet revenue, machine health, and utilization analytics.</p>
-        </div>
-        <div className="flex items-center gap-3 shrink-0">
-          <Button variant="outline" className="h-10 rounded-xl gap-2 font-semibold px-4 border-border/40 hover:bg-muted/30 transition-colors text-sm">
-             <Settings2 className="w-4 h-4" /> Settings
-          </Button>
-          <Button className="h-10 rounded-xl gap-2 font-semibold px-5 bg-foreground text-background shadow-md hover:shadow-lg transition-shadow text-sm">
-             <Download className="w-4 h-4" /> Export Report
-          </Button>
-        </div>
-      </motion.div>
+      {!hideTitle && (
+        <motion.div 
+          variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.5 } } }}
+          className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/30"
+        >
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="text-[9px] font-black uppercase tracking-[0.15em] text-blue-500/70 border-blue-500/20 bg-blue-500/5 px-2 py-0 h-auto rounded-md">
+                Services / Laundry Operations
+              </Badge>
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground leading-tight">{title}</h1>
+          </div>
+
+          <div className="flex flex-col sm:items-end gap-2">
+            <div className="flex items-center gap-2 shrink-0">
+              <Button variant="outline" className="h-8 rounded-lg gap-2 font-semibold px-3 border-border/40 hover:bg-muted/30 transition-colors text-[10px]">
+                <Settings2 className="w-3.5 h-3.5" /> Settings
+              </Button>
+              <Button className="h-8 rounded-lg gap-2 font-semibold px-4 bg-foreground text-background shadow-md hover:shadow-lg transition-shadow text-[10px]">
+                <Download className="w-3.5 h-3.5" /> Export Report
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* Dynamic KPI Ribbons (Revenue & Up-Time) */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {businessStats.map((s, i) => (
           <motion.div 
             variants={{ hidden: { y: 20, opacity: 0 }, visible: { y: 0, opacity: 1, transition: { duration: 0.5, delay: i * 0.1, ease: 'easeOut' } } }}
             key={i} 
-            className="group relative p-5 rounded-3xl bg-card/40 backdrop-blur-2xl border border-white/20 dark:border-white/5 shadow-lg overflow-hidden hover:-translate-y-1 transition-all duration-300"
+            className="group relative p-4 rounded-2xl bg-card/40 backdrop-blur-2xl border border-white/20 dark:border-white/5 shadow-lg overflow-hidden hover:-translate-y-1 transition-all duration-300"
           >
              <div className={cn("absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-5 transition-opacity duration-500", s.bg)}></div>
-             <div className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-2 flex items-center justify-between">
-                {s.label} <s.icon className={cn("w-3.5 h-3.5", s.color)} />
+             <div className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1 flex items-center justify-between">
+                {s.label} <s.icon className={cn("w-3 h-3", s.color)} />
              </div>
              <div className="flex items-baseline justify-between mt-1 relative z-10">
-                <span className="text-3xl font-black tracking-tighter text-foreground">{s.value}</span>
-                <span className={cn("text-[10px] font-black uppercase tracking-wider", s.color)}>{s.trend}</span>
+                <span className="text-2xl font-black tracking-tighter text-foreground">{s.value}</span>
+                <span className={cn("text-[9px] font-black uppercase tracking-wider", s.color)}>{s.trend}</span>
              </div>
           </motion.div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Main Data Visualizations */}
         <div className="lg:col-span-8 space-y-8">
@@ -249,15 +257,15 @@ export function LaundryContent({ title, tier = 'normal', role = 'admin' }: Laund
 
            <Card className="p-8 border border-white/20 dark:border-white/5 bg-card/40 backdrop-blur-3xl rounded-[2.5rem] shadow-xl space-y-6">
              <div className="flex items-center gap-2 text-foreground">
-               <Coins className="w-4 h-4 text-emerald-500" />
-               <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Revenue Logistics</span>
+               <Activity className="w-4 h-4 text-emerald-500" />
+               <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Fleet Logistics</span>
              </div>
              <div className="space-y-2">
                {[
-                 { icon: Clock, label: 'Average Wash Cycle', value: '$3.50', color: 'text-emerald-500' },
-                 { icon: RefreshCw, label: 'Average Dry Cycle', value: '$2.00', color: 'text-blue-500' },
-                 { icon: CheckCircle2, label: 'Digital Payments', value: '92.4%', color: 'text-indigo-500' },
-                 { label: 'Refund Claims (MTD)', value: '$12.50', color: 'text-rose-500', isRefund: true },
+                 { icon: Clock, label: 'Average Wash Cycle', value: '35 min', color: 'text-emerald-500' },
+                 { icon: RefreshCw, label: 'Average Dry Cycle', value: '45 min', color: 'text-blue-500' },
+                 { icon: CheckCircle2, label: 'Digital Auth Rate', value: '99.2%', color: 'text-indigo-500' },
+                 { label: 'System Faults (MTD)', value: '3 Issues', color: 'text-rose-500', isRefund: true },
                ].map((item, i) => (
                  <div key={i} className={cn("flex items-center justify-between p-4 rounded-xl transition-all", item.isRefund ? "bg-rose-500/5 hover:bg-rose-500/10" : "hover:bg-muted/40")}>
                    <div className="flex items-center gap-3">

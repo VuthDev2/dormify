@@ -8,12 +8,14 @@ import {
   Save, X, Radio, Server, Gauge
 } from 'lucide-react';
 import React, { useState, useMemo } from 'react';
+import { useModal } from '@/contexts/modal-context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import { DormitoryFormContent, RoomFormContent, ActionPlaceholderContent } from '@/components/modal-contents';
 
 interface BuildingData {
   id: string;
@@ -46,6 +48,7 @@ interface RoomData {
 }
 
 export function PropertiesContent({ tier = 'pro' }: { tier?: string }) {
+  const { openModal } = useModal();
   const [activeTab, setActiveTab] = useState<'dormitories' | 'rooms'>('dormitories');
   const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -106,7 +109,16 @@ export function PropertiesContent({ tier = 'pro' }: { tier?: string }) {
                </button>
              ))}
           </div>
-          <Button size="sm" className="h-10 rounded-xl bg-primary text-white font-bold gap-2 text-xs uppercase tracking-widest px-5 shadow-xl shadow-primary/20">
+          <Button
+            size="sm"
+            className="h-10 rounded-xl bg-primary text-white font-bold gap-2 text-xs uppercase tracking-widest px-5 shadow-xl shadow-primary/20"
+            onClick={() => openModal({
+              id: 'new-asset',
+              title: 'Create New Property',
+              component: <DormitoryFormContent />,
+              size: 'lg'
+            })}
+          >
             <Plus className="w-4 h-4" /> New Asset
           </Button>
         </div>
@@ -185,7 +197,18 @@ export function PropertiesContent({ tier = 'pro' }: { tier?: string }) {
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
                         <Input placeholder="Filter Unit ID..." className="pl-9 h-10 bg-muted/10 border-border/40 rounded-xl text-xs font-bold w-40" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                      </div>
-                     <Button size="sm" className="h-10 rounded-xl bg-primary text-white font-black px-4 text-[10px] uppercase tracking-widest">Add Unit</Button>
+                     <Button
+                       size="sm"
+                       className="h-10 rounded-xl bg-primary text-white font-black px-4 text-[10px] uppercase tracking-widest"
+                       onClick={() => openModal({
+                         id: `new-unit-${selectedBuildingId}`,
+                         title: 'Add Unit',
+                         component: <RoomFormContent />,
+                         size: 'lg'
+                       })}
+                     >
+                       Add Unit
+                     </Button>
                   </div>
                </div>
 
@@ -213,7 +236,19 @@ export function PropertiesContent({ tier = 'pro' }: { tier?: string }) {
                           </div>
                           <div className="flex items-center justify-between">
                              <p className="text-sm font-black text-foreground">{r.rent}</p>
-                             <Button size="sm" variant="ghost" className="h-8 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all">Manage Unit</Button>
+                             <Button
+                               size="sm"
+                               variant="ghost"
+                               className="h-8 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all"
+                               onClick={() => openModal({
+                                 id: `manage-unit-${r.id}`,
+                                 title: `Manage Unit: ${r.name}`,
+                                 component: <RoomFormContent />,
+                                 size: 'lg'
+                               })}
+                             >
+                               Manage Unit
+                             </Button>
                           </div>
                        </div>
                     </Card>
@@ -261,8 +296,30 @@ export function PropertiesContent({ tier = 'pro' }: { tier?: string }) {
                   <Input placeholder="Search master unit registry across all campuses..." className="pl-8 h-12 border-none bg-transparent text-sm font-bold focus-visible:ring-0" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                </div>
                <div className="flex items-center gap-2">
-                  <Button variant="outline" className="h-12 rounded-xl border-border/40 gap-2 text-[10px] font-black uppercase px-6 tracking-widest"><Filter className="w-4 h-4" /> Filter</Button>
-                  <Button variant="outline" className="h-12 rounded-xl border-border/40 gap-2 text-[10px] font-black uppercase px-6 tracking-widest"><Download className="w-4 h-4" /> Export</Button>
+                  <Button
+                    variant="outline"
+                    className="h-12 rounded-xl border-border/40 gap-2 text-[10px] font-black uppercase px-6 tracking-widest"
+                    onClick={() => openModal({
+                      id: 'property-filter',
+                      title: 'Filter Registry',
+                      component: <ActionPlaceholderContent action="Configure property filters" />,
+                      size: 'md'
+                    })}
+                  >
+                    <Filter className="w-4 h-4" /> Filter
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="h-12 rounded-xl border-border/40 gap-2 text-[10px] font-black uppercase px-6 tracking-widest"
+                    onClick={() => openModal({
+                      id: 'property-export',
+                      title: 'Export Property Registry',
+                      component: <ActionPlaceholderContent action="Export property registry" detail="Export modal is ready; connect this action to CSV/PDF endpoint." />,
+                      size: 'md'
+                    })}
+                  >
+                    <Download className="w-4 h-4" /> Export
+                  </Button>
                </div>
             </Card>
 
@@ -306,7 +363,17 @@ export function PropertiesContent({ tier = 'pro' }: { tier?: string }) {
                         <td className="p-5 text-[11px] font-black text-foreground/60 uppercase tracking-tight">{r.resident || 'Unassigned Node'}</td>
                         <td className="p-5 pr-8 text-right text-sm font-black text-foreground tracking-tighter">{r.rent}</td>
                         <td className="p-5 text-right">
-                          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl opacity-0 group-hover:opacity-100 transition-all hover:bg-primary hover:text-white">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-9 w-9 rounded-xl opacity-0 group-hover:opacity-100 transition-all hover:bg-primary hover:text-white"
+                            onClick={() => openModal({
+                              id: `open-room-${r.id}`,
+                              title: `Open Unit: ${r.name}`,
+                              component: <RoomFormContent />,
+                              size: 'lg'
+                            })}
+                          >
                             <ArrowUpRight className="w-5 h-5" />
                           </Button>
                         </td>
