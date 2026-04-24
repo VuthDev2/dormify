@@ -1,5 +1,7 @@
 'use client';
 
+import { type FormEvent, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Users,
   Building2,
@@ -36,6 +38,14 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { StatCard } from './stat-card';
 
@@ -45,11 +55,40 @@ interface DashboardContentProps {
 }
 
 export function DashboardContent({ role, tier = 'normal' }: DashboardContentProps) {
+  const router = useRouter();
+  const [isAddTenantOpen, setIsAddTenantOpen] = useState(false);
+  const [tenantFeedback, setTenantFeedback] = useState<string | null>(null);
+  const [dashboardNotice, setDashboardNotice] = useState<string | null>(null);
+  const [savedTenants, setSavedTenants] = useState(0);
+  const [tenantForm, setTenantForm] = useState({
+    fullName: '',
+    email: '',
+    room: '',
+    status: 'Pending',
+  });
   const isPremium = tier === 'premium' && role === 'admin';
   const isPro = tier === 'pro' && role === 'admin';
   const isNormal = tier === 'normal' && role === 'admin';
   const isChef = role === 'chef';
   const isTenant = role === 'tenant';
+
+  const handleSaveTenant = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!tenantForm.fullName.trim() || !tenantForm.email.trim() || !tenantForm.room.trim()) {
+      setTenantFeedback('Please fill in full name, email, and room before saving.');
+      return;
+    }
+
+    setSavedTenants((previous) => previous + 1);
+    setTenantFeedback(`Tenant ${tenantForm.fullName.trim()} added to local mock list.`);
+    setTenantForm({ fullName: '', email: '', room: '', status: 'Pending' });
+    setIsAddTenantOpen(false);
+  };
+
+  const handleComingSoon = (message: string) => {
+    setDashboardNotice(message);
+  };
 
   if (isPremium) {
     return (
@@ -65,14 +104,27 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
             <p className="text-muted-foreground font-medium text-base max-w-xl leading-snug">Strategic oversight and predictive performance metrics.</p>
           </div>
           <div className="flex items-center gap-2">
-             <Button variant="outline" className="rounded-xl h-10 px-4 font-bold border-border bg-card text-xs">
+             <Button
+                variant="outline"
+                className="rounded-xl h-10 px-4 font-bold border-border bg-card text-xs"
+                onClick={() => handleComingSoon('Market brief opened (mock).')}
+             >
                 Market Brief
              </Button>
-             <Button className="rounded-xl h-10 px-6 font-black bg-primary text-primary-foreground shadow-lg shadow-primary/20 text-xs text-primary-foreground">
+             <Button
+                className="rounded-xl h-10 px-6 font-black bg-primary text-primary-foreground shadow-lg shadow-primary/20 text-xs text-primary-foreground"
+                onClick={() => handleComingSoon('Expand assets flow is coming soon.')}
+             >
                 Expand Assets
              </Button>
           </div>
         </div>
+
+        {dashboardNotice ? (
+          <Card className="border-border/40 bg-card/70 rounded-xl px-4 py-3">
+            <p className="text-xs font-semibold text-foreground">{dashboardNotice}</p>
+          </Card>
+        ) : null}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
@@ -156,7 +208,10 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
                 ))}
               </div>
 
-              <Button className="w-full h-16 rounded-2xl bg-foreground text-background font-black text-[10px] uppercase tracking-widest hover:bg-foreground/90 transition-all">
+              <Button
+                className="w-full h-16 rounded-2xl bg-foreground text-background font-black text-[10px] uppercase tracking-widest hover:bg-foreground/90 transition-all"
+                onClick={() => router.push('/dashboard/premium/analytics')}
+              >
                  Open Full Intelligence Suite
               </Button>
            </div>
@@ -178,14 +233,36 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
              <p className="text-sm text-muted-foreground font-medium">Efficient management of your residential infrastructure.</p>
            </div>
            <div className="flex items-center gap-2">
-             <Button variant="outline" className="rounded-xl h-9 px-4 font-bold border-border bg-card text-xs">
+             <Button
+               variant="outline"
+               className="rounded-xl h-9 px-4 font-bold border-border bg-card text-xs"
+               onClick={() => handleComingSoon('Daily report prepared locally.')}
+             >
                Daily Report
              </Button>
-             <Button className="rounded-xl h-9 px-5 font-black bg-primary text-primary-foreground shadow-lg shadow-primary/10 text-xs text-primary-foreground">
+             <Button
+               onClick={() => setIsAddTenantOpen(true)}
+               className="rounded-xl h-9 px-5 font-black bg-primary text-primary-foreground shadow-lg shadow-primary/10 text-xs text-primary-foreground"
+             >
                Add Tenant
              </Button>
            </div>
         </div>
+
+        {dashboardNotice ? (
+          <Card className="border-border/40 bg-card/70 rounded-xl px-4 py-3">
+            <p className="text-xs font-semibold text-foreground">{dashboardNotice}</p>
+          </Card>
+        ) : null}
+
+        {tenantFeedback && (
+          <Card className="border-border/40 bg-card/70 rounded-xl px-4 py-3">
+            <p className="text-xs font-semibold text-foreground">{tenantFeedback}</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mt-1">
+              Local tenants added: {savedTenants}
+            </p>
+          </Card>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard tier="pro" label="Occupancy" value="94.2%" icon={Zap} trend="up" />
@@ -265,7 +342,10 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
                       <h3 className="text-lg font-black tracking-tight">Smart Ops</h3>
                       <p className="text-[11px] opacity-80 font-medium">Auto-billing is optimized.</p>
                     </div>
-                    <Button className="w-full text-[9px] font-black uppercase tracking-widest h-10 rounded-xl bg-white text-primary hover:bg-white/90 transition-all">
+                    <Button
+                      className="w-full text-[9px] font-black uppercase tracking-widest h-10 rounded-xl bg-white text-primary hover:bg-white/90 transition-all"
+                      onClick={() => router.push('/dashboard/pro/settings')}
+                    >
                       Configure System
                     </Button>
                  </div>
@@ -273,6 +353,67 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
               </Card>
            </div>
         </div>
+
+        <Dialog open={isAddTenantOpen} onOpenChange={setIsAddTenantOpen}>
+          <DialogContent className="sm:max-w-md rounded-2xl">
+            <DialogHeader>
+              <DialogTitle className="text-lg font-black tracking-tight">Add Tenant</DialogTitle>
+            </DialogHeader>
+
+            <form onSubmit={handleSaveTenant} className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Full Name</label>
+                <Input
+                  value={tenantForm.fullName}
+                  onChange={(event) => setTenantForm((previous) => ({ ...previous, fullName: event.target.value }))}
+                  placeholder="Alex Johnson"
+                  className="h-10"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Email</label>
+                <Input
+                  type="email"
+                  value={tenantForm.email}
+                  onChange={(event) => setTenantForm((previous) => ({ ...previous, email: event.target.value }))}
+                  placeholder="alex@example.com"
+                  className="h-10"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Room</label>
+                <Input
+                  value={tenantForm.room}
+                  onChange={(event) => setTenantForm((previous) => ({ ...previous, room: event.target.value }))}
+                  placeholder="B-204"
+                  className="h-10"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Status</label>
+                <select
+                  value={tenantForm.status}
+                  onChange={(event) => setTenantForm((previous) => ({ ...previous, status: event.target.value }))}
+                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                >
+                  <option value="Pending">Pending</option>
+                  <option value="Active">Active</option>
+                  <option value="Inactive">Inactive</option>
+                </select>
+              </div>
+
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setIsAddTenantOpen(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit">Save</Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
@@ -297,14 +438,29 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
             </p>
           </div>
           <div className="flex items-center gap-2">
-             <Button variant="outline" size="sm" className="rounded-xl font-bold border-border bg-card shadow-sm h-10 px-4">
+             <Button
+               variant="outline"
+               size="sm"
+               className="rounded-xl font-bold border-border bg-card shadow-sm h-10 px-4"
+               onClick={() => handleComingSoon('Report export queued (mock).')}
+             >
                Download Report
              </Button>
-             <Button size="sm" className="rounded-xl font-black bg-primary text-primary-foreground shadow-lg shadow-primary/10 h-10 px-4">
+             <Button
+               size="sm"
+               className="rounded-xl font-black bg-primary text-primary-foreground shadow-lg shadow-primary/10 h-10 px-4"
+               onClick={() => router.push('/dashboard/normal/residents')}
+             >
                <Plus className="w-4 h-4 mr-2" /> Add Resident
              </Button>
           </div>
         </div>
+
+        {dashboardNotice ? (
+          <Card className="border-border/40 bg-card/70 rounded-xl px-4 py-3">
+            <p className="text-xs font-semibold text-foreground">{dashboardNotice}</p>
+          </Card>
+        ) : null}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard tier="normal" label="Total Residents" value="142" icon={Users} trend="neutral" change="Stable" />
@@ -349,7 +505,11 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
                 ))}
               </div>
               <div className="p-4 bg-muted/10 border-t border-border/40">
-                <Button variant="ghost" className="w-full text-xs font-bold text-muted-foreground hover:text-primary">
+                <Button
+                  variant="ghost"
+                  className="w-full text-xs font-bold text-muted-foreground hover:text-primary"
+                  onClick={() => router.push('/dashboard/normal/reports')}
+                >
                   View Full Operational Log <ArrowRight className="w-3 h-3 ml-2" />
                 </Button>
               </div>
@@ -361,13 +521,21 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
             <div className="space-y-3">
               <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground px-2">Quick Commands</h3>
               <div className="grid grid-cols-1 gap-2">
-                <Button variant="outline" className="h-12 justify-start gap-3 px-4 rounded-xl border-border bg-card hover:bg-muted transition-all group border-dashed">
+                <Button
+                  variant="outline"
+                  className="h-12 justify-start gap-3 px-4 rounded-xl border-border bg-card hover:bg-muted transition-all group border-dashed"
+                  onClick={() => router.push('/dashboard/normal/rooms')}
+                >
                   <div className="w-7 h-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all">
                     <Plus className="w-4 h-4" />
                   </div>
                   <span className="font-bold text-xs uppercase tracking-widest">Assign Room</span>
                 </Button>
-                <Button variant="outline" className="h-12 justify-start gap-3 px-4 rounded-xl border-border bg-card hover:bg-muted transition-all group border-dashed">
+                <Button
+                  variant="outline"
+                  className="h-12 justify-start gap-3 px-4 rounded-xl border-border bg-card hover:bg-muted transition-all group border-dashed"
+                  onClick={() => router.push('/dashboard/normal/payments')}
+                >
                   <div className="w-7 h-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all">
                     <FileText className="w-4 h-4" />
                   </div>
@@ -397,7 +565,11 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
                    </div>
                  ))}
               </div>
-              <Button variant="ghost" className="w-full mt-6 text-[10px] font-black uppercase tracking-widest h-10 border border-border/40 rounded-xl">
+              <Button
+                variant="ghost"
+                className="w-full mt-6 text-[10px] font-black uppercase tracking-widest h-10 border border-border/40 rounded-xl"
+                onClick={() => router.push('/dashboard/normal/reports')}
+              >
                 System History
               </Button>
             </Card>
@@ -513,7 +685,11 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
                 <p className="text-4xl font-black">£1,240.00</p>
                 <p className="text-xs font-bold text-amber-500 uppercase mt-1">Due: April 01, 2026</p>
               </div>
-              <Button size="sm" className="w-full h-10 rounded-xl font-black text-[10px] uppercase bg-primary text-white shadow-lg shadow-primary/20">
+              <Button
+                size="sm"
+                className="w-full h-10 rounded-xl font-black text-[10px] uppercase bg-primary text-white shadow-lg shadow-primary/20"
+                onClick={() => router.push('/dashboard/tenants/invoices')}
+              >
                 Pay Now
               </Button>
             </Card>
@@ -529,7 +705,12 @@ export function DashboardContent({ role, tier = 'normal' }: DashboardContentProp
                 <p className="text-xl font-black leading-tight">Slow-cooked Beef Bourguignon</p>
                 <p className="text-xs font-bold text-muted-foreground uppercase mt-1">🕰 18:30 – 20:30 · Chef Special</p>
               </div>
-              <Button size="sm" variant="outline" className="w-full h-10 rounded-xl font-bold text-[10px] uppercase border-border/40">
+              <Button
+                size="sm"
+                variant="outline"
+                className="w-full h-10 rounded-xl font-bold text-[10px] uppercase border-border/40"
+                onClick={() => router.push('/dashboard/tenants/meals')}
+              >
                 View Full Menu
               </Button>
             </Card>

@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import {
   Users, Building2, TrendingUp, CreditCard, Utensils, FileText,
   PieChart, ShieldCheck, Search, Plus, ArrowRight, AlertCircle,
@@ -32,6 +33,7 @@ interface ModuleContentProps {
 }
 
 export function ModuleContent({ title, type, tier = 'normal', role = 'admin' }: ModuleContentProps) {
+  const router = useRouter();
   const isPremium = tier === 'premium';
   const isNormal = tier === 'normal';
 
@@ -206,7 +208,12 @@ export function ModuleContent({ title, type, tier = 'normal', role = 'admin' }: 
               <h1 className="text-2xl font-black tracking-tight text-foreground">Campus <span className="text-muted-foreground/30">Assets</span></h1>
               <p className="text-xs text-muted-foreground font-medium">Portfolio oversight and infrastructure control.</p>
            </div>
-           <Button className="rounded-xl h-9 px-4 font-black bg-primary text-primary-foreground shadow-lg shadow-primary/20 text-[11px]">Add Asset</Button>
+           <Button
+             className="rounded-xl h-9 px-4 font-black bg-primary text-primary-foreground shadow-lg shadow-primary/20 text-[11px]"
+             onClick={() => window.alert('Asset creation is coming soon.')}
+           >
+             Add Asset
+           </Button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
            {dorms.map((dorm, i) => (
@@ -225,7 +232,13 @@ export function ModuleContent({ title, type, tier = 'normal', role = 'admin' }: 
                       <div><p className="text-[9px] font-bold text-muted-foreground uppercase mb-1">Yield</p><p className="text-sm font-black">{dorm.yield}</p></div>
                       <div><p className="text-[9px] font-bold text-muted-foreground uppercase mb-1">Status</p><Badge variant="outline" className="text-[9px] border-border">{dorm.status}</Badge></div>
                    </div>
-                   <Button variant="outline" className="w-full h-10 rounded-xl font-bold text-xs uppercase tracking-widest">Manage building</Button>
+                   <Button
+                     variant="outline"
+                     className="w-full h-10 rounded-xl font-bold text-xs uppercase tracking-widest"
+                     onClick={() => router.push(`/dashboard/${tier}/dorms`)}
+                   >
+                     Manage building
+                   </Button>
                 </div>
              </Card>
            ))}
@@ -292,7 +305,10 @@ export function ModuleContent({ title, type, tier = 'normal', role = 'admin' }: 
               <h2 className="text-2xl font-black tracking-tight">Billing <span className="text-muted-foreground/30">Operations</span></h2>
               <p className="text-muted-foreground font-medium text-[11px]">Automate and track your collection cycles.</p>
            </div>
-           <Button className="rounded-xl h-9 px-4 font-black bg-primary text-white shadow-lg shadow-primary/20 text-[11px]">
+           <Button
+             className="rounded-xl h-9 px-4 font-black bg-primary text-white shadow-lg shadow-primary/20 text-[11px]"
+             onClick={() => window.alert('Billing cycle creation is coming soon.')}
+           >
               <Plus className="w-4 h-4 mr-1.5" /> New Cycle
            </Button>
         </div>
@@ -353,7 +369,11 @@ export function ModuleContent({ title, type, tier = 'normal', role = 'admin' }: 
                       </div>
                    </div>
 
-                   <Button variant="outline" className="w-full h-12 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] group-hover:bg-primary group-hover:text-white transition-all">
+                   <Button
+                     variant="outline"
+                     className="w-full h-12 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] group-hover:bg-primary group-hover:text-white transition-all"
+                     onClick={() => window.alert(`${c.name} management is coming soon.`)}
+                   >
                       Manage Cycle <ChevronRight className="w-3 h-3 ml-2" />
                    </Button>
                 </Card>
@@ -385,10 +405,17 @@ export function ModuleContent({ title, type, tier = 'normal', role = 'admin' }: 
               <p className="text-muted-foreground font-medium text-[11px]">Revenue tracking and performance analytics.</p>
            </div>
            <div className="flex gap-2">
-              <Button variant="outline" className="rounded-xl font-bold text-[9px] uppercase tracking-widest h-9 px-3 border-border/40 hover:bg-muted/50">
+              <Button
+                variant="outline"
+                className="rounded-xl font-bold text-[9px] uppercase tracking-widest h-9 px-3 border-border/40 hover:bg-muted/50"
+                onClick={() => window.alert('Revenue export queued (mock).')}
+              >
                  <Download className="w-3.5 h-3.5 mr-1.5" /> Export
               </Button>
-              <Button className="rounded-xl font-bold text-[9px] uppercase tracking-widest h-9 px-4 bg-primary text-white shadow-lg shadow-primary/20">
+              <Button
+                className="rounded-xl font-bold text-[9px] uppercase tracking-widest h-9 px-4 bg-primary text-white shadow-lg shadow-primary/20"
+                onClick={() => router.push(`/dashboard/${tier}/reports`)}
+              >
                  View Reports
               </Button>
            </div>
@@ -483,7 +510,13 @@ export function ModuleContent({ title, type, tier = 'normal', role = 'admin' }: 
         <Card className="border-border/40 bg-card rounded-[2.5rem] overflow-hidden shadow-sm">
            <div className="p-8 border-b border-border/20 flex justify-between items-center">
               <h3 className="text-xl font-black tracking-tight">Recent Revenue Events</h3>
-              <Button variant="ghost" className="text-[10px] font-black uppercase tracking-widest text-primary">View All</Button>
+              <Button
+                variant="ghost"
+                className="text-[10px] font-black uppercase tracking-widest text-primary"
+                onClick={() => window.alert('Showing all revenue events is coming soon.')}
+              >
+                View All
+              </Button>
            </div>
            <div className="overflow-x-auto">
               <table className="w-full text-left">
@@ -552,7 +585,11 @@ export function ModuleContent({ title, type, tier = 'normal', role = 'admin' }: 
               <h4 className="font-black text-xl">Detailed Visuals</h4>
               <p className="text-sm text-muted-foreground max-w-xs mx-auto">Full visual reporting and trend analysis is available in Pro and Premium tiers.</p>
            </div>
-           {!isNormal ? <Button className="rounded-xl font-black text-xs uppercase tracking-widest">Generate Report</Button> : null}
+           {!isNormal ? (
+             <Button className="rounded-xl font-black text-xs uppercase tracking-widest" onClick={() => window.alert('Analytics report generation is coming soon.')}>
+               Generate Report
+             </Button>
+           ) : null}
         </Card>
       </div>
     );
@@ -569,7 +606,9 @@ export function ModuleContent({ title, type, tier = 'normal', role = 'admin' }: 
       <div className="space-y-6 animate-in fade-in duration-700">
         <div className="flex justify-between items-center border-b border-border/40 pb-4">
            <h2 className="text-2xl font-black tracking-tight">System <span className="text-muted-foreground/30">Reports</span></h2>
-           <Button className="rounded-xl h-9 px-4 font-black bg-primary text-white shadow-lg shadow-primary/20 text-[11px]">Schedule Report</Button>
+           <Button className="rounded-xl h-9 px-4 font-black bg-primary text-white shadow-lg shadow-primary/20 text-[11px]" onClick={() => window.alert('Report scheduling is coming soon.')}>
+             Schedule Report
+           </Button>
         </div>
         <div className="grid gap-2">
            {reports.map((report, i) => (
@@ -583,7 +622,9 @@ export function ModuleContent({ title, type, tier = 'normal', role = 'admin' }: 
                 </div>
                 <div className="flex items-center gap-2">
                    <Badge variant="outline" className="text-[8px] font-black uppercase px-1.5">{report.type}</Badge>
-                   <Button variant="ghost" size="icon" className="rounded-lg h-8 w-8"><ArrowDownRight className="w-3.5 h-3.5" /></Button>
+                   <Button variant="ghost" size="icon" className="rounded-lg h-8 w-8" onClick={() => window.alert(`${report.name} download queued (mock).`)}>
+                     <ArrowDownRight className="w-3.5 h-3.5" />
+                   </Button>
                 </div>
              </Card>
            ))}
@@ -631,12 +672,12 @@ export function ModuleContent({ title, type, tier = 'normal', role = 'admin' }: 
           <h2 className="text-3xl font-black tracking-tight">{title}</h2>
           <p className="text-sm font-medium text-muted-foreground">Standard operational node.</p>
         </div>
-        <Button className="rounded-xl bg-primary text-white">Add Request</Button>
+        <Button className="rounded-xl bg-primary text-white" onClick={() => window.alert('Request creation is coming soon.')}>Add Request</Button>
       </div>
       <Card className="p-20 border-dashed border-2 border-border/40 bg-muted/30 flex flex-col items-center justify-center text-center space-y-4 rounded-[2.5rem]">
          <div className="w-16 h-16 rounded-2xl bg-card flex items-center justify-center text-muted-foreground/20 border border-border/40"><FileText className="w-8 h-8" /></div>
          <p className="text-foreground font-bold">No records found</p>
-         <Button variant="outline" className="rounded-xl text-[10px] font-black uppercase">Refresh system</Button>
+         <Button variant="outline" className="rounded-xl text-[10px] font-black uppercase" onClick={() => window.alert('System refreshed (mock).')}>Refresh system</Button>
       </Card>
     </div>
   );

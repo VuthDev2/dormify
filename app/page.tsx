@@ -14,9 +14,10 @@ import {
 import { motion, useScroll } from 'framer-motion';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Navigation } from '@/components/landing/Navigation';
+import { Hero } from '@/components/landing/Hero';
 import { ScrollRevealText } from '@/components/landing/animations';
 import {
-  STATS, SERVICES, INSTITUTIONAL_FEATURES, DINING_FEATURES,
+  INSTITUTIONAL_FEATURES, DINING_FEATURES,
   RESIDENT_FEATURES, PRICING_PLANS, FAQ_ITEMS, ANIMATION_VARIANTS
 } from '@/components/landing/constants';
 
@@ -24,6 +25,42 @@ export default function LandingPage() {
   const { scrollYProgress: pageScroll } = useScroll();
   const fadeInUp = ANIMATION_VARIANTS.fadeInUp;
   const staggerContainer = ANIMATION_VARIANTS.staggerContainer;
+  const pricingHrefByName: Record<string, string> = {
+    Normal: '/dashboard/normal',
+    Pro: '/dashboard/pro',
+    Premium: '/dashboard/premium',
+  };
+
+  const footerGroups = [
+    {
+      title: 'Ecosystem',
+      links: [
+        { label: 'Documentation', href: '/documentation' },
+        { label: 'API Reference', href: '/api-reference' },
+      ],
+    },
+    {
+      title: 'Resources',
+      links: [
+        { label: 'About Us', href: '/about-us' },
+        { label: 'Privacy Policy', href: '/privacy-policy' },
+      ],
+    },
+    {
+      title: 'Corporate',
+      links: [
+        { label: 'Institutional', href: '/institutional' },
+        { label: 'Ecosystem', href: '/ecosystem' },
+      ],
+    },
+    {
+      title: 'Legal',
+      links: [
+        { label: 'Terms of Service', href: '/terms-of-service' },
+        { label: 'Privacy Policy', href: '/privacy-policy' },
+      ],
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/10 selection:text-primary scroll-smooth">
@@ -33,6 +70,7 @@ export default function LandingPage() {
       />
 
       <Navigation />
+      <Hero />
 
       <section id="institutional" className="py-32 bg-background border-t border-border">
         <div className="max-w-7xl mx-auto px-6">
@@ -71,9 +109,11 @@ export default function LandingPage() {
               </div>
 
               <motion.div variants={fadeInUp}>
-                <Button size="lg" className="h-14 px-8 rounded-none bg-foreground text-background font-black hover:bg-foreground/90 transition-all uppercase text-[11px] tracking-widest">
-                  Request Portfolio Audit
-                </Button>
+                <Link href="/dashboard/pro">
+                  <Button size="lg" className="h-14 px-8 rounded-none bg-foreground text-background font-black hover:bg-foreground/90 transition-all uppercase text-[11px] tracking-widest">
+                    Request Portfolio Audit
+                  </Button>
+                </Link>
               </motion.div>
             </motion.div>
 
@@ -192,9 +232,11 @@ export default function LandingPage() {
             viewport={{ once: false }}
             transition={{ delay: 0.5 }}
           >
-            <Button size="lg" className="rounded-full px-10 h-14 font-bold bg-white text-black hover:bg-slate-200 transition-all hover:scale-105">
-              Explore the Ecosystem
-            </Button>
+            <Link href="/ecosystem">
+              <Button size="lg" className="rounded-full px-10 h-14 font-bold bg-white text-black hover:bg-slate-200 transition-all hover:scale-105">
+                Explore the Ecosystem
+              </Button>
+            </Link>
           </motion.div>
         </div>
       </section>
@@ -313,9 +355,11 @@ export default function LandingPage() {
                          <Shield className="w-4 h-4 opacity-60" />
                       </div>
                       <p className="text-sm font-bold">Room 402 - Bloomsbury</p>
-                      <Button size="sm" className="w-full bg-white text-primary font-black text-[10px] uppercase tracking-widest h-10 rounded-xl">
-                         Hold to Unlock
-                      </Button>
+                      <Link href="/dashboard/tenants">
+                        <Button size="sm" className="w-full bg-white text-primary font-black text-[10px] uppercase tracking-widest h-10 rounded-xl">
+                           Hold to Unlock
+                        </Button>
+                      </Link>
                    </div>
 
                    <div className="grid grid-cols-2 gap-3">
@@ -438,13 +482,15 @@ export default function LandingPage() {
                     ))}
                   </ul>
 
-                  <Button className={`w-full h-14 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all ${
-                    plan.highlighted 
-                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:scale-[1.02]' 
-                      : 'bg-foreground text-background hover:bg-foreground/90'
-                  }`}>
-                    {plan.cta}
-                  </Button>
+                  <Link href={pricingHrefByName[plan.name] || '/dashboard/normal'}>
+                    <Button className={`w-full h-14 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all ${
+                      plan.highlighted 
+                        ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:scale-[1.02]' 
+                        : 'bg-foreground text-background hover:bg-foreground/90'
+                    }`}>
+                      {plan.cta}
+                    </Button>
+                  </Link>
                 </Card>
               </motion.div>
             ))}
@@ -507,14 +553,18 @@ export default function LandingPage() {
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                  <Button size="lg" className="h-16 px-10 rounded-2xl bg-primary text-primary-foreground font-bold text-base shadow-xl shadow-primary/20 transition-all">
-                    Get Started Now
-                  </Button>
+                  <Link href="/dashboard/normal">
+                    <Button size="lg" className="h-16 px-10 rounded-2xl bg-primary text-primary-foreground font-bold text-base shadow-xl shadow-primary/20 transition-all">
+                      Get Started Now
+                    </Button>
+                  </Link>
                 </motion.div>
                 <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                  <Button size="lg" variant="outline" className="h-16 px-10 rounded-2xl border-white/10 text-white bg-white/5 backdrop-blur-md hover:bg-white/10 font-bold text-base transition-all">
-                    Contact Sales
-                  </Button>
+                  <Link href="/about-us">
+                    <Button size="lg" variant="outline" className="h-16 px-10 rounded-2xl border-white/10 text-white bg-white/5 backdrop-blur-md hover:bg-white/10 font-bold text-base transition-all">
+                      Contact Sales
+                    </Button>
+                  </Link>
                 </motion.div>
               </div>
             </div>
@@ -536,20 +586,29 @@ export default function LandingPage() {
                 Advanced property management for modern campus living.
               </p>
               <div className="flex gap-4">
-                 {[MessageSquare, Globe, HelpCircle].map((Icon, i) => (
-                   <div key={i} className="w-10 h-10 bg-card border border-border rounded-xl flex items-center justify-center text-muted-foreground hover:text-primary transition-colors cursor-pointer">
-                      <Icon className="w-4 h-4" />
-                   </div>
+                 {[
+                  { icon: MessageSquare, href: '/documentation' },
+                  { icon: Globe, href: '/about-us' },
+                  { icon: HelpCircle, href: '/api-reference' },
+                 ].map((item, i) => (
+                   <Link key={i} href={item.href} className="w-10 h-10 bg-card border border-border rounded-xl flex items-center justify-center text-muted-foreground hover:text-primary transition-colors cursor-pointer">
+                      <item.icon className="w-4 h-4" />
+                   </Link>
                  ))}
               </div>
             </div>
             
-            {['Ecosystem', 'Resources', 'Corporate', 'Legal'].map((group) => (
-              <div key={group}>
-                <h5 className="font-bold text-[10px] uppercase tracking-widest mb-6">{group}</h5>
+            {footerGroups.map((group) => (
+              <div key={group.title}>
+                <h5 className="font-bold text-[10px] uppercase tracking-widest mb-6">{group.title}</h5>
                 <ul className="space-y-3 text-sm text-muted-foreground font-medium">
-                  <li><a href="#" className="hover:text-primary transition-colors">Link One</a></li>
-                  <li><a href="#" className="hover:text-primary transition-colors">Link Two</a></li>
+                  {group.links.map((link) => (
+                    <li key={link.href}>
+                      <Link href={link.href} className="hover:text-primary transition-colors">
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
                 </ul>
               </div>
             ))}

@@ -1,6 +1,8 @@
 'use client';
 
+import { useState } from 'react';
 import { Bell, Search, ChevronDown, Command } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -20,12 +22,49 @@ interface HeaderProps {
 }
 
 export function Header({ role, tier = 'normal' }: HeaderProps) {
+  const router = useRouter();
+  const [headerNotice, setHeaderNotice] = useState<string | null>(null);
+
   const searchPlaceholder =
     role === 'admin'
       ? 'Search residents, rooms, reports'
       : role === 'chef'
       ? 'Search meals, inventory, plans'
       : 'Search payments, meals, profile';
+
+  const handleSignOut = () => {
+    const confirmed = window.confirm('Sign out of this session?');
+    if (!confirmed) return;
+    router.push('/login');
+  };
+
+  const goToProfileSettings = () => {
+    if (role === 'admin') {
+      router.push(`/dashboard/${tier}/settings`);
+      return;
+    }
+
+    if (role === 'tenant') {
+      router.push('/dashboard/tenants/profile');
+      return;
+    }
+
+    router.push('/dashboard/chef');
+  };
+
+  const goToOrganization = () => {
+    if (role === 'admin') {
+      router.push(`/dashboard/${tier}/dorms`);
+      return;
+    }
+
+    if (role === 'tenant') {
+      router.push('/dashboard/tenants');
+      return;
+    }
+
+    router.push('/dashboard/chef/plan');
+  };
 
   return (
     <header className="sticky top-0 z-40 px-4 pt-4 md:px-6 md:pt-5">
@@ -56,6 +95,7 @@ export function Header({ role, tier = 'normal' }: HeaderProps) {
               variant="ghost"
               size="icon"
               className="relative h-11 w-11 rounded-xl text-slate-500 transition-all hover:bg-black/[0.04] hover:text-slate-950 dark:text-slate-300 dark:hover:bg-white/[0.08] dark:hover:text-white"
+              onClick={() => setHeaderNotice('Notifications are up to date. No new alerts right now.')}
             >
               <Bell className="h-5 w-5" />
               <span className="absolute right-3 top-3 h-2.5 w-2.5 rounded-full border-2 border-white bg-primary dark:border-[#11192b]" />
@@ -87,20 +127,34 @@ export function Header({ role, tier = 'normal' }: HeaderProps) {
                   Global Account
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-border/40" />
-                <DropdownMenuItem className="cursor-pointer rounded-xl px-3 py-3 text-sm font-semibold">
+                <DropdownMenuItem
+                  onSelect={goToProfileSettings}
+                  className="cursor-pointer rounded-xl px-3 py-3 text-sm font-semibold"
+                >
                   Profile Settings
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer rounded-xl px-3 py-3 text-sm font-semibold">
+                <DropdownMenuItem
+                  onSelect={goToOrganization}
+                  className="cursor-pointer rounded-xl px-3 py-3 text-sm font-semibold"
+                >
                   Organization
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-border/40" />
-                <DropdownMenuItem className="cursor-pointer rounded-xl px-3 py-3 text-sm font-bold text-destructive focus:bg-destructive/5 focus:text-destructive">
+                <DropdownMenuItem
+                  onSelect={handleSignOut}
+                  className="cursor-pointer rounded-xl px-3 py-3 text-sm font-bold text-destructive focus:bg-destructive/5 focus:text-destructive"
+                >
                   Sign Out
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
         </div>
+        {headerNotice ? (
+          <p className="mt-2 px-2 text-xs font-semibold text-muted-foreground">
+            {headerNotice}
+          </p>
+        ) : null}
       </div>
     </header>
   );

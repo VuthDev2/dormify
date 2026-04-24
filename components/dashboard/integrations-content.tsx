@@ -33,6 +33,7 @@ export function IntegrationsContent({ title, tier = 'normal', role = 'admin' }: 
   const isPro = tier === 'pro';
 
   const [isSyncing, setIsSyncing] = useState<string | null>(null);
+  const [integrationNotice, setIntegrationNotice] = useState<string | null>(null);
 
   const handleSync = (id: string) => {
     setIsSyncing(id);
@@ -74,14 +75,25 @@ export function IntegrationsContent({ title, tier = 'normal', role = 'admin' }: 
         </div>
 
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="h-10 px-5 rounded-xl font-bold bg-card border-border/40 text-[11px] shadow-sm transition-all hover:bg-muted">
+          <Button
+            variant="outline"
+            className="h-10 px-5 rounded-xl font-bold bg-card border-border/40 text-[11px] shadow-sm transition-all hover:bg-muted"
+            onClick={() => setIntegrationNotice('Developer API docs opened in Documentation.')}
+          >
             <LinkIcon className="w-4 h-4 mr-2" /> Developer API
           </Button>
-          <Button className="h-10 px-6 rounded-xl font-black bg-primary text-primary-foreground shadow-lg shadow-primary/20 text-[11px] uppercase tracking-widest">
+          <Button
+            className="h-10 px-6 rounded-xl font-black bg-primary text-primary-foreground shadow-lg shadow-primary/20 text-[11px] uppercase tracking-widest"
+            onClick={() => setIntegrationNotice('App store browser is coming soon.')}
+          >
             <Plus className="w-4 h-4 mr-2" /> Browse App Store
           </Button>
         </div>
       </div>
+
+      {integrationNotice ? (
+        <p className="text-xs font-semibold text-muted-foreground">{integrationNotice}</p>
+      ) : null}
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
          {[
@@ -156,7 +168,12 @@ export function IntegrationsContent({ title, tier = 'normal', role = 'admin' }: 
                                    <RefreshCw className={cn("w-3.5 h-3.5", isSyncing === app.id ? "animate-spin text-primary" : "")} />
                                 </Button>
                               )}
-                              <Button variant="outline" size="sm" className="h-8 px-4 text-[10px] font-bold rounded-lg border-border/40">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-8 px-4 text-[10px] font-bold rounded-lg border-border/40"
+                                onClick={() => setIntegrationNotice(`${app.name}: ${app.status === 'Disconnected' ? 'connect' : 'settings'} flow opened (mock).`)}
+                              >
                                 {app.status === 'Disconnected' ? 'Connect' : 'Settings'}
                               </Button>
                            </div>

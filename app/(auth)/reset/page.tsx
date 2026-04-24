@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Lock, Eye, EyeOff, Building2, ArrowLeft } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
+import { createOptionalClient } from '@/lib/supabase/client';
+import { missingSupabaseEnvMessage } from '@/lib/supabase/env';
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -22,7 +23,12 @@ export default function ResetPasswordPage() {
     if (password.length < 8) { setError('Password must be at least 8 characters'); return; }
     setIsLoading(true);
     setError('');
-    const supabase = createClient();
+    const supabase = createOptionalClient();
+    if (!supabase) {
+      setError(missingSupabaseEnvMessage);
+      setIsLoading(false);
+      return;
+    }
     const { error: updateError } = await supabase.auth.updateUser({ password });
     if (updateError) {
       setError(updateError.message);

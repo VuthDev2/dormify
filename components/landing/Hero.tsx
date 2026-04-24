@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState, useEffect } from 'react';
+import Link from 'next/link';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Home, Zap } from 'lucide-react';
@@ -78,14 +79,18 @@ export const Hero = () => {
           
           <div className="flex flex-col sm:flex-row gap-5 justify-center pt-8">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button size="lg" className="h-16 px-10 rounded-full bg-primary text-primary-foreground text-base font-bold shadow-2xl shadow-primary/40">
-                Get Started <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
+              <Link href="/dashboard/normal">
+                <Button size="lg" className="h-16 px-10 rounded-full bg-primary text-primary-foreground text-base font-bold shadow-2xl shadow-primary/40">
+                  Get Started <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+              </Link>
             </motion.div>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button size="lg" variant="outline" className="h-16 px-10 rounded-full border-white/20 text-white bg-white/5 backdrop-blur-md hover:bg-white/10 text-base font-bold transition-all">
-                View Demo!
-              </Button>
+              <Link href="/ecosystem">
+                <Button size="lg" variant="outline" className="h-16 px-10 rounded-full border-white/20 text-white bg-white/5 backdrop-blur-md hover:bg-white/10 text-base font-bold transition-all">
+                  View Demo!
+                </Button>
+              </Link>
             </motion.div>
           </div>
         </div>

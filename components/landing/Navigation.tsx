@@ -38,8 +38,8 @@ export const Navigation = () => {
 
           <div className="flex items-center justify-end gap-4">
             <ThemeToggle />
-            <Link href="/auth/login" className="text-sm font-medium text-muted-foreground hover:text-primary hidden sm:block">Log in</Link>
-            <Link href="/dashboard/normal">
+            <Link href="/login" className="text-sm font-medium text-muted-foreground hover:text-primary hidden sm:block">Log in</Link>
+            <Link href="/signup">
               <Button size="sm" className="rounded-full px-5 font-semibold">
                 Get Started
               </Button>
@@ -64,8 +64,8 @@ export const Navigation = () => {
               <Link href="/institutional" onClick={() => setIsMobileMenuOpen(false)}>Institutional</Link>
               <Link href="/resident" onClick={() => setIsMobileMenuOpen(false)}>Resident</Link>
               <Link href="/#pricing" onClick={() => setIsMobileMenuOpen(false)}>Pricing</Link>
-              <Link href="/auth/login" onClick={() => setIsMobileMenuOpen(false)}>Log in</Link>
-              <Link href="/dashboard/normal" onClick={() => setIsMobileMenuOpen(false)}>
+              <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>Log in</Link>
+              <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>
                 <Button className="w-full rounded-full h-12">Get Started</Button>
               </Link>
             </div>

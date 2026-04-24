@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import {
   CreditCard,
   ArrowUpRight,
@@ -29,19 +30,33 @@ interface FinanceLedgerProps {
 }
 
 export function FinanceLedger({ title, transactions, tier }: FinanceLedgerProps) {
+  const [ledgerNotice, setLedgerNotice] = useState<string | null>(null);
+
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-black tracking-tight text-foreground">{title}</h2>
         <div className="flex gap-2">
-           <Button variant="outline" size="sm" className="rounded-xl h-10 border-border text-muted-foreground hover:bg-muted">
+           <Button
+             variant="outline"
+             size="sm"
+             className="rounded-xl h-10 border-border text-muted-foreground hover:bg-muted"
+             onClick={() => setLedgerNotice('Filter panel opened (mock).')}
+           >
              <Filter className="w-4 h-4 mr-2" /> Filter
            </Button>
-           <Button variant="outline" size="sm" className="rounded-xl h-10 border-border text-muted-foreground hover:bg-muted">
+           <Button
+             variant="outline"
+             size="sm"
+             className="rounded-xl h-10 border-border text-muted-foreground hover:bg-muted"
+             onClick={() => setLedgerNotice('CSV export queued (mock).')}
+           >
              <Download className="w-4 h-4 mr-2" /> Export CSV
            </Button>
         </div>
       </div>
+
+      {ledgerNotice ? <p className="text-xs font-semibold text-muted-foreground">{ledgerNotice}</p> : null}
 
       <Card className={cn(
         "rounded-[2rem] border-border/40 shadow-sm overflow-hidden bg-card transition-all",

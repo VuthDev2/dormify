@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   Users,
@@ -31,6 +31,7 @@ interface SidebarProps {
 
 export function Sidebar({ role, tier = 'normal' }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const isPremium = tier === 'premium' && role === 'admin';
   const isPro = tier === 'pro' && role === 'admin';
   const isNormal = tier === 'normal' && role === 'admin';
@@ -180,6 +181,12 @@ export function Sidebar({ role, tier = 'normal' }: SidebarProps) {
       ? 'Pro Operations'
       : 'Operations Suite';
 
+  const handleSignOut = () => {
+    const confirmed = window.confirm('Sign out from Dormify now?');
+    if (!confirmed) return;
+    router.push('/login');
+  };
+
   return (
     <aside className={shellStyles}>
       <div className={panelStyles}>
@@ -263,6 +270,7 @@ export function Sidebar({ role, tier = 'normal' }: SidebarProps) {
           <Button
             variant="ghost"
             className="group h-12 w-full justify-start rounded-2xl border border-transparent px-4 text-sm font-semibold text-muted-foreground transition-all hover:border-destructive/20 hover:bg-destructive/10 hover:text-destructive"
+            onClick={handleSignOut}
           >
             <LogOut className="mr-3 h-4 w-4 transition-transform duration-500 group-hover:rotate-180" />
             Sign out

@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Mail, Lock, Eye, EyeOff, Building2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { createClient } from '@/lib/supabase/client';
+import { createOptionalClient } from '@/lib/supabase/client';
+import { missingSupabaseEnvMessage } from '@/lib/supabase/env';
 import { PLAN_TO_TIER } from '@/lib/supabase/types';
 
 export default function LoginPage() {
@@ -23,7 +24,12 @@ export default function LoginPage() {
     setIsLoading(true);
     setError('');
 
-    const supabase = createClient();
+    const supabase = createOptionalClient();
+    if (!supabase) {
+      setError(missingSupabaseEnvMessage);
+      setIsLoading(false);
+      return;
+    }
     const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
 
     if (authError) {

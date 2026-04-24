@@ -66,6 +66,7 @@ export function ResidentsManagement({ title, description, residents, tier }: Res
   const [selectedPayment, setSelectedPayment] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
   const [currentPage, setCurrentPage] = useState(1);
+  const [residentsNotice, setResidentsNotice] = useState<string | null>(null);
 
   // Extract unique values
   const floors = useMemo(() => [...new Set(residents.map(r => r.floor))].sort(), [residents]);
@@ -132,10 +133,15 @@ export function ResidentsManagement({ title, description, residents, tier }: Res
           <h2 className="text-2xl font-black tracking-tight">{title}</h2>
           <p className="text-sm font-medium text-muted-foreground">{description}</p>
         </div>
-        <Button className="rounded-xl h-9 px-4 font-black bg-primary text-primary-foreground shadow-lg shadow-primary/20 text-[10px] uppercase tracking-wider">
+        <Button
+          className="rounded-xl h-9 px-4 font-black bg-primary text-primary-foreground shadow-lg shadow-primary/20 text-[10px] uppercase tracking-wider"
+          onClick={() => setResidentsNotice('Add Resident form is available on the table view.')}
+        >
           <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Resident
         </Button>
       </div>
+
+      {residentsNotice ? <p className="text-xs font-semibold text-muted-foreground">{residentsNotice}</p> : null}
 
       {/* Statistics Grid */}
       <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
@@ -246,7 +252,7 @@ export function ResidentsManagement({ title, description, residents, tier }: Res
           </div>
 
           {/* Download */}
-          <Button variant="outline" className="rounded-xl h-9 px-3 border-border text-muted-foreground gap-2 hover:bg-muted text-xs font-bold">
+          <Button variant="outline" className="rounded-xl h-9 px-3 border-border text-muted-foreground gap-2 hover:bg-muted text-xs font-bold" onClick={() => setResidentsNotice('Resident export queued (mock).')}>
             <Download className="w-3.5 h-3.5" /> Export
           </Button>
         </div>
@@ -335,7 +341,11 @@ export function ResidentsManagement({ title, description, residents, tier }: Res
           {viewMode === 'grid' && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {paginatedResidents.map((resident) => (
-                <Card key={resident.id} className="group border-border/40 bg-card rounded-xl overflow-hidden hover:shadow-lg transition-all cursor-pointer">
+                <Card
+                  key={resident.id}
+                  className="group border-border/40 bg-card rounded-xl overflow-hidden hover:shadow-lg transition-all cursor-pointer"
+                  onClick={() => setResidentsNotice(`Resident ${resident.name} selected.`)}
+                >
                   <div className="p-5 space-y-4">
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-3">
@@ -355,13 +365,13 @@ export function ResidentsManagement({ title, description, residents, tier }: Res
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-40 rounded-lg p-1 border-border/40 shadow-xl">
                           <DropdownMenuLabel className="text-[9px] font-bold uppercase px-3 py-2">Actions</DropdownMenuLabel>
-                          <DropdownMenuItem className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold">
+                          <DropdownMenuItem onSelect={() => setResidentsNotice(`Viewing ${resident.name}.`)} className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold">
                             <Eye className="w-3 h-3 mr-2" /> View
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold">
+                          <DropdownMenuItem onSelect={() => setResidentsNotice(`Editing ${resident.name} (mock).`)} className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold">
                             <Edit2 className="w-3 h-3 mr-2" /> Edit
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold text-destructive">
+                          <DropdownMenuItem onSelect={() => setResidentsNotice(`Delete flow opened for ${resident.name} (mock).`)} className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold text-destructive">
                             <Trash2 className="w-3 h-3 mr-2" /> Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -467,13 +477,13 @@ export function ResidentsManagement({ title, description, residents, tier }: Res
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-40 rounded-lg p-1 border-border/40 shadow-xl">
                               <DropdownMenuLabel className="text-[9px] font-bold uppercase px-3 py-2">Actions</DropdownMenuLabel>
-                              <DropdownMenuItem className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold">
+                              <DropdownMenuItem onSelect={() => setResidentsNotice(`Viewing ${resident.name}.`)} className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold">
                                 <Eye className="w-3 h-3 mr-2" /> View
                               </DropdownMenuItem>
-                              <DropdownMenuItem className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold">
+                              <DropdownMenuItem onSelect={() => setResidentsNotice(`Editing ${resident.name} (mock).`)} className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold">
                                 <Edit2 className="w-3 h-3 mr-2" /> Edit
                               </DropdownMenuItem>
-                              <DropdownMenuItem className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold text-destructive">
+                              <DropdownMenuItem onSelect={() => setResidentsNotice(`Delete flow opened for ${resident.name} (mock).`)} className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold text-destructive">
                                 <Trash2 className="w-3 h-3 mr-2" /> Delete
                               </DropdownMenuItem>
                             </DropdownMenuContent>

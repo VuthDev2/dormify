@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Mail, Building2, ArrowLeft } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
+import { createOptionalClient } from '@/lib/supabase/client';
+import { missingSupabaseEnvMessage } from '@/lib/supabase/env';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -17,7 +18,12 @@ export default function ForgotPasswordPage() {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-    const supabase = createClient();
+    const supabase = createOptionalClient();
+    if (!supabase) {
+      setError(missingSupabaseEnvMessage);
+      setIsLoading(false);
+      return;
+    }
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
     });

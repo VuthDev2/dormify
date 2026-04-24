@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Mail, Lock, Eye, EyeOff, User, Building2 } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
+import { createOptionalClient } from '@/lib/supabase/client';
+import { missingSupabaseEnvMessage } from '@/lib/supabase/env';
 import { TIER_TO_PLAN, PLAN_TO_TIER } from '@/lib/supabase/types';
 
 const PLAN_PRICE: Record<string, number | null> = {
@@ -38,7 +39,12 @@ export default function SignupPage() {
     setIsLoading(true);
     setError('');
 
-    const supabase = createClient();
+    const supabase = createOptionalClient();
+    if (!supabase) {
+      setError(missingSupabaseEnvMessage);
+      setIsLoading(false);
+      return;
+    }
     const dbPlan = TIER_TO_PLAN[formData.plan];
 
     // 1. Sign up the user (trigger auto-creates profile row)

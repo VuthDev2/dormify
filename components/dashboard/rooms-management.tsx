@@ -62,6 +62,7 @@ export function RoomsManagement({ title, description, rooms, tier }: RoomsManage
   const [selectedMaintenance, setSelectedMaintenance] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [currentPage, setCurrentPage] = useState(1);
+  const [roomsNotice, setRoomsNotice] = useState<string | null>(null);
 
   // Extract unique values
   const floors = useMemo(() => [...new Set(rooms.map(r => r.floor))].sort(), [rooms]);
@@ -134,10 +135,15 @@ export function RoomsManagement({ title, description, rooms, tier }: RoomsManage
           <h2 className="text-2xl font-black tracking-tight">{title}</h2>
           <p className="text-sm font-medium text-muted-foreground">{description}</p>
         </div>
-        <Button className="rounded-xl h-9 px-4 font-black bg-primary text-primary-foreground shadow-lg shadow-primary/20 text-[10px] uppercase tracking-wider">
+        <Button
+          className="rounded-xl h-9 px-4 font-black bg-primary text-primary-foreground shadow-lg shadow-primary/20 text-[10px] uppercase tracking-wider"
+          onClick={() => setRoomsNotice('Add Room form is coming soon.')}
+        >
           <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Room
         </Button>
       </div>
+
+      {roomsNotice ? <p className="text-xs font-semibold text-muted-foreground">{roomsNotice}</p> : null}
 
       {/* Statistics Grid */}
       <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
@@ -248,7 +254,7 @@ export function RoomsManagement({ title, description, rooms, tier }: RoomsManage
           </div>
 
           {/* Download */}
-          <Button variant="outline" className="rounded-xl h-9 px-3 border-border text-muted-foreground gap-2 hover:bg-muted text-xs font-bold">
+          <Button variant="outline" className="rounded-xl h-9 px-3 border-border text-muted-foreground gap-2 hover:bg-muted text-xs font-bold" onClick={() => setRoomsNotice('Room export queued (mock).')}>
             <Download className="w-3.5 h-3.5" /> Export
           </Button>
         </div>
@@ -339,7 +345,11 @@ export function RoomsManagement({ title, description, rooms, tier }: RoomsManage
                 const hkIcon = getHousekeepingIcon(room.housekeeping);
                 const HKIcon = hkIcon.icon;
                 return (
-                  <Card key={room.id} className="group border-border/40 bg-card rounded-xl overflow-hidden hover:shadow-lg transition-all cursor-pointer">
+                  <Card
+                    key={room.id}
+                    className="group border-border/40 bg-card rounded-xl overflow-hidden hover:shadow-lg transition-all cursor-pointer"
+                    onClick={() => setRoomsNotice(`Room ${room.name} opened (mock).`)}
+                  >
                     <div className="p-4 space-y-3">
                       <div className="flex items-start justify-between">
                         <div className="space-y-1">
@@ -354,13 +364,13 @@ export function RoomsManagement({ title, description, rooms, tier }: RoomsManage
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="w-40 rounded-lg p-1 border-border/40 shadow-xl">
                             <DropdownMenuLabel className="text-[9px] font-bold uppercase px-3 py-2">Actions</DropdownMenuLabel>
-                            <DropdownMenuItem className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold">
+                            <DropdownMenuItem onSelect={() => setRoomsNotice(`Viewing room ${room.name}.`)} className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold">
                               <Eye className="w-3 h-3 mr-2" /> View
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold">
+                            <DropdownMenuItem onSelect={() => setRoomsNotice(`Editing room ${room.name} (mock).`)} className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold">
                               <Edit2 className="w-3 h-3 mr-2" /> Edit
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold text-destructive">
+                            <DropdownMenuItem onSelect={() => setRoomsNotice(`Delete flow opened for room ${room.name} (mock).`)} className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold text-destructive">
                               <Trash2 className="w-3 h-3 mr-2" /> Delete
                             </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -457,13 +467,13 @@ export function RoomsManagement({ title, description, rooms, tier }: RoomsManage
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end" className="w-40 rounded-lg p-1 border-border/40 shadow-xl">
                                 <DropdownMenuLabel className="text-[9px] font-bold uppercase px-3 py-2">Actions</DropdownMenuLabel>
-                                <DropdownMenuItem className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold">
+                                <DropdownMenuItem onSelect={() => setRoomsNotice(`Viewing room ${room.name}.`)} className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold">
                                   <Eye className="w-3 h-3 mr-2" /> View
                                 </DropdownMenuItem>
-                                <DropdownMenuItem className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold">
+                                <DropdownMenuItem onSelect={() => setRoomsNotice(`Editing room ${room.name} (mock).`)} className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold">
                                   <Edit2 className="w-3 h-3 mr-2" /> Edit
                                 </DropdownMenuItem>
-                                <DropdownMenuItem className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold text-destructive">
+                                <DropdownMenuItem onSelect={() => setRoomsNotice(`Delete flow opened for room ${room.name} (mock).`)} className="rounded-lg cursor-pointer py-1.5 px-3 text-xs font-semibold text-destructive">
                                   <Trash2 className="w-3 h-3 mr-2" /> Delete
                                 </DropdownMenuItem>
                               </DropdownMenuContent>

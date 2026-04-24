@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import {
   Users,
   UserPlus,
@@ -143,6 +144,7 @@ function statusBadge(status: StaffRow['status']) {
 }
 
 export function StaffContent({ tier }: { tier: StaffTier }) {
+  const [staffNotice, setStaffNotice] = useState<string | null>(null);
   const isNormal = tier === 'normal';
   const isPro = tier === 'pro';
   const isPremium = tier === 'premium';
@@ -213,7 +215,12 @@ export function StaffContent({ tier }: { tier: StaffTier }) {
         </div>
         <div className="flex flex-wrap gap-2">
           {!isNormal && (
-            <Button variant="outline" size="sm" className="rounded-xl font-semibold gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-xl font-semibold gap-2"
+              onClick={() => setStaffNotice('Staff export queued (mock).')}
+            >
               <Download className="w-4 h-4" />
               Export
             </Button>
@@ -223,15 +230,20 @@ export function StaffContent({ tier }: { tier: StaffTier }) {
               'rounded-xl font-bold shadow-lg active:scale-[0.98] transition-all',
               isNormal && 'h-10 px-5',
               isPro && 'h-10 px-5 bg-primary shadow-primary/20',
-              isPremium &&
+                isPremium &&
                 'h-11 px-6 bg-primary shadow-xl shadow-primary/25 hover:bg-primary/90',
             )}
+            onClick={() => setStaffNotice('Add staff form is coming soon.')}
           >
             <UserPlus className="w-4 h-4 mr-2" />
             Add staff
           </Button>
         </div>
       </div>
+
+      {staffNotice ? (
+        <p className="text-xs font-semibold text-muted-foreground">{staffNotice}</p>
+      ) : null}
 
       {/* Normal: minimal summary line */}
       {isNormal && (
@@ -346,7 +358,11 @@ export function StaffContent({ tier }: { tier: StaffTier }) {
               )}
             />
           </div>
-          <Button variant="outline" className="rounded-xl gap-2 h-11 shrink-0">
+          <Button
+            variant="outline"
+            className="rounded-xl gap-2 h-11 shrink-0"
+            onClick={() => setStaffNotice('Staff filters opened (mock).')}
+          >
             <Filter className="w-4 h-4" />
             Filters
           </Button>
@@ -496,10 +512,10 @@ export function StaffContent({ tier }: { tier: StaffTier }) {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-44">
-                          <DropdownMenuItem>View profile</DropdownMenuItem>
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
-                          {!isNormal && <DropdownMenuItem>Schedule</DropdownMenuItem>}
-                          {isPremium && <DropdownMenuItem>Compliance log</DropdownMenuItem>}
+                          <DropdownMenuItem onSelect={() => setStaffNotice(`Viewing ${row.name} profile (mock).`)}>View profile</DropdownMenuItem>
+                          <DropdownMenuItem onSelect={() => setStaffNotice(`Editing ${row.name} (mock).`)}>Edit</DropdownMenuItem>
+                          {!isNormal && <DropdownMenuItem onSelect={() => setStaffNotice(`Scheduling ${row.name} (mock).`)}>Schedule</DropdownMenuItem>}
+                          {isPremium && <DropdownMenuItem onSelect={() => setStaffNotice(`${row.name} compliance log opened (mock).`)}>Compliance log</DropdownMenuItem>}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </td>
@@ -522,7 +538,7 @@ export function StaffContent({ tier }: { tier: StaffTier }) {
                 Morning shift is fully staffed. Evening desk needs one backup—consider calling
                 someone from the float pool.
               </p>
-              <Button variant="outline" size="sm" className="mt-4 w-full rounded-xl font-semibold">
+              <Button variant="outline" size="sm" className="mt-4 w-full rounded-xl font-semibold" onClick={() => setStaffNotice('Rota view opened (mock).')}>
                 View rota
               </Button>
             </Card>
@@ -566,7 +582,7 @@ export function StaffContent({ tier }: { tier: StaffTier }) {
                 </li>
               ))}
             </ul>
-            <Button variant="ghost" size="sm" className="mt-4 w-full rounded-xl text-primary font-semibold">
+            <Button variant="ghost" size="sm" className="mt-4 w-full rounded-xl text-primary font-semibold" onClick={() => setStaffNotice('Audit log opened (mock).')}>
               Full audit log
             </Button>
           </Card>
@@ -583,7 +599,7 @@ export function StaffContent({ tier }: { tier: StaffTier }) {
               <span className="font-semibold text-foreground">Settings</span>.
             </span>
           </div>
-          <Button variant="link" className="text-primary font-semibold p-0 h-auto">
+          <Button variant="link" className="text-primary font-semibold p-0 h-auto" onClick={() => setStaffNotice('Settings route opened from staff panel (mock).')}>
             Open settings
           </Button>
         </Card>
