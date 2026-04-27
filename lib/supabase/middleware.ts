@@ -1,12 +1,19 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { hasSupabaseBrowserConfig, getSupabaseBrowserConfig } from '@/lib/supabase/config'
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
+  if (!hasSupabaseBrowserConfig()) {
+    return supabaseResponse
+  }
+
+  const { url, anonKey } = getSupabaseBrowserConfig()
+
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    url,
+    anonKey,
     {
       cookies: {
         getAll() { return request.cookies.getAll() },
@@ -35,8 +42,19 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(new URL('/dashboard/normal', request.url))
   }
 
-  // Gate chef dashboard behind pro plan
+  // Gate /dashboard/chef: allow actual chef-role users; for admins require pro plan
   if (path.startsWith('/dashboard/chef') && user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+
+    if (profile?.role === 'chef') {
+      return supabaseResponse
+    }
+
+    // Admin must have pro plan to access chef dashboard
     const { data: sub } = await supabase
       .from('subscriptions')
       .select('plan')
