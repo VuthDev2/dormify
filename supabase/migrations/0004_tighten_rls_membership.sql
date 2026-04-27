@@ -68,6 +68,8 @@ CREATE POLICY "meal_toggles: tenant inserts own"
       WHERE tr.dorm_id = meal_toggles.dorm_id
         AND tr.tenant_id = auth.uid()
         AND tr.is_active = true
+        AND mp.week_start_date = date_trunc('week', meal_toggles.meal_date)::date
+        AND mpi.day_of_week = EXTRACT(ISODOW FROM meal_toggles.meal_date)::int - 1
     )
   );
 
@@ -88,6 +90,8 @@ CREATE POLICY "meal_toggles: tenant updates own"
       WHERE tr.dorm_id = meal_toggles.dorm_id
         AND tr.tenant_id = auth.uid()
         AND tr.is_active = true
+        AND mp.week_start_date = date_trunc('week', meal_toggles.meal_date)::date
+        AND mpi.day_of_week = EXTRACT(ISODOW FROM meal_toggles.meal_date)::int - 1
     )
   );
 
@@ -95,7 +99,13 @@ CREATE POLICY "meal_toggles: tenant deletes own"
   ON meal_toggles FOR DELETE
   USING (
     tenant_id = auth.uid()
-    AND is_dorm_tenant(dorm_id)
+    AND EXISTS (
+      SELECT 1
+      FROM tenant_rooms
+      WHERE tenant_id = auth.uid()
+        AND dorm_id = meal_toggles.dorm_id
+        AND is_active = true
+    )
   );
 
 -- ---------------------------------------------------------------------------
