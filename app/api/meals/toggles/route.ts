@@ -73,7 +73,9 @@ export async function PUT(request: Request) {
     )
   }
 
-  // Cutoff check — only applies to today; future dates are always toggleable
+  // Cutoff check - only applies to today; future dates are always toggleable.
+  // TODO: cutoff_time currently assumes a single dorm timezone (Asia/Phnom_Penh for MVP).
+  // If multi-region dorms are added in Pro tier, store TZ on the dorms row and convert cutoff using it.
   if (meal_date === todayUTC) {
     const dayOfWeek = toDayOfWeek(meal_date)
 
