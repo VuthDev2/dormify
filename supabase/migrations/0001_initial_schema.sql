@@ -351,3 +351,4 @@ CREATE TABLE notifications (
 
 CREATE INDEX idx_notifications_user_unread ON notifications(user_id, is_read);
 CREATE INDEX idx_notifications_created_at  ON notifications(created_at DESC);
+
