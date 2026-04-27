@@ -22,6 +22,7 @@ import {
 } from '@/components/landing/constants';
 import { Footer } from '@/components/landing/Footer';
 import { useModal } from '@/contexts/modal-context';
+import { StaffContent } from '@/components/dashboard/staff-content';
 import { 
   PropertiesContent, 
   ResidentsContent, 

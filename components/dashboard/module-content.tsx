@@ -169,6 +169,7 @@ interface ModuleContentProps {
 
 export function ModuleContent({ title, type, subType, tier = 'normal', role = 'admin' }: ModuleContentProps) {
   const { openModal } = useModal();
+  const currentType = type as ModuleContentProps['type'];
   const isPremium = tier === 'premium';
   const isNormal = tier === 'normal';
 
@@ -195,7 +196,7 @@ export function ModuleContent({ title, type, subType, tier = 'normal', role = 'a
     return <FinanceHub tier={tier as 'pro' | 'premium'} />;
   }
 
-  if (type === 'dorms') {
+  if (currentType === 'dorms') {
     return <FeedbackContent title={title} role={role} />;
   }
 
@@ -393,7 +394,7 @@ export function ModuleContent({ title, type, subType, tier = 'normal', role = 'a
     );
   }
 
-  if (type === 'payments') {
+  if (currentType === 'payments') {
     if (tier === 'normal') {
       return <FinanceContent />;
     }
