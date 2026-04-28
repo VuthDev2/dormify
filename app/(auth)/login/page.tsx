@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,14 @@ import { createClient } from '@/lib/supabase/client';
 import { PLAN_TO_TIER } from '@/lib/supabase/types';
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={<LoginPageFallback />}>
+      <LoginPageContent />
+    </Suspense>
+  );
+}
+
+function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
@@ -204,6 +212,26 @@ export default function LoginPage() {
             <p className="text-base font-medium text-blue-50 max-w-sm drop-shadow-md">
               Rooms, payments, and organization made simple
             </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LoginPageFallback() {
+  return (
+    <div className="min-h-screen bg-white flex items-center justify-center px-4">
+      <div className="w-full max-w-[480px] rounded-[2rem] border border-border/50 bg-slate-50/60 p-10 shadow-xl shadow-black/[0.02]">
+        <div className="flex flex-col items-center justify-center text-center space-y-4">
+          <div className="flex items-center justify-center gap-2">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-black">
+              <Building2 className="h-6 w-6 text-white" />
+            </div>
+          </div>
+          <div className="space-y-1.5">
+            <h1 className="text-3xl font-black tracking-tight text-black">Welcome Back!</h1>
+            <p className="text-sm font-medium text-muted-foreground">Loading sign in...</p>
           </div>
         </div>
       </div>
