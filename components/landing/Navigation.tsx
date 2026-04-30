@@ -45,14 +45,9 @@ export const Navigation = () => {
             <Button 
               size="sm" 
               className="rounded-full px-5 font-semibold"
-              onClick={() => openModal({
-                id: 'signup',
-                title: 'Join Dormify',
-                component: <ResidentsContent />,
-                size: 'md'
-              })}
+              asChild
             >
-              Get Started
+              <Link href="/signup">Get Started</Link>
             </Button>
             <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -77,17 +72,9 @@ export const Navigation = () => {
               <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>Log in</Link>
               <Button 
                 className="w-full rounded-full h-12"
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  openModal({
-                    id: 'signup',
-                    title: 'Join Dormify',
-                    component: <ResidentsContent />,
-                    size: 'md'
-                  });
-                }}
+                asChild
               >
-                Get Started
+                <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>Get Started</Link>
               </Button>
             </div>
           </motion.div>

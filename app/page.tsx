@@ -633,14 +633,9 @@ export default function LandingPage() {
                   <Button 
                     size="lg" 
                     className="h-16 px-10 rounded-2xl bg-primary text-primary-foreground font-bold text-base shadow-xl shadow-primary/20 transition-all"
-                    onClick={() => openModal({
-                      id: 'signup',
-                      title: 'Create an Account',
-                      component: <ResidentsContent />,
-                      size: 'md'
-                    })}
+                    asChild
                   >
-                    Get Started Now
+                    <Link href="/signup">Get Started Now</Link>
                   </Button>
                 </motion.div>
                 <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>

@@ -172,14 +172,11 @@ export const Hero = () => {
               <Button 
                 size="lg" 
                 className="h-16 px-10 rounded-full bg-primary text-primary-foreground text-base font-bold shadow-2xl shadow-primary/40"
-                onClick={() => openModal({
-                  id: 'signup',
-                  title: 'Get Started with Dormify',
-                  component: <ResidentsContent />,
-                  size: 'md'
-                })}
+                asChild
               >
-                Get Started <ArrowRight className="ml-2 w-5 h-5" />
+                <Link href="/signup">
+                  Get Started <ArrowRight className="ml-2 w-5 h-5" />
+                </Link>
               </Button>
             </motion.div>
             
