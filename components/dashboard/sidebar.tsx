@@ -40,8 +40,7 @@ import {
   TooltipTrigger,
   TooltipProvider,
 } from "@/components/ui/tooltip";
-import { useModal } from '@/contexts/modal-context';
-import { ActionPlaceholderContent } from '@/components/modal-contents';
+import { performClientSignOut } from '@/lib/client-auth';
 
 interface SidebarProps {
   role: 'admin' | 'tenant' | 'chef';
@@ -50,7 +49,6 @@ interface SidebarProps {
 
 export function Sidebar({ role, tier = 'normal' }: SidebarProps) {
   const pathname = usePathname();
-  const { openModal } = useModal();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -316,12 +314,7 @@ export function Sidebar({ role, tier = 'normal' }: SidebarProps) {
                   <Button
                     variant="ghost"
                     className="h-12 w-full justify-center rounded-2xl text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-all"
-                    onClick={() => openModal({
-                      id: 'sidebar-signout',
-                      title: 'Sign Out',
-                      component: <ActionPlaceholderContent action="Sign out session" detail="Connect this action to Supabase Auth signOut() in backend integration." />,
-                      size: 'md'
-                    })}
+                    onClick={() => performClientSignOut('/login')}
                   >
                     <LogOut className="h-4 w-4" />
                   </Button>
@@ -334,12 +327,7 @@ export function Sidebar({ role, tier = 'normal' }: SidebarProps) {
               <Button
                 variant="ghost"
                 className="h-12 w-full justify-start rounded-2xl text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-all"
-                onClick={() => openModal({
-                  id: 'sidebar-signout-expanded',
-                  title: 'Sign Out',
-                  component: <ActionPlaceholderContent action="Sign out session" detail="Connect this action to Supabase Auth signOut() in backend integration." />,
-                  size: 'md'
-                })}
+                onClick={() => performClientSignOut('/login')}
               >
                 <LogOut className="h-4 w-4 mr-3" />
                 <span className="text-xs font-bold uppercase tracking-wider">Sign out</span>

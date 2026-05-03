@@ -1,28 +1,18 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { 
   TrendingUp, 
   CreditCard, 
   FileText, 
   DollarSign, 
-  ArrowUpRight, 
-  ArrowDownRight, 
   Target, 
-  Activity,
-  Download,
   Plus,
-  Search,
-  Filter,
-  CheckCircle2,
   Clock,
   AlertCircle,
-  MoreHorizontal,
   Mail,
   FileDown,
-  RefreshCcw,
   BarChart3,
-  CalendarDays,
   Zap,
   ShieldCheck,
   ShieldAlert,
@@ -35,6 +25,16 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FinanceContent } from './finance-content';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { HUB_INVOICES, type HubInvoice } from './mock-data';
 
 interface FinanceHubProps {
   tier: 'pro' | 'premium';
@@ -42,14 +42,16 @@ interface FinanceHubProps {
 
 export function FinanceHub({ tier }: FinanceHubProps) {
   const [activeTab, setActiveTab] = useState<'revenue' | 'payments' | 'invoices'>('payments');
-
-  const invoices = [
-    { id: 'INV-2026-8820', resident: 'Sarah Johnson', amount: '1,240.00', issued: 'Mar 25', due: 'Apr 01', status: 'Paid', method: 'Bank Transfer' },
-    { id: 'INV-2026-8821', resident: 'Michael Chen', amount: '850.00', issued: 'Mar 25', due: 'Apr 01', status: 'Paid', method: 'Cash' },
-    { id: 'INV-2026-8822', resident: 'Emma Wilson', amount: '1,100.00', issued: 'Mar 25', due: 'Apr 01', status: 'Pending', method: 'Transfer In-Flight' },
-    { id: 'INV-2026-8823', resident: 'James Porter', amount: '1,240.00', issued: 'Mar 20', due: 'Mar 31', status: 'Overdue', method: '-' },
-    { id: 'INV-2026-8824', resident: 'Lisa Anderson', amount: '950.00', issued: 'Mar 28', due: 'Apr 05', status: 'Draft', method: '-' },
-  ];
+  const [invoices, setInvoices] = useState<HubInvoice[]>(HUB_INVOICES);
+  const [invoiceView, setInvoiceView] = useState<'all' | 'active'>('all');
+  const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const [isCreateInvoiceOpen, setIsCreateInvoiceOpen] = useState(false);
+  const [newInvoice, setNewInvoice] = useState({
+    resident: '',
+    amount: '',
+    due: '',
+    method: 'Bank Transfer',
+  });
 
   const revenueStreams = [
     { label: 'Room Fees', value: '$542,800', growth: '+4.2%', color: 'bg-primary' },
@@ -58,14 +60,49 @@ export function FinanceHub({ tier }: FinanceHubProps) {
     { label: 'Misc Services', value: '$12,300', growth: '-1.4%', color: 'bg-slate-400' },
   ];
 
+  const visibleInvoices = useMemo(() => {
+    if (invoiceView === 'all') return invoices;
+    return invoices.filter((invoice) => invoice.status !== 'Paid');
+  }, [invoiceView, invoices]);
+
+  const createInvoice = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!newInvoice.resident || !newInvoice.amount || !newInvoice.due) {
+      setActionMessage('Please complete resident, amount, and due date before creating an invoice.');
+      return;
+    }
+
+    const invoiceId = `INV-2026-${Math.floor(9000 + Math.random() * 999)}`;
+    const created: HubInvoice = {
+      id: invoiceId,
+      resident: newInvoice.resident,
+      amount: Number(newInvoice.amount).toFixed(2),
+      issued: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit' }),
+      due: newInvoice.due,
+      status: 'Draft',
+      method: newInvoice.method,
+    };
+
+    setInvoices((previous) => [created, ...previous]);
+    setActionMessage(`Invoice ${invoiceId} created in Draft status.`);
+    setIsCreateInvoiceOpen(false);
+    setNewInvoice({ resident: '', amount: '', due: '', method: 'Bank Transfer' });
+  };
+
   return (
     <div className="space-y-6 animate-in fade-in duration-700 pb-16">
+      {actionMessage ? (
+        <div className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-xs font-bold uppercase tracking-wider text-blue-800">
+          {actionMessage}
+        </div>
+      ) : null}
+
       {/* 1. Specialized Hub Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-border/40 pb-5">
         <div>
           <div className="flex items-center gap-2 mb-1">
              <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Fiscal Control Active</span>
+             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Fiscal Control Active • {tier}</span>
           </div>
           <h1 className="text-3xl font-black tracking-tight text-foreground uppercase italic leading-none">Revenue <span className="text-muted-foreground/30 not-italic">Platform</span></h1>
         </div>
@@ -90,7 +127,10 @@ export function FinanceHub({ tier }: FinanceHubProps) {
                </button>
              ))}
           </div>
-          <Button className="h-10 rounded-xl bg-primary text-white text-[10px] font-black uppercase tracking-widest px-8 shadow-xl shadow-primary/20 border-none hover:translate-y-[-1px] transition-all">
+          <Button
+            onClick={() => setIsCreateInvoiceOpen(true)}
+            className="h-10 rounded-xl bg-primary text-white text-[10px] font-black uppercase tracking-widest px-8 shadow-xl shadow-primary/20 border-none hover:translate-y-[-1px] transition-all"
+          >
              <Plus className="w-4 h-4 mr-2" /> New Entry
           </Button>
         </div>
@@ -248,17 +288,44 @@ export function FinanceHub({ tier }: FinanceHubProps) {
                <div className="p-5 border-b border-border/10 flex items-center justify-between bg-muted/10">
                   <div className="flex items-center gap-3">
                      <div className="flex p-1 bg-muted/20 rounded-xl border border-border/20">
-                        <Button variant="ghost" size="sm" className="h-8 rounded-lg bg-background text-foreground text-[9px] font-black uppercase tracking-widest shadow-sm">All Invoices</Button>
-                        <Button variant="ghost" size="sm" className="h-8 rounded-lg text-muted-foreground text-[9px] font-black uppercase tracking-widest">Active Only</Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setInvoiceView('all')}
+                          className={cn(
+                            "h-8 rounded-lg text-[9px] font-black uppercase tracking-widest",
+                            invoiceView === 'all' ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"
+                          )}
+                        >
+                          All Invoices
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setInvoiceView('active')}
+                          className={cn(
+                            "h-8 rounded-lg text-[9px] font-black uppercase tracking-widest",
+                            invoiceView === 'active' ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"
+                          )}
+                        >
+                          Active Only
+                        </Button>
                      </div>
                      <div className="h-4 w-px bg-border/20" />
-                     <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">Total: {invoices.length} Registry Entries</span>
+                     <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">Total: {visibleInvoices.length} Registry Entries</span>
                   </div>
                   <div className="flex items-center gap-2">
-                     <Button variant="outline" className="h-9 px-4 rounded-xl border-border/40 text-[9px] font-black uppercase tracking-widest gap-2 bg-background hover:bg-muted/50 transition-all">
+                     <Button
+                        variant="outline"
+                        onClick={() => setActionMessage('Payment reminders queued for all Pending and Overdue invoices (mock).')}
+                        className="h-9 px-4 rounded-xl border-border/40 text-[9px] font-black uppercase tracking-widest gap-2 bg-background hover:bg-muted/50 transition-all"
+                      >
                         <Mail className="w-3.5 h-3.5" /> Send Reminders
                      </Button>
-                     <Button className="h-9 px-5 rounded-xl bg-foreground text-background text-[9px] font-black uppercase tracking-widest shadow-lg border-none hover:bg-foreground/90 transition-all">
+                     <Button
+                        onClick={() => setIsCreateInvoiceOpen(true)}
+                        className="h-9 px-5 rounded-xl bg-foreground text-background text-[9px] font-black uppercase tracking-widest shadow-lg border-none hover:bg-foreground/90 transition-all"
+                      >
                         <Plus className="w-3.5 h-3.5 mr-1" /> Create Invoice
                      </Button>
                   </div>
@@ -276,7 +343,7 @@ export function FinanceHub({ tier }: FinanceHubProps) {
                         </tr>
                      </thead>
                      <tbody className="divide-y divide-border/5">
-                        {invoices.map((inv) => (
+                        {visibleInvoices.map((inv) => (
                            <tr key={inv.id} className="group hover:bg-muted/10 transition-colors cursor-pointer">
                               <td className="py-5 px-8">
                                  <div className="flex items-center gap-3">
@@ -317,6 +384,43 @@ export function FinanceHub({ tier }: FinanceHubProps) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <Dialog open={isCreateInvoiceOpen} onOpenChange={setIsCreateInvoiceOpen}>
+        <DialogContent className="max-w-lg rounded-[2rem] border-border/60">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-black uppercase tracking-tight">Create Invoice</DialogTitle>
+            <DialogDescription className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              Local invoice flow for manual QA and backend integration.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form className="space-y-4 pt-2" onSubmit={createInvoice}>
+            <div className="space-y-1.5">
+              <Label className="text-[10px] font-black uppercase tracking-widest">Resident</Label>
+              <Input value={newInvoice.resident} onChange={(event) => setNewInvoice((prev) => ({ ...prev, resident: event.target.value }))} />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-[10px] font-black uppercase tracking-widest">Amount (USD)</Label>
+                <Input type="number" min="0" step="0.01" value={newInvoice.amount} onChange={(event) => setNewInvoice((prev) => ({ ...prev, amount: event.target.value }))} />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-[10px] font-black uppercase tracking-widest">Due Date</Label>
+                <Input placeholder="Apr 30" value={newInvoice.due} onChange={(event) => setNewInvoice((prev) => ({ ...prev, due: event.target.value }))} />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-[10px] font-black uppercase tracking-widest">Method</Label>
+              <Input value={newInvoice.method} onChange={(event) => setNewInvoice((prev) => ({ ...prev, method: event.target.value }))} />
+            </div>
+
+            <div className="pt-2 flex gap-3">
+              <Button type="button" variant="outline" className="flex-1" onClick={() => setIsCreateInvoiceOpen(false)}>Cancel</Button>
+              <Button type="submit" className="flex-1">Create Invoice</Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

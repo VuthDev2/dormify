@@ -1,6 +1,7 @@
 ﻿'use client';
 
 import { Bell, Search, ChevronDown, Command } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -15,7 +16,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ThemeToggle } from './theme-toggle';
 import { cn } from '@/lib/utils';
 import { useModal } from '@/contexts/modal-context';
-import { SettingsContent, ResidentsContent, StaffContent, ActionPlaceholderContent } from '@/components/modal-contents';
+import { ActionPlaceholderContent } from '@/components/modal-contents';
+import { performClientSignOut } from '@/lib/client-auth';
 
 interface HeaderProps {
   role: 'admin' | 'tenant' | 'chef';
@@ -23,6 +25,7 @@ interface HeaderProps {
 }
 
 export function Header({ role, tier = 'normal' }: HeaderProps) {
+  const router = useRouter();
   const { openModal } = useModal();
   const isChef = role === 'chef';
   const isTenant = role === 'tenant';
@@ -34,6 +37,34 @@ export function Header({ role, tier = 'normal' }: HeaderProps) {
       : role === 'chef'
       ? 'Search meals, inventory, plans'
       : 'Search payments, meals, profile';
+
+  const openProfileSettings = () => {
+    if (isAdmin) {
+      router.push(`/dashboard/${tier}/settings?tab=profile`);
+      return;
+    }
+
+    if (isTenant) {
+      router.push('/dashboard/tenants/profile');
+      return;
+    }
+
+    router.push('/dashboard/chef/staff');
+  };
+
+  const openOrganizationSettings = () => {
+    if (isAdmin) {
+      router.push(`/dashboard/${tier}/settings?tab=organization`);
+      return;
+    }
+
+    if (isTenant) {
+      router.push('/dashboard/tenants/profile');
+      return;
+    }
+
+    router.push('/dashboard/chef/staff');
+  };
 
   return (
     <header className="sticky top-0 z-40 transition-all duration-500 px-6 py-4">
@@ -110,35 +141,20 @@ export function Header({ role, tier = 'normal' }: HeaderProps) {
               <DropdownMenuSeparator className="bg-border/40" />
               <DropdownMenuItem 
                 className="rounded-xl cursor-pointer py-3 px-3 font-semibold text-sm"
-                onClick={() => openModal({
-                  id: 'profile',
-                  title: 'Profile Settings',
-                  component: <ResidentsContent />,
-                  size: 'lg'
-                })}
+                onClick={openProfileSettings}
               >
                 Profile Settings
               </DropdownMenuItem>
               <DropdownMenuItem 
                 className="rounded-xl cursor-pointer py-3 px-3 font-semibold text-sm"
-                onClick={() => openModal({
-                  id: 'org',
-                  title: isChef ? 'Kitchen Settings' : isTenant ? 'Room Details' : 'Organization',
-                  component: <StaffContent />,
-                  size: 'lg'
-                })}
+                onClick={openOrganizationSettings}
               >
                 {isChef ? 'Kitchen Settings' : isTenant ? 'Room Details' : 'Organization'}
               </DropdownMenuItem>
               <DropdownMenuSeparator className="bg-border/40" />
               <DropdownMenuItem 
                 className="rounded-xl cursor-pointer py-3 px-3 font-bold text-sm text-destructive focus:text-destructive focus:bg-destructive/5"
-                onClick={() => openModal({
-                  id: 'logout',
-                  title: 'Sign Out',
-                  component: <SettingsContent />,
-                  size: 'md'
-                })}
+                onClick={() => performClientSignOut('/login')}
               >
                 Sign Out
               </DropdownMenuItem>

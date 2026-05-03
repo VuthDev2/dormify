@@ -5,25 +5,22 @@ import {
   ArrowUpRight,
   CheckCircle2,
   Clock,
-  CreditCard,
   DollarSign,
   Download,
   Filter,
-  MoreHorizontal,
   Plus,
   Search,
   Users,
-  User,
-  MapPin,
   Calendar,
   Wallet
 } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Table,
   TableBody,
@@ -41,6 +38,7 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { NORMAL_PAYMENT_INVOICES, type NormalPaymentInvoice } from './mock-data';
 
 const stats = [
   {
@@ -69,69 +67,93 @@ const stats = [
   },
 ] as const;
 
-const residents = [
-  {
-    id: 'INV-2001',
-    name: 'Sokha Chann',
-    room: 'A-204',
-    amount: '$325.00',
-    status: 'Paid',
-    date: 'Apr 20, 2024',
-    method: 'ABA Transfer',
-    email: 'sokha.c@example.com',
-    avatar: 'Sokha'
-  },
-  {
-    id: 'INV-2002',
-    name: 'Lina Phan',
-    room: 'B-105',
-    amount: '$325.00',
-    status: 'Pending',
-    date: 'Apr 24, 2024',
-    method: 'Cash',
-    email: 'lina.p@example.com',
-    avatar: 'Lina'
-  },
-  {
-    id: 'INV-2003',
-    name: 'Dara Mean',
-    room: 'A-311',
-    amount: '$325.00',
-    status: 'Overdue',
-    date: 'Apr 15, 2024',
-    method: '-',
-    email: 'dara.m@example.com',
-    avatar: 'Dara'
-  },
-  {
-    id: 'INV-2004',
-    name: 'Mey Vanna',
-    room: 'C-118',
-    amount: '$305.00',
-    status: 'Paid',
-    date: 'Apr 18, 2024',
-    method: 'Credit Card',
-    email: 'mey.v@example.com',
-    avatar: 'Mey'
-  },
-  {
-    id: 'INV-2005',
-    name: 'Rith Srey',
-    room: 'B-210',
-    amount: '$325.00',
-    status: 'Pending',
-    date: 'Apr 25, 2024',
-    method: 'ABA Transfer',
-    email: 'rith.s@example.com',
-    avatar: 'Rith'
-  },
-] as const;
+type PaymentFilter = 'all' | 'paid' | 'pending' | 'overdue';
 
 export function NormalPaymentsContent() {
-  const [selectedInvoice, setSelectedInvoice] = useState<typeof residents[number] | null>(null);
+  const [invoices, setInvoices] = useState<NormalPaymentInvoice[]>(NORMAL_PAYMENT_INVOICES);
+  const [selectedInvoice, setSelectedInvoice] = useState<NormalPaymentInvoice | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [activeFilter, setActiveFilter] = useState<PaymentFilter>('all');
+  const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const [isNewPaymentOpen, setIsNewPaymentOpen] = useState(false);
+  const [newPayment, setNewPayment] = useState({
+    name: '',
+    room: '',
+    amount: '',
+    method: 'Cash',
+    email: '',
+  });
+
+  const filteredInvoices = useMemo(() => {
+    return invoices.filter((invoice) => {
+      const matchesQuery =
+        invoice.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        invoice.room.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesFilter =
+        activeFilter === 'all' ||
+        invoice.status.toLowerCase() === activeFilter;
+
+      return matchesQuery && matchesFilter;
+    });
+  }, [activeFilter, invoices, searchTerm]);
+
+  const cycleFilter = () => {
+    setActiveFilter((previous) => {
+      if (previous === 'all') return 'paid';
+      if (previous === 'paid') return 'pending';
+      if (previous === 'pending') return 'overdue';
+      return 'all';
+    });
+  };
+
+  const markAsCollected = () => {
+    if (!selectedInvoice) return;
+
+    setInvoices((previous) =>
+      previous.map((invoice) =>
+        invoice.id === selectedInvoice.id
+          ? { ...invoice, status: 'Paid', method: invoice.method === '-' ? 'Cash' : invoice.method }
+          : invoice
+      )
+    );
+    setActionMessage(`Invoice ${selectedInvoice.id} marked as collected.`);
+    setSelectedInvoice((previous) => (previous ? { ...previous, status: 'Paid' } : previous));
+  };
+
+  const createPayment = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!newPayment.name || !newPayment.room || !newPayment.amount || !newPayment.email) {
+      setActionMessage('Please complete all new payment fields.');
+      return;
+    }
+
+    const createdInvoice: NormalPaymentInvoice = {
+      id: `INV-${Math.floor(3000 + Math.random() * 5000)}`,
+      name: newPayment.name,
+      room: newPayment.room,
+      amount: `$${Number(newPayment.amount).toFixed(2)}`,
+      status: 'Pending',
+      date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+      method: newPayment.method,
+      email: newPayment.email,
+      avatar: newPayment.name.split(' ')[0] ?? newPayment.name,
+    };
+
+    setInvoices((previous) => [createdInvoice, ...previous]);
+    setActionMessage(`New payment ${createdInvoice.id} created for ${createdInvoice.name}.`);
+    setIsNewPaymentOpen(false);
+    setNewPayment({ name: '', room: '', amount: '', method: 'Cash', email: '' });
+  };
 
   return (
     <div className="space-y-8 pb-10 animate-in fade-in duration-500">
+      {actionMessage ? (
+        <div className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-xs font-bold uppercase tracking-wider text-blue-800">
+          {actionMessage}
+        </div>
+      ) : null}
+
       {/* Header Section */}
       <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
         <div>
@@ -143,11 +165,18 @@ export function NormalPaymentsContent() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="h-10 rounded-xl gap-2 text-xs font-black uppercase tracking-widest border-border/60">
+          <Button
+            variant="outline"
+            onClick={() => setActionMessage('Export started. Download will be enabled when backend export API is connected.')}
+            className="h-10 rounded-xl gap-2 text-xs font-black uppercase tracking-widest border-border/60"
+          >
             <Download className="h-4 w-4" />
             Export
           </Button>
-          <Button className="h-10 rounded-xl gap-2 text-xs font-black uppercase tracking-widest bg-primary text-primary-foreground shadow-md shadow-primary/20 border-none">
+          <Button
+            onClick={() => setIsNewPaymentOpen(true)}
+            className="h-10 rounded-xl gap-2 text-xs font-black uppercase tracking-widest bg-primary text-primary-foreground shadow-md shadow-primary/20 border-none"
+          >
             <Plus className="h-4 w-4" />
             New Payment
           </Button>
@@ -194,17 +223,19 @@ export function NormalPaymentsContent() {
               <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search resident or room..."
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
                 className="h-11 pl-11 text-sm font-bold rounded-xl border-border/60 focus-visible:ring-primary/20 bg-background/50"
               />
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="outline" className="h-11 px-4 rounded-xl text-xs font-bold uppercase tracking-widest border-border/60">
+              <Button variant="outline" onClick={cycleFilter} className="h-11 px-4 rounded-xl text-xs font-bold uppercase tracking-widest border-border/60">
                 <Filter className="mr-2 h-4 w-4" />
-                Filter
+                Filter: {activeFilter}
               </Button>
               <Badge variant="secondary" className="h-11 px-4 rounded-xl text-[11px] font-black uppercase tracking-widest bg-muted/50 border-none text-muted-foreground">
                 <Users className="mr-2 h-4 w-4" />
-                15 Residents
+                {filteredInvoices.length} Residents
               </Badge>
             </div>
           </div>
@@ -223,7 +254,7 @@ export function NormalPaymentsContent() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {residents.map((resident) => (
+              {filteredInvoices.map((resident) => (
                 <TableRow 
                   key={resident.id} 
                   className="border-border/40 hover:bg-muted/10 cursor-pointer group"
@@ -337,7 +368,7 @@ export function NormalPaymentsContent() {
                        Dismiss Detail
                     </Button>
                     {selectedInvoice.status !== 'Paid' && (
-                      <Button className="flex-1 h-12 bg-foreground text-background dark:bg-primary dark:text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.15em] shadow-xl border-none">
+                      <Button onClick={markAsCollected} className="flex-1 h-12 bg-foreground text-background dark:bg-primary dark:text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.15em] shadow-xl border-none">
                          Mark as Collected
                       </Button>
                     )}
@@ -345,6 +376,47 @@ export function NormalPaymentsContent() {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isNewPaymentOpen} onOpenChange={setIsNewPaymentOpen}>
+        <DialogContent className="max-w-lg rounded-[2rem] border-border/60">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-black uppercase tracking-tight">Create New Payment</DialogTitle>
+            <DialogDescription className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              Local mock flow for manual testing and backend handoff.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form className="space-y-4 pt-2" onSubmit={createPayment}>
+            <div className="space-y-1.5">
+              <Label className="text-[10px] font-black uppercase tracking-widest">Resident Name</Label>
+              <Input value={newPayment.name} onChange={(event) => setNewPayment((prev) => ({ ...prev, name: event.target.value }))} />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-[10px] font-black uppercase tracking-widest">Room</Label>
+                <Input value={newPayment.room} onChange={(event) => setNewPayment((prev) => ({ ...prev, room: event.target.value }))} />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-[10px] font-black uppercase tracking-widest">Amount (USD)</Label>
+                <Input type="number" min="0" step="0.01" value={newPayment.amount} onChange={(event) => setNewPayment((prev) => ({ ...prev, amount: event.target.value }))} />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-[10px] font-black uppercase tracking-widest">Email</Label>
+              <Input type="email" value={newPayment.email} onChange={(event) => setNewPayment((prev) => ({ ...prev, email: event.target.value }))} />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-[10px] font-black uppercase tracking-widest">Payment Method</Label>
+              <Input value={newPayment.method} onChange={(event) => setNewPayment((prev) => ({ ...prev, method: event.target.value }))} />
+            </div>
+
+            <div className="pt-2 flex items-center gap-3">
+              <Button type="button" variant="outline" className="flex-1" onClick={() => setIsNewPaymentOpen(false)}>Cancel</Button>
+              <Button type="submit" className="flex-1">Create Payment</Button>
+            </div>
+          </form>
         </DialogContent>
       </Dialog>
     </div>

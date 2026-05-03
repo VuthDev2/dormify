@@ -10,6 +10,7 @@ import {
   Banknote,
   Building
 } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -32,6 +33,14 @@ interface FinanceLedgerProps {
 }
 
 export function FinanceLedger({ title, transactions, tier }: FinanceLedgerProps) {
+  const [pendingOnly, setPendingOnly] = useState(false);
+  const [actionMessage, setActionMessage] = useState<string | null>(null);
+
+  const visibleTransactions = useMemo(() => {
+    if (!pendingOnly) return transactions;
+    return transactions.filter((transaction) => transaction.status === 'Pending');
+  }, [pendingOnly, transactions]);
+
   const getMethodIcon = (method?: string) => {
     switch (method) {
       case 'Cash': return <Banknote className="w-4 h-4 text-emerald-500" />;
@@ -42,13 +51,29 @@ export function FinanceLedger({ title, transactions, tier }: FinanceLedgerProps)
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
+      {actionMessage ? (
+        <div className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-xs font-bold uppercase tracking-wider text-blue-800">
+          {actionMessage}
+        </div>
+      ) : null}
+
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-black tracking-tight text-foreground">{title}</h2>
         <div className="flex gap-2">
-           <Button variant="outline" size="sm" className="rounded-xl h-10 border-border text-muted-foreground hover:bg-muted">
-             <Filter className="w-4 h-4 mr-2" /> Filter
+           <Button
+             variant="outline"
+             size="sm"
+             onClick={() => setPendingOnly((previous) => !previous)}
+             className="rounded-xl h-10 border-border text-muted-foreground hover:bg-muted"
+           >
+             <Filter className="w-4 h-4 mr-2" /> {pendingOnly ? 'Show All' : 'Pending Only'}
            </Button>
-           <Button variant="outline" size="sm" className="rounded-xl h-10 border-border text-muted-foreground hover:bg-muted">
+           <Button
+             variant="outline"
+             size="sm"
+             onClick={() => setActionMessage('Export initiated for visible ledger transactions (mock).')}
+             className="rounded-xl h-10 border-border text-muted-foreground hover:bg-muted"
+           >
              <Download className="w-4 h-4 mr-2" /> Export CSV
            </Button>
         </div>
@@ -72,7 +97,7 @@ export function FinanceLedger({ title, transactions, tier }: FinanceLedgerProps)
               </tr>
             </thead>
             <tbody className="divide-y divide-border/20">
-              {transactions.map((t, i) => (
+              {visibleTransactions.map((t, i) => (
                 <tr key={i} className="group hover:bg-muted/10 transition-colors">
                   <td className="p-5 pl-8 text-xs font-mono text-muted-foreground/40">{t.id}</td>
                   <td className="p-5 text-sm font-black text-foreground">{t.user}</td>

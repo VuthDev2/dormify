@@ -8,7 +8,7 @@ import {
   Cloud, Terminal, Layout, Sparkles, Building2,
   MapPin, Globe2, Briefcase, Trash2, Plus,
   Smartphone, Hash, DollarSign, Languages,
-  Clock, LogOut, ExternalLink, Camera, Info, FileText
+  Clock, LogOut, ExternalLink, Camera, FileText
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -20,7 +20,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { performClientSignOut } from '@/lib/client-auth';
 
 interface SettingsContentProps {
   title: string;
@@ -29,10 +31,39 @@ interface SettingsContentProps {
 
 type SettingsTab = 'profile' | 'organization' | 'security' | 'billing' | 'notifications' | 'appearance' | 'integrations';
 
+interface SecuritySession {
+  id: string;
+  device: string;
+  location: string;
+  ip: string;
+  status: 'Current' | 'Active';
+  icon: typeof Laptop;
+}
+
 export function SettingsContent({ title, tier = 'normal' }: SettingsContentProps) {
-  const [activeTab, setActiveTab] = useState<SettingsTab>('profile');
+  const pathname = usePathname();
   const isPremium = tier === 'premium';
   const isPro = tier === 'pro' || tier === 'premium';
+  const [activeTab, setActiveTab] = useState<SettingsTab>('profile');
+  const [securityError, setSecurityError] = useState<string | null>(null);
+  const [securitySuccess, setSecuritySuccess] = useState<string | null>(null);
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(true);
+  const [sessionPersistenceEnabled, setSessionPersistenceEnabled] = useState(false);
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+  const [sessions, setSessions] = useState<SecuritySession[]>([
+    { id: 'session-current', device: 'MacBook Pro 16"', location: 'New York, USA', ip: '192.168.1.1', status: 'Current', icon: Laptop },
+    { id: 'session-mobile', device: 'iPhone 15 Pro', location: 'New York, USA', ip: '10.0.0.45', status: 'Active', icon: Smartphone },
+  ]);
+  const [notificationSettings, setNotificationSettings] = useState({
+    newEnrollment: true,
+    departureWarning: true,
+    successfulPayment: false,
+    systemAuditReady: true,
+  });
 
   const SectionHeader = ({ icon: Icon, title, description }: { icon: any, title: string, description: string }) => (
     <div className="flex items-start gap-4 mb-8">
@@ -74,6 +105,60 @@ export function SettingsContent({ title, tier = 'normal' }: SettingsContentProps
     { id: 'appearance', label: 'Appearance', icon: Palette },
     ...(isPro ? [{ id: 'integrations', label: 'API & Integrations', icon: Terminal }] : []),
   ];
+
+  const availableTabs = useMemo(() => tabs.map((tab) => tab.id), [tabs]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const queryTab = params.get('tab');
+    if (!queryTab) return;
+    if (!availableTabs.includes(queryTab)) return;
+
+    const typedTab = queryTab as SettingsTab;
+    if (typedTab !== activeTab) {
+      setActiveTab(typedTab);
+    }
+  }, [activeTab, availableTabs]);
+
+  const selectTab = (tab: SettingsTab) => {
+    setActiveTab(tab);
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    params.set('tab', tab);
+    window.history.replaceState(null, '', `${pathname}?${params.toString()}`);
+  };
+
+  const submitChangePassword = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSecurityError(null);
+    setSecuritySuccess(null);
+
+    if (!passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword) {
+      setSecurityError('All password fields are required.');
+      return;
+    }
+
+    if (passwordForm.newPassword.length < 8) {
+      setSecurityError('New password must be at least 8 characters.');
+      return;
+    }
+
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setSecurityError('New password and confirmation do not match.');
+      return;
+    }
+
+    setSecuritySuccess('Password changed successfully (local mock flow).');
+    setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+  };
+
+  const toggleNotificationSetting = (key: keyof typeof notificationSettings, checked: boolean) => {
+    setNotificationSettings((previous) => ({
+      ...previous,
+      [key]: checked,
+    }));
+  };
 
   return (
     <div className="w-full space-y-8 animate-in fade-in duration-700 pb-20">
@@ -124,7 +209,7 @@ export function SettingsContent({ title, tier = 'normal' }: SettingsContentProps
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as SettingsTab)}
+              onClick={() => selectTab(tab.id as SettingsTab)}
               className={cn(
                 "w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-xs font-bold transition-all text-left group",
                 activeTab === tab.id
@@ -143,7 +228,10 @@ export function SettingsContent({ title, tier = 'normal' }: SettingsContentProps
           
           <Separator className="my-6 opacity-40" />
           
-          <button className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-xs font-bold text-destructive hover:bg-destructive/5 transition-all text-left">
+          <button
+            onClick={() => performClientSignOut('/login')}
+            className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-xs font-bold text-destructive hover:bg-destructive/5 transition-all text-left"
+          >
             <LogOut className="w-4.5 h-4.5" />
             Terminate Session
           </button>
@@ -324,26 +412,73 @@ export function SettingsContent({ title, tier = 'normal' }: SettingsContentProps
                 description="Secure your administrative access and monitor session integrity."
               />
 
+              <form className="space-y-4 rounded-2xl border border-border/20 bg-muted/10 p-5" onSubmit={submitChangePassword}>
+                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/70">Change Password</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div className="space-y-1">
+                    <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/70">Current Password</Label>
+                    <Input
+                      type="password"
+                      value={passwordForm.currentPassword}
+                      onChange={(event) => setPasswordForm((prev) => ({ ...prev, currentPassword: event.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/70">New Password</Label>
+                    <Input
+                      type="password"
+                      value={passwordForm.newPassword}
+                      onChange={(event) => setPasswordForm((prev) => ({ ...prev, newPassword: event.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/70">Confirm New Password</Label>
+                    <Input
+                      type="password"
+                      value={passwordForm.confirmPassword}
+                      onChange={(event) => setPasswordForm((prev) => ({ ...prev, confirmPassword: event.target.value }))}
+                    />
+                  </div>
+                </div>
+                {securityError ? (
+                  <p className="text-[11px] font-bold text-rose-600">{securityError}</p>
+                ) : null}
+                {securitySuccess ? (
+                  <p className="text-[11px] font-bold text-emerald-600">{securitySuccess}</p>
+                ) : null}
+                <div className="flex justify-end">
+                  <Button type="submit" variant="outline" size="sm" className="rounded-xl h-10 px-6 font-bold text-[10px] uppercase tracking-widest">
+                    Update Secret
+                  </Button>
+                </div>
+              </form>
+
               <div className="space-y-2">
-                <SettingRow label="Change Root Password" description="Rotate your password regularly to maintain high-level security." icon={Lock}>
-                  <Button variant="outline" size="sm" className="rounded-xl h-10 px-6 font-bold text-[10px] uppercase tracking-widest">Update Secret</Button>
-                </SettingRow>
                 <SettingRow label="Two-Factor Authentication" description="Require a secure verification code from your mobile device." icon={Smartphone}>
-                  <Switch defaultChecked />
+                  <Switch
+                    checked={twoFactorEnabled}
+                    onCheckedChange={(checked) => {
+                      setTwoFactorEnabled(checked);
+                      setSecuritySuccess(`Two-factor authentication ${checked ? 'enabled' : 'disabled'} (local setting).`);
+                    }}
+                  />
                 </SettingRow>
                 <SettingRow label="Session Persistence" description="Remember this device for 30 days to reduce login frequency." icon={History}>
-                  <Switch />
+                  <Switch
+                    checked={sessionPersistenceEnabled}
+                    onCheckedChange={(checked) => {
+                      setSessionPersistenceEnabled(checked);
+                      setSecuritySuccess(`Session persistence ${checked ? 'enabled' : 'disabled'} (local setting).`);
+                    }}
+                  />
                 </SettingRow>
               </div>
 
               <div className="mt-12 space-y-6">
                 <h4 className="text-xs font-black uppercase tracking-[0.2em] text-foreground/50 px-2">Active Administrative Sessions</h4>
                 <div className="space-y-3">
-                  {[
-                    { device: 'MacBook Pro 16"', location: 'New York, USA', ip: '192.168.1.1', status: 'Current', icon: Laptop },
-                    { device: 'iPhone 15 Pro', location: 'New York, USA', ip: '10.0.0.45', status: 'Active', icon: Smartphone },
-                  ].map((session, i) => (
-                    <div key={i} className="flex items-center justify-between p-5 rounded-2xl bg-muted/10 border border-border/20 group hover:border-primary/20 transition-all">
+                  {sessions.map((session) => (
+                    <div key={session.id} className="flex items-center justify-between p-5 rounded-2xl bg-muted/10 border border-border/20 group hover:border-primary/20 transition-all">
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 rounded-xl bg-muted/50 flex items-center justify-center text-muted-foreground group-hover:text-primary transition-colors">
                           <session.icon className="w-5 h-5" />
@@ -357,7 +492,15 @@ export function SettingsContent({ title, tier = 'normal' }: SettingsContentProps
                         {session.status === 'Current' ? (
                           <Badge className="bg-emerald-500/10 text-emerald-600 border-none font-black text-[8px] uppercase px-2 h-5">This Device</Badge>
                         ) : (
-                          <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-destructive hover:bg-destructive/5">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-9 w-9 text-muted-foreground hover:text-destructive hover:bg-destructive/5"
+                            onClick={() => {
+                              setSessions((previous) => previous.filter((activeSession) => activeSession.id !== session.id));
+                              setSecuritySuccess(`Session removed for ${session.device}.`);
+                            }}
+                          >
                             <Trash2 className="w-4 h-4" />
                           </Button>
                         )}
@@ -382,10 +525,22 @@ export function SettingsContent({ title, tier = 'normal' }: SettingsContentProps
                   <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-6 ml-1">Resident Lifecycle</h4>
                   <div className="space-y-1">
                     <SettingRow label="New Enrollment" description="Triggered when a new resident successfully completes registration." icon={User}>
-                      <div className="flex gap-4"><Switch defaultChecked /><Switch defaultChecked className="hidden sm:inline-flex" /></div>
+                      <div className="flex items-center gap-3">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Enabled</Label>
+                        <Switch
+                          checked={notificationSettings.newEnrollment}
+                          onCheckedChange={(checked) => toggleNotificationSetting('newEnrollment', checked)}
+                        />
+                      </div>
                     </SettingRow>
                     <SettingRow label="Departure Warning" description="Sent 14 days prior to a resident's scheduled move-out date." icon={LogOut}>
-                      <div className="flex gap-4"><Switch defaultChecked /><Switch className="hidden sm:inline-flex" /></div>
+                      <div className="flex items-center gap-3">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Enabled</Label>
+                        <Switch
+                          checked={notificationSettings.departureWarning}
+                          onCheckedChange={(checked) => toggleNotificationSetting('departureWarning', checked)}
+                        />
+                      </div>
                     </SettingRow>
                   </div>
                 </div>
@@ -394,20 +549,24 @@ export function SettingsContent({ title, tier = 'normal' }: SettingsContentProps
                   <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-6 ml-1">Fiscal Operations</h4>
                   <div className="space-y-1">
                     <SettingRow label="Successful Payment" description="Notification for every institutional rent or fee credit." icon={DollarSign}>
-                      <div className="flex gap-4"><Switch /><Switch className="hidden sm:inline-flex" /></div>
+                      <div className="flex items-center gap-3">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Enabled</Label>
+                        <Switch
+                          checked={notificationSettings.successfulPayment}
+                          onCheckedChange={(checked) => toggleNotificationSetting('successfulPayment', checked)}
+                        />
+                      </div>
                     </SettingRow>
                     <SettingRow label="System Audit Ready" description="Weekly automated financial and occupancy audit generation." icon={FileText}>
-                      <div className="flex gap-4"><Switch defaultChecked /><Switch defaultChecked className="hidden sm:inline-flex" /></div>
+                      <div className="flex items-center gap-3">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Enabled</Label>
+                        <Switch
+                          checked={notificationSettings.systemAuditReady}
+                          onCheckedChange={(checked) => toggleNotificationSetting('systemAuditReady', checked)}
+                        />
+                      </div>
                     </SettingRow>
                   </div>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-muted/10 border border-border/20 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 rounded-full bg-primary" />
-                    <span className="text-[9px] font-black uppercase text-muted-foreground tracking-widest">Left switch: Email | Right switch: Push (Mobile App)</span>
-                  </div>
-                  <Info className="w-4 h-4 text-muted-foreground/20" />
                 </div>
               </div>
             </Card>

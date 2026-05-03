@@ -33,131 +33,9 @@ import { PropertiesContent } from './properties-content';
 import { FinanceContent } from './finance-content';
 import { useModal } from '@/contexts/modal-context';
 import { ActionPlaceholderContent } from '@/components/modal-contents';
+import { DASHBOARD_RESIDENTS } from './mock-data';
 
 import { FinanceHub } from './finance-hub';
-
-const realisticResidents: Resident[] = [
-  { 
-    id: 'RES-8820', 
-    name: 'Sarah Johnson', 
-    email: 'sarah.j@university.edu', 
-    room: 'A-402', 
-    floor: '4', 
-    phone: '+44 7700 900123', 
-    status: 'Active', 
-    joinDate: 'Sept 2024', 
-    leaseEnd: 'Aug 2026', 
-    paymentStatus: 'Paid',
-    university: 'NYU',
-    course: 'MSc Data Science & AI',
-    nationality: 'American'
-  },
-  { 
-    id: 'RES-8821', 
-    name: 'Michael Chen', 
-    email: 'mchen@imperial.ac.uk', 
-    room: 'B-102', 
-    floor: '1', 
-    phone: '+44 7700 900124', 
-    status: 'Active', 
-    joinDate: 'Sept 2024', 
-    leaseEnd: 'Aug 2025', 
-    paymentStatus: 'Paid',
-    university: 'Columbia University',
-    course: 'BEng Robotic Systems',
-    nationality: 'Singaporean'
-  },
-  { 
-    id: 'RES-8822', 
-    name: 'Emma Wilson', 
-    email: 'ewilson@lse.ac.uk', 
-    room: 'C-305', 
-    floor: '3', 
-    phone: '+44 7700 900125', 
-    status: 'Pending', 
-    joinDate: 'Oct 2024', 
-    leaseEnd: 'Sept 2026', 
-    paymentStatus: 'Pending',
-    university: 'Princeton',
-    course: 'BSc International Relations',
-    nationality: 'Canadian'
-  },
-  { 
-    id: 'RES-8823', 
-    name: 'James Porter', 
-    email: 'jporter@kcl.ac.uk', 
-    room: 'D-201', 
-    floor: '2', 
-    phone: '+44 7700 900126', 
-    status: 'Active', 
-    joinDate: 'Sept 2023', 
-    leaseEnd: 'Aug 2026', 
-    paymentStatus: 'Paid',
-    university: 'Harvard',
-    course: 'LLB Law / Global Ethics',
-    nationality: 'American'
-  },
-  { 
-    id: 'RES-8824', 
-    name: 'Olivia Martinez', 
-    email: 'omartinez@arts.ac.uk', 
-    room: 'A-103', 
-    floor: '1', 
-    phone: '+44 7700 900127', 
-    status: 'Active', 
-    joinDate: 'Jan 2024', 
-    leaseEnd: 'Dec 2025', 
-    paymentStatus: 'Paid',
-    university: 'Parsons',
-    course: 'BA Fine Art / Digital Media',
-    nationality: 'Spanish'
-  },
-  { 
-    id: 'RES-8825', 
-    name: 'Alexander Vogt', 
-    email: 'avogt@ucl.ac.uk', 
-    room: 'B-405', 
-    floor: '4', 
-    phone: '+44 7700 900128', 
-    status: 'Moving-Out', 
-    joinDate: 'Sept 2022', 
-    leaseEnd: 'Jun 2026', 
-    paymentStatus: 'Paid',
-    university: 'NYU',
-    course: 'PhD Quantum Computing',
-    nationality: 'German'
-  },
-  { 
-    id: 'RES-8826', 
-    name: 'Yuki Tanaka', 
-    email: 'y.tanaka@soas.ac.uk', 
-    room: 'C-202', 
-    floor: '2', 
-    phone: '+44 7700 900129', 
-    status: 'Active', 
-    joinDate: 'Sept 2024', 
-    leaseEnd: 'Aug 2027', 
-    paymentStatus: 'Overdue',
-    university: 'Stanford',
-    course: 'MA East Asian Studies',
-    nationality: 'Japanese'
-  },
-  { 
-    id: 'RES-8827', 
-    name: 'Amara Diop', 
-    email: 'adiop@qmul.ac.uk', 
-    room: 'D-501', 
-    floor: '5', 
-    phone: '+44 7700 900130', 
-    status: 'Pending', 
-    joinDate: 'Oct 2024', 
-    leaseEnd: 'Sept 2025', 
-    paymentStatus: 'Pending',
-    university: 'Queen Mary University',
-    course: 'MSc Global Public Health',
-    nationality: 'Senegalese'
-  },
-];
 
 interface ModuleContentProps {
   title: string;
@@ -209,10 +87,10 @@ export function ModuleContent({ title, type, subType, tier = 'normal', role = 'a
 
   if (type === 'residents') {
     return (
-      <ResidentsManagement 
+        <ResidentsManagement 
         title="Institutional Residents" 
         description="Comprehensive administrative registry of active, pending, and departing structural nodes (residents) across the portfolio." 
-        residents={realisticResidents} 
+        residents={DASHBOARD_RESIDENTS as Resident[]} 
       />
     );
   }
