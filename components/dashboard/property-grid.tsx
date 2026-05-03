@@ -88,15 +88,15 @@ export function PropertyGrid({ title, description, items, tier, mode = 'rooms' }
 
   // Enhanced data structure for multiple dorms
   const dormProperties = {
-    'Bloomsbury Hall': { campus: 'North Campus', color: 'from-blue-500' },
-    'Borough Wing': { campus: 'South Campus', color: 'from-purple-500' },
-    'Paddington Court': { campus: 'East Campus', color: 'from-emerald-500' },
+    'Manhattan Central': { campus: 'North Campus', color: 'from-blue-500' },
+    'Brooklyn Wing': { campus: 'South Campus', color: 'from-purple-500' },
+    'Times Square Court': { campus: 'East Campus', color: 'from-emerald-500' },
   };
 
   // Assign dorms to items based on name or distribute evenly
   const enrichedItems = items.map((item, idx) => ({
     ...item,
-    dorm: item.floor?.includes('Floor') ? Object.keys(dormProperties)[idx % 3] : 'Bloomsbury Hall'
+    dorm: item.floor?.includes('Floor') ? Object.keys(dormProperties)[idx % 3] : 'Manhattan Central'
   }));
 
   // Filtering logic
@@ -133,7 +133,7 @@ export function PropertyGrid({ title, description, items, tier, mode = 'rooms' }
       maintenance: itemsToAnalyze.filter(i => i.maintenance !== 'none').length,
       cleaning: itemsToAnalyze.filter(i => i.housekeeping === 'Dirty' || i.housekeeping === 'Maintenance').length,
       revenue: itemsToAnalyze.reduce((sum, i) => {
-        const rent = parseInt(i.rent?.replace(/[£,]/g, '') || '0');
+        const rent = parseInt(i.rent?.replace(/[$,]/g, '') || '0');
         return sum + rent;
       }, 0)
     };
@@ -453,7 +453,7 @@ export function PropertyGrid({ title, description, items, tier, mode = 'rooms' }
           </Card>
           <Card className="p-4 border-border/40 bg-linear-to-br from-purple-500/10 to-transparent rounded-xl">
             <p className="text-[8px] font-black text-purple-600/60 uppercase mb-2 tracking-widest">Monthly Revenue</p>
-            <p className="text-3xl font-black text-purple-600 mb-1">£{(allStats.revenue / 1000).toFixed(0)}k</p>
+            <p className="text-3xl font-black text-purple-600 mb-1">${(allStats.revenue / 1000).toFixed(0)}k</p>
             <p className="text-[9px] font-bold text-muted-foreground/50">Total projected</p>
           </Card>
         </div>
@@ -503,7 +503,7 @@ export function PropertyGrid({ title, description, items, tier, mode = 'rooms' }
               arriving: groupedItems[floor].filter((r: any) => r.status === 'Arriving').length,
               departing: groupedItems[floor].filter((r: any) => r.status === 'Departing').length,
               totalRent: groupedItems[floor].reduce((sum: number, r: any) => {
-                const rent = parseInt(r.rent?.replace(/[£,]/g, '') || '0');
+                const rent = parseInt(r.rent?.replace(/[$,]/g, '') || '0');
                 return sum + rent;
               }, 0),
               maintenance: groupedItems[floor].filter((r: any) => r.maintenance !== 'none').length,
@@ -536,7 +536,7 @@ export function PropertyGrid({ title, description, items, tier, mode = 'rooms' }
                     </div>
                     <div>
                       <p className="text-[9px] font-black uppercase text-muted-foreground/40 tracking-widest">Revenue</p>
-                      <p className="text-lg font-black text-primary">£{(floorStats.totalRent / 1000).toFixed(1)}k</p>
+                      <p className="text-lg font-black text-primary">${(floorStats.totalRent / 1000).toFixed(1)}k</p>
                     </div>
                   </div>
                 </div>

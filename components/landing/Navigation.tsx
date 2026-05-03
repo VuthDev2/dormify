@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -6,10 +6,13 @@ import { Building2, Menu, X } from 'lucide-react';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { motion, AnimatePresence, useScroll } from 'framer-motion';
 import { useState } from 'react';
+import { useModal } from '@/contexts/modal-context';
+import { ResidentsContent } from '@/components/modal-contents';
 
 export const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { scrollYProgress: pageScroll } = useScroll();
+  const { openModal } = useModal();
 
   return (
     <>
@@ -39,11 +42,13 @@ export const Navigation = () => {
           <div className="flex items-center justify-end gap-4">
             <ThemeToggle />
             <Link href="/login" className="text-sm font-medium text-muted-foreground hover:text-primary hidden sm:block">Log in</Link>
-            <Link href="/signup">
-              <Button size="sm" className="rounded-full px-5 font-semibold">
-                Get Started
-              </Button>
-            </Link>
+            <Button 
+              size="sm" 
+              className="rounded-full px-5 font-semibold"
+              asChild
+            >
+              <Link href="/signup">Get Started</Link>
+            </Button>
             <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </Button>
@@ -65,9 +70,12 @@ export const Navigation = () => {
               <Link href="/resident" onClick={() => setIsMobileMenuOpen(false)}>Resident</Link>
               <Link href="/#pricing" onClick={() => setIsMobileMenuOpen(false)}>Pricing</Link>
               <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>Log in</Link>
-              <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>
-                <Button className="w-full rounded-full h-12">Get Started</Button>
-              </Link>
+              <Button 
+                className="w-full rounded-full h-12"
+                asChild
+              >
+                <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>Get Started</Link>
+              </Button>
             </div>
           </motion.div>
         )}

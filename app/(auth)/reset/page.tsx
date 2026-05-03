@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -6,8 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Lock, Eye, EyeOff, Building2, ArrowLeft } from 'lucide-react';
-import { createOptionalClient } from '@/lib/supabase/client';
-import { missingSupabaseEnvMessage } from '@/lib/supabase/env';
+import { createClient } from '@/lib/supabase/client';
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -23,19 +22,19 @@ export default function ResetPasswordPage() {
     if (password.length < 8) { setError('Password must be at least 8 characters'); return; }
     setIsLoading(true);
     setError('');
-    const supabase = createOptionalClient();
-    if (!supabase) {
-      setError(missingSupabaseEnvMessage);
+    try {
+      const supabase = createClient();
+      const { error: updateError } = await supabase.auth.updateUser({ password });
+      if (updateError) {
+        setError(updateError.message);
+        return;
+      }
+      router.push('/login?reset=success');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unable to reset your password right now.');
+    } finally {
       setIsLoading(false);
-      return;
     }
-    const { error: updateError } = await supabase.auth.updateUser({ password });
-    if (updateError) {
-      setError(updateError.message);
-      setIsLoading(false);
-      return;
-    }
-    router.push('/login?reset=success');
   };
 
   return (
@@ -113,9 +112,15 @@ export default function ResetPasswordPage() {
               </Button>
             </form>
 
+            {error ? (
+              <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 font-medium text-center shadow-sm">
+                {error}
+              </div>
+            ) : null}
+
             <div className="flex justify-center pt-2">
               <Link
-                href="/auth/login"
+                href="/login"
                 className="inline-flex items-center justify-center gap-2 text-blue-600 font-bold hover:text-blue-700 transition-colors text-sm"
               >
                 <ArrowLeft className="w-4 h-4" />

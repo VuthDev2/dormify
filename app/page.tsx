@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -15,52 +15,29 @@ import { motion, useScroll } from 'framer-motion';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Navigation } from '@/components/landing/Navigation';
 import { Hero } from '@/components/landing/Hero';
-import { ScrollRevealText } from '@/components/landing/animations';
+import { TypingHeadline, ScrollRevealText, DriftingElement } from '@/components/landing/animations';
 import {
-  INSTITUTIONAL_FEATURES, DINING_FEATURES,
+  STATS, SERVICES, INSTITUTIONAL_FEATURES, DINING_FEATURES,
   RESIDENT_FEATURES, PRICING_PLANS, FAQ_ITEMS, ANIMATION_VARIANTS
 } from '@/components/landing/constants';
+import { Footer } from '@/components/landing/Footer';
+import { useModal } from '@/contexts/modal-context';
+import { 
+  PropertiesContent, 
+  ResidentsContent, 
+  FinanceContent, 
+  MaintenanceContent,
+  MealsContent,
+  SettingsContent,
+  StaffContent,
+} from '@/components/modal-contents';
 
 export default function LandingPage() {
   const { scrollYProgress: pageScroll } = useScroll();
+  const { openModal } = useModal();
+
   const fadeInUp = ANIMATION_VARIANTS.fadeInUp;
   const staggerContainer = ANIMATION_VARIANTS.staggerContainer;
-  const pricingHrefByName: Record<string, string> = {
-    Normal: '/dashboard/normal',
-    Pro: '/dashboard/pro',
-    Premium: '/dashboard/premium',
-  };
-
-  const footerGroups = [
-    {
-      title: 'Ecosystem',
-      links: [
-        { label: 'Documentation', href: '/documentation' },
-        { label: 'API Reference', href: '/api-reference' },
-      ],
-    },
-    {
-      title: 'Resources',
-      links: [
-        { label: 'About Us', href: '/about-us' },
-        { label: 'Privacy Policy', href: '/privacy-policy' },
-      ],
-    },
-    {
-      title: 'Corporate',
-      links: [
-        { label: 'Institutional', href: '/institutional' },
-        { label: 'Ecosystem', href: '/ecosystem' },
-      ],
-    },
-    {
-      title: 'Legal',
-      links: [
-        { label: 'Terms of Service', href: '/terms-of-service' },
-        { label: 'Privacy Policy', href: '/privacy-policy' },
-      ],
-    },
-  ];
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/10 selection:text-primary scroll-smooth">
@@ -70,7 +47,81 @@ export default function LandingPage() {
       />
 
       <Navigation />
+
       <Hero />
+
+      {/* Stats Section */}
+      <section className="relative py-10 bg-muted/20 border-y border-border/50">
+        <div className="max-w-4xl mx-auto px-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+            {STATS.map((stat, i) => (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, y: 5 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false }}
+                transition={{ delay: i * 0.05, duration: 0.4 }}
+                className="text-center space-y-0.5"
+              >
+                <h4 className="text-xl md:text-2xl font-black tracking-tighter text-foreground">
+                  {stat.value}
+                </h4>
+                <p className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
+                  {stat.label}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Four Services Section */}
+      <section className="relative py-32 px-6 overflow-hidden bg-background border-b border-border">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-20 space-y-6"
+          >
+            <h2 className="text-5xl md:text-7xl font-bold tracking-tighter text-foreground">
+              Core Services
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-medium">
+              Everything you need to manage modern dormitories in one unified platform
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {SERVICES.map((service, idx) => (
+              <motion.div
+                key={service.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false }}
+                transition={{ delay: idx * 0.1, duration: 0.6 }}
+              >
+                <Card className="h-full p-8 hover:shadow-xl transition-all duration-300 border-border hover:border-primary/50 group cursor-pointer bg-card/50 backdrop-blur">
+                  <div className={`w-16 h-16 rounded-2xl mb-6 flex items-center justify-center ${service.iconBg} group-hover:scale-110 transition-transform`}>
+                    <service.icon className={`w-8 h-8 ${service.iconColor}`} />
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <p className="text-sm font-black text-primary uppercase tracking-widest">{service.id}</p>
+                    <h3 className="text-2xl font-bold tracking-tight text-foreground">{service.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{service.desc}</p>
+                  </div>
+
+                  <div className="mt-6 pt-6 border-t border-border">
+                    <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                  </div>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       <section id="institutional" className="py-32 bg-background border-t border-border">
         <div className="max-w-7xl mx-auto px-6">
@@ -109,11 +160,18 @@ export default function LandingPage() {
               </div>
 
               <motion.div variants={fadeInUp}>
-                <Link href="/dashboard/pro">
-                  <Button size="lg" className="h-14 px-8 rounded-none bg-foreground text-background font-black hover:bg-foreground/90 transition-all uppercase text-[11px] tracking-widest">
-                    Request Portfolio Audit
-                  </Button>
-                </Link>
+                <Button 
+                  size="lg" 
+                  className="h-14 px-8 rounded-none bg-foreground text-background font-black hover:bg-foreground/90 transition-all uppercase text-[11px] tracking-widest"
+                  onClick={() => openModal({
+                    id: 'audit',
+                    title: 'Portfolio Audit Request',
+                    component: <PropertiesContent />,
+                    size: 'xl'
+                  })}
+                >
+                  Requests Portfolio Audits
+                </Button>
               </motion.div>
             </motion.div>
 
@@ -133,7 +191,7 @@ export default function LandingPage() {
                     playsInline 
                     className="w-full h-full object-cover grayscale brightness-50"
                   >
-                    <source src="/property-exterior.mp4" type="video/mp4" />
+                    <source src="/dorm-demo.mp4" type="video/mp4" />
                   </video>
 
                   <div className="absolute inset-0 p-8 flex flex-col justify-between pointer-events-none">
@@ -232,11 +290,18 @@ export default function LandingPage() {
             viewport={{ once: false }}
             transition={{ delay: 0.5 }}
           >
-            <Link href="/ecosystem">
-              <Button size="lg" className="rounded-full px-10 h-14 font-bold bg-white text-black hover:bg-slate-200 transition-all hover:scale-105">
-                Explore the Ecosystem
-              </Button>
-            </Link>
+            <Button 
+              size="lg" 
+              className="rounded-full px-10 h-14 font-bold bg-white text-black hover:bg-slate-200 transition-all hover:scale-105"
+              onClick={() => openModal({
+                id: 'ecosystem',
+                title: 'Platform Ecosystem',
+                component: <PropertiesContent />,
+                size: 'full'
+              })}
+            >
+              Explore the Ecosystem
+            </Button>
           </motion.div>
         </div>
       </section>
@@ -355,11 +420,18 @@ export default function LandingPage() {
                          <Shield className="w-4 h-4 opacity-60" />
                       </div>
                       <p className="text-sm font-bold">Room 402 - Bloomsbury</p>
-                      <Link href="/dashboard/tenants">
-                        <Button size="sm" className="w-full bg-white text-primary font-black text-[10px] uppercase tracking-widest h-10 rounded-xl">
-                           Hold to Unlock
-                        </Button>
-                      </Link>
+                      <Button 
+                        size="sm" 
+                        className="w-full bg-white text-primary font-black text-[10px] uppercase tracking-widest h-10 rounded-xl"
+                        onClick={() => openModal({
+                          id: 'digital-key',
+                          title: 'Digital Key System',
+                          component: <SettingsContent />,
+                          size: 'sm'
+                        })}
+                      >
+                         Hold to Unlock
+                      </Button>
                    </div>
 
                    <div className="grid grid-cols-2 gap-3">
@@ -482,15 +554,21 @@ export default function LandingPage() {
                     ))}
                   </ul>
 
-                  <Link href={pricingHrefByName[plan.name] || '/dashboard/normal'}>
-                    <Button className={`w-full h-14 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all ${
+                  <Button 
+                    className={`w-full h-14 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all ${
                       plan.highlighted 
                         ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:scale-[1.02]' 
                         : 'bg-foreground text-background hover:bg-foreground/90'
-                    }`}>
-                      {plan.cta}
-                    </Button>
-                  </Link>
+                    }`}
+                    onClick={() => openModal({
+                      id: `plan-${plan.name}`,
+                      title: `${plan.name} Tier Enrollment`,
+                      component: <FinanceContent />,
+                      size: 'lg'
+                    })}
+                  >
+                    {plan.cta}
+                  </Button>
                 </Card>
               </motion.div>
             ))}
@@ -553,18 +631,28 @@ export default function LandingPage() {
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                  <Link href="/dashboard/normal">
-                    <Button size="lg" className="h-16 px-10 rounded-2xl bg-primary text-primary-foreground font-bold text-base shadow-xl shadow-primary/20 transition-all">
-                      Get Started Now
-                    </Button>
-                  </Link>
+                  <Button 
+                    size="lg" 
+                    className="h-16 px-10 rounded-2xl bg-primary text-primary-foreground font-bold text-base shadow-xl shadow-primary/20 transition-all"
+                    asChild
+                  >
+                    <Link href="/signup">Get Started Now</Link>
+                  </Button>
                 </motion.div>
                 <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                  <Link href="/about-us">
-                    <Button size="lg" variant="outline" className="h-16 px-10 rounded-2xl border-white/10 text-white bg-white/5 backdrop-blur-md hover:bg-white/10 font-bold text-base transition-all">
-                      Contact Sales
-                    </Button>
-                  </Link>
+                  <Button 
+                    size="lg" 
+                    variant="outline" 
+                    className="h-16 px-10 rounded-2xl border-white/10 text-white bg-white/5 backdrop-blur-md hover:bg-white/10 font-bold text-base transition-all"
+                    onClick={() => openModal({
+                      id: 'contact',
+                      title: 'Contact Sales',
+                      component: <StaffContent />,
+                      size: 'md'
+                    })}
+                  >
+                    Contact Sales
+                  </Button>
                 </motion.div>
               </div>
             </div>
@@ -572,58 +660,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <footer className="py-20 bg-muted/30 border-t border-border">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-12 mb-16">
-            <div className="col-span-2 space-y-6">
-              <Link href="/" className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground">
-                  <Building2 className="w-4 h-4" />
-                </div>
-                <span className="font-bold text-xl">Dormify</span>
-              </Link>
-              <p className="text-muted-foreground text-sm leading-relaxed max-w-xs">
-                Advanced property management for modern campus living.
-              </p>
-              <div className="flex gap-4">
-                 {[
-                  { icon: MessageSquare, href: '/documentation' },
-                  { icon: Globe, href: '/about-us' },
-                  { icon: HelpCircle, href: '/api-reference' },
-                 ].map((item, i) => (
-                   <Link key={i} href={item.href} className="w-10 h-10 bg-card border border-border rounded-xl flex items-center justify-center text-muted-foreground hover:text-primary transition-colors cursor-pointer">
-                      <item.icon className="w-4 h-4" />
-                   </Link>
-                 ))}
-              </div>
-            </div>
-            
-            {footerGroups.map((group) => (
-              <div key={group.title}>
-                <h5 className="font-bold text-[10px] uppercase tracking-widest mb-6">{group.title}</h5>
-                <ul className="space-y-3 text-sm text-muted-foreground font-medium">
-                  {group.links.map((link) => (
-                    <li key={link.href}>
-                      <Link href={link.href} className="hover:text-primary transition-colors">
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-          
-          <div className="pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium text-muted-foreground">
-            <div>&copy; {new Date().getFullYear()} Dormify Systems Inc.</div>
-            <div className="flex gap-8 uppercase tracking-widest text-[9px]">
-              <span>Silicon Valley</span>
-              <span>London</span>
-              <span>Singapore</span>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

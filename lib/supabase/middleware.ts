@@ -1,18 +1,19 @@
-import { createServerClient } from '@supabase/ssr'
+﻿import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
-import { getSupabaseEnv } from './env'
+import { getSupabaseBrowserConfig, hasSupabaseBrowserConfig } from '@/lib/supabase/config'
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
-  const env = getSupabaseEnv()
 
-  if (!env) {
+  if (!hasSupabaseBrowserConfig()) {
     return supabaseResponse
   }
 
+  const { url, anonKey } = getSupabaseBrowserConfig()
+
   const supabase = createServerClient(
-    env.url,
-    env.anonKey,
+    url,
+    anonKey,
     {
       cookies: {
         getAll() { return request.cookies.getAll() },

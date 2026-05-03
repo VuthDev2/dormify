@@ -59,7 +59,7 @@ export default function LandingPage() {
             whileInView="visible"
             viewport={{ once: false, margin: "-50px" }}
             variants={staggerContainer}
-            className="grid md:grid-cols-2 gap-6"
+            className="grid md:grid-cols-2 gap-16"
           >
             {SERVICES.map((service, i) => (
               <motion.div key={i} variants={fadeInUp}>
@@ -135,7 +135,7 @@ export default function LandingPage() {
                     playsInline 
                     className="w-full h-full object-cover grayscale brightness-50"
                   >
-                    <source src="/property-exterior.mp4" type="video/mp4" />
+                    <source src="/dorm-demo.mp4" type="video/mp4" />
                   </video>
 
                   <div className="absolute inset-0 p-8 flex flex-col justify-between pointer-events-none">
@@ -549,8 +549,12 @@ export default function LandingPage() {
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                  <Button size="lg" className="h-16 px-10 rounded-2xl bg-primary text-primary-foreground font-bold text-base shadow-xl shadow-primary/20 transition-all">
-                    Get Started Now
+                  <Button 
+                    size="lg" 
+                    className="h-16 px-10 rounded-2xl bg-primary text-primary-foreground font-bold text-base shadow-xl shadow-primary/20 transition-all"
+                    asChild
+                  >
+                    <Link href="/signup">Get Started Now</Link>
                   </Button>
                 </motion.div>
                 <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
@@ -601,7 +605,7 @@ export default function LandingPage() {
             <div>&copy; {new Date().getFullYear()} Dormify Systems Inc.</div>
             <div className="flex gap-8 uppercase tracking-widest text-[9px]">
               <span>Silicon Valley</span>
-              <span>London</span>
+              <span>New York</span>
               <span>Singapore</span>
             </div>
           </div>

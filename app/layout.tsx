@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { ThemeProvider } from '@/components/theme-provider'
+import { ModalProvider } from '@/contexts/modal-context'
+import { Modal } from '@/components/modal'
 import './globals.css'
 
 const geistSans = Geist({
@@ -35,7 +37,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <ModalProvider>
+            {children}
+            <Modal />
+          </ModalProvider>
           <Analytics />
         </ThemeProvider>
       </body>
